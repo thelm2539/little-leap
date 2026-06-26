@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { AppShell } from "@/components/littleleaps/AppShell";
 import { Card } from "@/components/ui/card";
 import { ageLabel, getAge, greeting } from "@/lib/littleleaps/age";
-import { ACTIVITIES, WEEKLY_TIP } from "@/lib/littleleaps/data";
+import { ACTIVITIES, WEEKLY_TIP, formatDuration } from "@/lib/littleleaps/data";
 import { useActivityLog, countThisWeek } from "@/lib/littleleaps/storage";
 import { DomainBadge, DurationPill, RatingButtons } from "@/components/littleleaps/ActivityBits";
 import { Lightbulb } from "lucide-react";
@@ -29,7 +29,7 @@ function Home() {
   const { log } = useActivityLog();
   const weekCount = countThisWeek(log);
 
-  const todayActivity = ACTIVITIES.find((a) => a.id === "face-gazing")!;
+  const todayActivity = ACTIVITIES.find((a) => a.id === "slow-face")!;
 
   return (
     <AppShell>
@@ -59,12 +59,12 @@ function Home() {
                 </h3>
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   <DomainBadge domain={todayActivity.domain} />
-                  <DurationPill duration={todayActivity.duration} />
+                  <DurationPill duration={formatDuration(todayActivity.durationMinutes)} />
                 </div>
               </div>
             </div>
             <p className="mt-3 text-sm leading-relaxed text-foreground/80">
-              {todayActivity.instructions.split(". ").slice(0, 2).join(". ")}.
+              {todayActivity.instructions.slice(0, 2).join(" ")}
             </p>
             <div className="mt-4">
               <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
