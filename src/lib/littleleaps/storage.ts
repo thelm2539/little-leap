@@ -17,14 +17,47 @@ export interface ActivityLogRow {
 const FAMILY_KEY_STORE = "littleleaps.familyKey";
 const CHECKIN_KEY = "littleleaps.checkin";
 
-// ---------- Family key (localStorage) ----------
+// ---------- Anonymous auth ----------
+
+let authReadyPromise: Promise<void> | null = null;
+
+export function ensureAnonAuth(): Promise<void> {
+  if (typeof window === "undefined") return Promise.resolve();
+  if (!authReadyPromise) {
+    authReadyPromise = (async () => {
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) {
+        const { error } = await supabase.auth.signInAnonymously();
+        if (error) {
+          authReadyPromise = null;
+          throw error;
+        }
+      }
+    })();
+  }
+  return authReadyPromise;
+}
+
+// ---------- Family key (localStorage + family_members) ----------
 
 export function getFamilyKey(): string | null {
   if (typeof window === "undefined") return null;
   return window.localStorage.getItem(FAMILY_KEY_STORE);
 }
 
-export function setFamilyKey(key: string) {
+async function persistFamilyMembership(key: string) {
+  const { data: userData } = await supabase.auth.getUser();
+  const uid = userData.user?.id;
+  if (!uid) throw new Error("Not signed in");
+  const { error } = await supabase
+    .from("family_members")
+    .upsert({ auth_uid: uid, family_key: key }, { onConflict: "auth_uid" });
+  if (error) throw error;
+}
+
+export async function setFamilyKey(key: string) {
+  await ensureAnonAuth();
+  await persistFamilyMembership(key);
   window.localStorage.setItem(FAMILY_KEY_STORE, key);
   window.dispatchEvent(new CustomEvent("littleleaps:familyKey"));
 }
@@ -34,12 +67,36 @@ export function useFamilyKey() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setKey(getFamilyKey());
-    setReady(true);
+    let cancelled = false;
+    (async () => {
+      try {
+        await ensureAnonAuth();
+        let current = getFamilyKey();
+        if (!current) {
+          // Recover from server in case localStorage was cleared on this device
+          const { data } = await supabase
+            .from("family_members")
+            .select("family_key")
+            .maybeSingle();
+          if (data?.family_key) {
+            window.localStorage.setItem(FAMILY_KEY_STORE, data.family_key);
+            current = data.family_key;
+          }
+        }
+        if (cancelled) return;
+        setKey(current);
+      } catch (e) {
+        console.error("[littleleaps] auth/family init failed", e);
+      } finally {
+        if (!cancelled) setReady(true);
+      }
+    })();
+
     const handler = () => setKey(getFamilyKey());
     window.addEventListener("littleleaps:familyKey", handler);
     window.addEventListener("storage", handler);
     return () => {
+      cancelled = true;
       window.removeEventListener("littleleaps:familyKey", handler);
       window.removeEventListener("storage", handler);
     };
