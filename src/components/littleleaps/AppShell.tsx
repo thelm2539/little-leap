@@ -52,6 +52,7 @@ export function AppShell({ children }: { children?: ReactNode }) {
         </nav>
       </div>
       <Toaster position="top-center" />
+      <FamilyKeyGate />
     </div>
   );
 }
