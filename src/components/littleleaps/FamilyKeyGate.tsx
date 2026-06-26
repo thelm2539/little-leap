@@ -8,14 +8,24 @@ import { useFamilyKey } from "@/lib/littleleaps/storage";
 export function FamilyKeyGate() {
   const { familyKey, setFamilyKey, ready } = useFamilyKey();
   const [value, setValue] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   if (!ready) return null;
   if (familyKey) return null;
 
-  const submit = () => {
+  const submit = async () => {
     const trimmed = value.trim().toLowerCase().replace(/\s+/g, "-");
     if (!trimmed) return;
-    setFamilyKey(trimmed);
+    setSaving(true);
+    setError(null);
+    try {
+      await setFamilyKey(trimmed);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not save. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
