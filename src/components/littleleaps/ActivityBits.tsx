@@ -67,10 +67,11 @@ export function RatingButtons({ activityId, compact = false }: { activityId: str
           key={r}
           variant="outline"
           size="sm"
+          disabled={pending !== null}
           onClick={() => handle(r)}
-          className="h-auto flex-col gap-1 rounded-2xl border-border/70 bg-cream/40 py-2.5 text-xs font-medium text-foreground hover:bg-sage/10 hover:text-foreground"
+          className="h-auto flex-col gap-1 rounded-2xl border-border/70 bg-cream/40 py-2.5 text-xs font-medium text-foreground hover:bg-sage/10 hover:text-foreground disabled:opacity-60"
         >
-          <Icon size={18} className="text-sage" />
+          <Icon size={18} className={pending === r ? "animate-pulse text-sage" : "text-sage"} />
           {label}
         </Button>
       ))}
