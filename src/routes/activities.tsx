@@ -12,7 +12,8 @@ import {
   RatingBadge,
   RatingButtons,
 } from "@/components/littleleaps/ActivityBits";
-import { Search } from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
+import { useActivityLog } from "@/lib/littleleaps/storage";
 
 export const Route = createFileRoute("/activities")({
   head: () => ({
