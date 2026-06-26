@@ -58,11 +58,14 @@ export function FamilyKeyGate() {
           />
           <Button
             onClick={submit}
-            disabled={!value.trim()}
+            disabled={!value.trim() || saving}
             className="h-11 w-full rounded-full bg-sage text-sage-foreground hover:bg-sage/90"
           >
-            Create / Join
+            {saving ? "Saving…" : "Create / Join"}
           </Button>
+          {error && (
+            <p className="text-center text-xs text-destructive">{error}</p>
+          )}
           <p className="text-center text-xs text-muted-foreground">
             Share this code with your partner so you both see the same data.
           </p>
