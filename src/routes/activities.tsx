@@ -4,7 +4,13 @@ import { AppShell } from "@/components/littleleaps/AppShell";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { ACTIVITIES, type Activity, type Domain, DOMAIN_LABEL } from "@/lib/littleleaps/data";
+import {
+  ACTIVITIES,
+  type Activity,
+  type Domain,
+  DOMAIN_LABEL,
+  formatDuration,
+} from "@/lib/littleleaps/data";
 import {
   DomainBadge,
   DomainDot,
@@ -12,7 +18,7 @@ import {
   RatingBadge,
   RatingButtons,
 } from "@/components/littleleaps/ActivityBits";
-import { Search, Loader2 } from "lucide-react";
+import { Search, Loader2, FlaskConical, Sparkles } from "lucide-react";
 import { useActivityLog } from "@/lib/littleleaps/storage";
 
 export const Route = createFileRoute("/activities")({
@@ -29,7 +35,7 @@ type Filter = "all" | Domain;
 
 const FILTERS: { value: Filter; label: string }[] = [
   { value: "all", label: "All" },
-  { value: "sensorimotor", label: "Sensory & Motor" },
+  { value: "sensory-motor", label: "Sensory & Motor" },
   { value: "language", label: "Language" },
   { value: "cognitive", label: "Cognitive" },
 ];
@@ -100,11 +106,7 @@ function ActivitiesPage() {
 
         <div className="space-y-3">
           {list.map((a) => (
-            <button
-              key={a.id}
-              onClick={() => setOpen(a)}
-              className="w-full text-left"
-            >
+            <button key={a.id} onClick={() => setOpen(a)} className="w-full text-left">
               <Card className="rounded-2xl border-border/60 p-4 shadow-none transition active:scale-[0.99] hover:bg-cream/30">
                 <div className="flex items-start gap-3">
                   <DomainDot domain={a.domain} />
@@ -113,7 +115,7 @@ function ActivitiesPage() {
                     <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
                       <span>{DOMAIN_LABEL[a.domain]}</span>
                       <span>·</span>
-                      <DurationPill duration={a.duration} />
+                      <DurationPill duration={formatDuration(a.durationMinutes)} />
                     </div>
                   </div>
                   <RatingBadge activityId={a.id} />
@@ -129,35 +131,67 @@ function ActivitiesPage() {
       </div>
 
       <Sheet open={!!open} onOpenChange={(o) => !o && setOpen(null)}>
-        <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-3xl">
+        <SheetContent side="bottom" className="max-h-[88vh] overflow-y-auto rounded-t-3xl">
           {open && (
             <>
               <SheetHeader className="text-left">
                 <SheetTitle className="font-serif text-xl">{open.title}</SheetTitle>
                 <div className="mt-1 flex flex-wrap items-center gap-2">
                   <DomainBadge domain={open.domain} />
-                  <DurationPill duration={open.duration} />
+                  <DurationPill duration={formatDuration(open.durationMinutes)} />
+                  <span className="text-xs text-muted-foreground">· Ages {open.ageWindowWeeks} wks</span>
+                </div>
+                <div className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-sage/12 px-2.5 py-1 text-[11px] font-medium text-sage">
+                  <Sparkles size={12} />
+                  Recommended from week {open.weekRecommended}
                 </div>
               </SheetHeader>
+
               <div className="mt-5 space-y-5">
-                <div>
-                  <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                <section>
+                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                     How to
                   </p>
-                  <p className="text-sm leading-relaxed text-foreground/85">{open.instructions}</p>
-                </div>
-                <div>
+                  <ol className="space-y-2 pl-0">
+                    {open.instructions.map((step, i) => (
+                      <li key={i} className="flex gap-3 text-sm leading-relaxed text-foreground/85">
+                        <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-cream-dark text-[11px] font-semibold text-foreground/70">
+                          {i + 1}
+                        </span>
+                        <span>{step}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+
+                <section>
+                  <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    What this supports
+                  </p>
+                  <p className="text-sm leading-relaxed text-foreground/85">{open.processSupported}</p>
+                </section>
+
+                <section className="rounded-2xl border border-sage/20 bg-sage/5 p-4">
+                  <div className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-sage">
+                    <FlaskConical size={13} />
+                    The science
+                  </div>
+                  <p className="text-sm leading-relaxed text-foreground/80">{open.evidenceBasis}</p>
+                </section>
+
+                <section>
                   <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                     Why it works
                   </p>
-                  <p className="text-sm leading-relaxed text-foreground/75">{open.why}</p>
-                </div>
-                <div>
+                  <p className="text-sm leading-relaxed text-foreground/75">{open.whyItWorks}</p>
+                </section>
+
+                <section>
                   <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                     How did it go?
                   </p>
                   <RatingButtons activityId={open.id} compact />
-                </div>
+                </section>
               </div>
             </>
           )}

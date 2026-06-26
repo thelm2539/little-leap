@@ -7,10 +7,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ACTIVITIES, WEEK_EXPECTATIONS } from "@/lib/littleleaps/data";
+import { ACTIVITIES, WEEK_EXPECTATIONS, formatDuration } from "@/lib/littleleaps/data";
 import { DomainBadge, DurationPill, RatingButtons } from "@/components/littleleaps/ActivityBits";
 import { getAge } from "@/lib/littleleaps/age";
 import { dobFormatted } from "@/lib/littleleaps/age";
+import { FlaskConical } from "lucide-react";
 
 export const Route = createFileRoute("/this-week")({
   head: () => ({
@@ -24,7 +25,7 @@ export const Route = createFileRoute("/this-week")({
 
 function ThisWeek() {
   const { weeks } = getAge();
-  const activities = ACTIVITIES.filter((a) => a.thisWeek);
+  const activities = ACTIVITIES.filter((a) => a.weekRecommended === weeks);
 
   return (
     <AppShell>
@@ -86,22 +87,44 @@ function ThisWeek() {
                         </div>
                         <div className="mt-1.5 flex flex-wrap items-center gap-2">
                           <DomainBadge domain={a.domain} />
-                          <DurationPill duration={a.duration} />
+                          <DurationPill duration={formatDuration(a.durationMinutes)} />
                         </div>
                       </div>
                     </AccordionTrigger>
-                    <AccordionContent className="space-y-3 px-3 pb-4">
+                    <AccordionContent className="space-y-4 px-3 pb-4">
                       <div>
-                        <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                        <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                           How to
                         </p>
-                        <p className="text-sm leading-relaxed text-foreground/85">{a.instructions}</p>
+                        <ol className="space-y-1.5">
+                          {a.instructions.map((step, i) => (
+                            <li key={i} className="flex gap-2 text-sm leading-relaxed text-foreground/85">
+                              <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-cream-dark text-[10px] font-semibold text-foreground/70">
+                                {i + 1}
+                              </span>
+                              <span>{step}</span>
+                            </li>
+                          ))}
+                        </ol>
+                      </div>
+                      <div>
+                        <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                          What this supports
+                        </p>
+                        <p className="text-sm leading-relaxed text-foreground/85">{a.processSupported}</p>
+                      </div>
+                      <div className="rounded-2xl border border-sage/20 bg-sage/5 p-3">
+                        <div className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-sage">
+                          <FlaskConical size={12} />
+                          The science
+                        </div>
+                        <p className="text-sm leading-relaxed text-foreground/80">{a.evidenceBasis}</p>
                       </div>
                       <div>
                         <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                           Why it works
                         </p>
-                        <p className="text-sm leading-relaxed text-foreground/75">{a.why}</p>
+                        <p className="text-sm leading-relaxed text-foreground/75">{a.whyItWorks}</p>
                       </div>
                       <div>
                         <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">

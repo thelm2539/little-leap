@@ -1,173 +1,650 @@
-export type Domain = "sensorimotor" | "language" | "cognitive";
+export type Domain = "sensory-motor" | "language" | "cognitive";
 
 export interface Activity {
   id: string;
   title: string;
   domain: Domain;
-  duration: string;
-  instructions: string;
-  why: string;
-  thisWeek?: boolean;
+  ageWindowWeeks: string;
+  processSupported: string;
+  evidenceBasis: string;
+  instructions: string[];
+  durationMinutes: number;
+  whyItWorks: string;
+  weekRecommended: number;
 }
 
 export const DOMAIN_LABEL: Record<Domain, string> = {
-  sensorimotor: "Sensory & Motor",
+  "sensory-motor": "Sensory & Motor",
   language: "Language & Communication",
   cognitive: "Cognitive",
 };
 
 export const DOMAIN_DOT: Record<Domain, string> = {
-  sensorimotor: "bg-domain-sensorimotor",
+  "sensory-motor": "bg-domain-sensorimotor",
   language: "bg-domain-language",
   cognitive: "bg-domain-cognitive",
 };
 
 export const DOMAIN_BADGE: Record<Domain, string> = {
-  sensorimotor: "bg-domain-sensorimotor/15 text-domain-sensorimotor border-domain-sensorimotor/30",
+  "sensory-motor":
+    "bg-domain-sensorimotor/15 text-domain-sensorimotor border-domain-sensorimotor/30",
   language: "bg-domain-language/15 text-domain-language border-domain-language/30",
   cognitive: "bg-domain-cognitive/20 text-domain-cognitive border-domain-cognitive/40",
 };
 
+export function formatDuration(minutes: number): string {
+  if (minutes === 0) return "Ongoing";
+  return `${minutes} min`;
+}
+
 export const ACTIVITIES: Activity[] = [
   {
-    id: "skin-to-skin",
-    title: "Skin-to-Skin Time",
-    domain: "sensorimotor",
-    duration: "20–60 min",
-    thisWeek: true,
-    instructions:
-      "Lay baby on your bare chest, skin to baby's skin. Cover with a light blanket if cool. Allow baby to hear your heartbeat and feel your warmth. Do during a calm, alert window.",
-    why: "Kangaroo care has strong replicated evidence (multiple RCTs, endorsed by WHO) for stabilising heart rate, temperature regulation, and cortisol levels. Physical holding is neurologically active stimulation, not passive comfort.",
+    id: "mirror-face-time",
+    title: "Mirror face time",
+    domain: "sensory-motor",
+    ageWindowWeeks: "0–12",
+    processSupported: "Visual cortex calibration and face-recognition circuit activation",
+    evidenceBasis:
+      "Newborns preferentially attend to faces at ~25 cm; face-selective cortical responses present by 2 months (Farroni et al.; Nature Neuroscience 2025).",
+    instructions: [
+      "Hold baby facing a mirror at arm's length (~25 cm from their face).",
+      "Let them look for 30–60 seconds.",
+      "Slowly move your own face into view beside theirs so they can compare.",
+      "Narrate softly: 'That's you. That's your nose.' Calm is fine — no need for energy.",
+    ],
+    durationMinutes: 3,
+    whyItWorks:
+      "High-contrast face image at optimal focal distance activates developing face-detection circuits without requiring fine visual acuity.",
+    weekRecommended: 3,
   },
   {
-    id: "face-gazing",
-    title: "Face Gazing — The Slow Face",
-    domain: "language",
-    duration: "3–5 min",
-    thisWeek: true,
-    instructions:
-      "Hold baby approximately 25 cm from your face. Make eye contact. Wait. When they react — a grimace, eyebrow lift, mouth movement — mirror it back slowly. Then pause again and give them a turn. Follow their lead, not yours.",
-    why: "Activates face-detection circuits at baby's exact focal range. The Still-Face Paradigm (Tronick et al., 1978 — one of the most replicated experiments in developmental science) shows babies are active participants in social exchange, not passive receivers. Pausing and waiting teaches the turn-taking structure of conversation.",
+    id: "bw-card-gallery",
+    title: "Black-and-white card gallery",
+    domain: "sensory-motor",
+    ageWindowWeeks: "0–8",
+    processSupported: "Early visual cortex calibration — pattern detection before colour vision matures",
+    evidenceBasis:
+      "Newborn contrast sensitivity favours high-contrast edges; colour discrimination emerges ~2–3 months (Norcia & Tyler, 1985; replicated).",
+    instructions: [
+      "Draw 3–4 simple high-contrast images on separate sheets: thick black stripes, a bull's-eye, a simple face (two circles for eyes, curved line for mouth), a checkerboard.",
+      "Prop them upright at ~25–30 cm from where baby's face will be.",
+      "Place baby on their back facing the cards during an alert period.",
+      "Watch for stilling, widened eyes, or brief tracking — you don't need to point or direct.",
+    ],
+    durationMinutes: 5,
+    whyItWorks:
+      "High-contrast patterns are the most robustly processed visual stimuli in the 0–2 month window, directly matching the infant visual system's sensitivity profile.",
+    weekRecommended: 1,
   },
   {
-    id: "narrated-day",
-    title: "The Narrated Day",
+    id: "slow-face",
+    title: "Face gazing — the slow face",
     domain: "language",
-    duration: "Ongoing",
-    thisWeek: true,
-    instructions:
-      "Narrate what you are doing as you do it, in a calm, slightly slower voice. \"Now I'm changing your nappy — the wipe is going to be cold.\" \"Here comes your milk.\" No need for forced cheerfulness — your natural voice and pace is what matters.",
-    why: "Newborns are born as \"universal phoneticians\" absorbing prosodic patterns — the rhythm, stress, and melody of speech — before individual words. Research shows infants preferentially attend to infant-directed speech (Soderstrom, 2007). Quantity of talk in the first year predicts vocabulary at age 3 (Hart & Risley, 1995).",
+    ageWindowWeeks: "0–12",
+    processSupported: "Serve-and-return neural pathway development; face-gaze contingency learning",
+    evidenceBasis:
+      "Contingent face-to-face interaction builds stress-regulatory and social circuits (Tronick et al., 1978 Still-Face Paradigm — one of the most replicated experiments in developmental science).",
+    instructions: [
+      "Hold baby at your chest, facing you.",
+      "Slowly bring your face to ~25 cm from theirs.",
+      "Make eye contact and wait — don't speak first.",
+      "When baby makes any expression or sound, mirror it back slowly.",
+      "Pause after each response. Let them take a turn.",
+      "If baby looks away, that is self-regulation — wait. They will usually return.",
+    ],
+    durationMinutes: 5,
+    whyItWorks:
+      "Contingent responsiveness — your reaction following their cue — is the fundamental unit of social-brain wiring in this period.",
+    weekRecommended: 3,
+  },
+  {
+    id: "tummy-time-chest",
+    title: "Tummy time on your chest",
+    domain: "sensory-motor",
+    ageWindowWeeks: "0–12",
+    processSupported: "Neck extensor muscle development, vestibular input, proprioceptive stimulation",
+    evidenceBasis:
+      "Prone positioning activates neck and back extensor circuits essential for later head control and postural development; AAP-endorsed for awake supervised periods.",
+    instructions: [
+      "Recline slightly (30–45 degrees is easier for baby than fully flat).",
+      "Place baby prone (tummy-down) on your chest, head near your collarbone.",
+      "Let baby's head rest to the side initially.",
+      "Talk or sing softly — your voice gives them a reason to try to lift their head.",
+      "1–2 minutes is enough in the first weeks. Build gradually.",
+      "Never do tummy time when you might fall asleep.",
+    ],
+    durationMinutes: 2,
+    whyItWorks:
+      "Prone positioning requires active neck extension — even attempts count — and the familiar sound of your heartbeat and voice provides a calming context.",
+    weekRecommended: 2,
+  },
+  {
+    id: "sway-narrate",
+    title: "Slow sway and narrate walk",
+    domain: "sensory-motor",
+    ageWindowWeeks: "0–12",
+    processSupported: "Vestibular system stimulation; language exposure; stress regulation",
+    evidenceBasis:
+      "Rhythmic vestibular input promotes postural circuit maturation; slow rhythmic motion reduces infant crying and promotes calming via parasympathetic activation (NIH; multiple studies).",
+    instructions: [
+      "Hold baby securely against your chest or in a cradle hold.",
+      "Walk slowly around the room, swaying gently side to side.",
+      "Narrate what you see: 'Here's the window. Here's the plant. The light is on.'",
+      "Keep your pace slow and the sway smooth — no bouncing needed.",
+      "If baby is fussy, try walking toward a window or light source.",
+    ],
+    durationMinutes: 5,
+    whyItWorks:
+      "Gentle linear and rotational motion activates semicircular canal pathways — the vestibular system develops early and responds well to slow rhythmic input.",
+    weekRecommended: 1,
   },
   {
     id: "palmar-grasp",
-    title: "Palmar Grasp Practice",
-    domain: "sensorimotor",
-    duration: "2–3 min",
-    thisWeek: true,
-    instructions:
-      "Press your clean finger gently against baby's palm. Wait for the grasp reflex to activate. Don't pull or tug — just let them hold. Repeat 3–5 times during an alert window.",
-    why: "The palmar grasp is a brainstem-mediated primitive reflex present from birth. Practising it activates the same sensorimotor circuits that will later support intentional reaching and grasping. Repeated activation of these circuits during the sensitive period strengthens the neural pathways.",
+    title: "Palmar grasp practice",
+    domain: "sensory-motor",
+    ageWindowWeeks: "0–8",
+    processSupported: "Palmar grasp reflex activation and corticospinal circuit priming",
+    evidenceBasis:
+      "Palmar grasp reflex is a brainstem-mediated response that primes corticospinal motor circuits later underlying voluntary reach (NIH StatPearls; Forssberg et al.).",
+    instructions: [
+      "When baby's hand is open, gently stroke the palm from wrist toward fingers.",
+      "They will reflexively grip your finger.",
+      "Hold for 5–10 seconds, then gently release.",
+      "Repeat 3–5 times per hand.",
+      "You can also offer the handle of a wooden spoon or a rolled washcloth for texture variety.",
+    ],
+    durationMinutes: 3,
+    whyItWorks:
+      "Each reflex activation is a neural circuit firing — repeated activation strengthens the pathways that will eventually become voluntary grasping.",
+    weekRecommended: 3,
   },
   {
-    id: "scent-cloth",
-    title: "Scent Cloth Settling",
-    domain: "cognitive",
-    duration: "As needed",
-    thisWeek: true,
-    instructions:
-      "Place a muslin cloth or small square of soft fabric against your skin for 30 minutes. Place it near baby's face (not over it) during awake times or when they are unsettled, not during sleep. Refresh every 24 hours.",
-    why: "Newborns can identify their mother's scent within hours of birth. Familiar scent activates the olfactory system — one of the most mature sensory pathways at birth — and has a measurable calming effect on cortisol levels (replicated in neonatal studies).",
+    id: "cloth-texture",
+    title: "Cloth texture exploration",
+    domain: "sensory-motor",
+    ageWindowWeeks: "0–12",
+    processSupported: "Cutaneous mechanoreceptor stimulation; somatosensory cortex activation",
+    evidenceBasis:
+      "Tactile stimulation activates somatosensory pathways functional at birth; skin-to-skin contact has replicated physiological benefits (WHO Kangaroo Care evidence base).",
+    instructions: [
+      "Lay baby on their back on a firm flat surface.",
+      "Gently stroke each cloth across baby's forearm, palm, or cheek in turn.",
+      "Pause between each one — watch their face for changes in expression.",
+      "Name the texture out loud: 'smooth,' 'scratchy,' 'fluffy.' (Language exposure bonus.)",
+      "Stop if baby shows distress.",
+    ],
+    durationMinutes: 3,
+    whyItWorks:
+      "Different textures activate distinct mechanoreceptor populations, providing varied somatosensory input to a cortex hungry for calibration data.",
+    weekRecommended: 4,
   },
   {
-    id: "high-contrast",
-    title: "High-Contrast Card Gazing",
-    domain: "sensorimotor",
-    duration: "3–5 min",
-    instructions:
-      "Hold a black-and-white high-contrast card or pattern (stripes, checkerboard) at 25 cm. Watch for stilling, wide eyes, or a gaze-lock — signs of visual engagement. Shift it slowly side to side.",
-    why: "At 2–3 weeks, the visual system is most responsive to high-contrast edges. Tracking practice strengthens the developing oculomotor circuits and supports later visual attention.",
+    id: "object-tracking",
+    title: "Slow object tracking",
+    domain: "sensory-motor",
+    ageWindowWeeks: "0–12",
+    processSupported: "Visual tracking circuit development; smooth pursuit maturation",
+    evidenceBasis:
+      "Visual tracking (smooth pursuit) emerges gradually from ~6 weeks; subcortical superior colliculus drives early orienting, cortical control increases by 3 months (reviewed in Atkinson, 2000).",
+    instructions: [
+      "Hold baby on your lap, face up.",
+      "Hold an object at ~25 cm, slightly above eye level. A white sock with a black X works well.",
+      "Wait until baby focuses on it.",
+      "Move it SLOWLY (about 10 cm per second) in an arc to one side, then back.",
+      "Pause frequently — baby's tracking is fragile and easily lost.",
+      "0–4 weeks: horizontal arc only. 4–8 weeks: try slow vertical too. 8–12 weeks: try a full 180° arc.",
+    ],
+    durationMinutes: 3,
+    whyItWorks:
+      "Repeated tracking practice strengthens the cortical smooth-pursuit pathways being laid down in real time.",
+    weekRecommended: 4,
   },
   {
-    id: "vestibular-sway",
-    title: "Vestibular Sway",
-    domain: "sensorimotor",
-    duration: "5–10 min",
-    instructions:
-      "Hold baby upright against your chest and sway gently side to side or rock slowly forward and back.",
-    why: "The vestibular system is among the earliest sensory systems to develop and is functional before birth. Gentle vestibular input is calming and supports the developing balance and spatial systems.",
-  },
-  {
-    id: "tummy-chest",
-    title: "Tummy Time on Chest",
-    domain: "sensorimotor",
-    duration: "2–5 min",
-    instructions:
-      "Recline slightly and place baby face-down on your chest. This is the gentlest entry to tummy time and uses your heartbeat and scent as calming anchors while baby works on head lifting.",
-    why: "Early tummy time builds neck and shoulder strength essential for later head control, rolling, and crawling — without the distress of floor-based tummy time at this age.",
-  },
-  {
-    id: "bath-skin",
-    title: "Bath Time Skin Stimulation",
-    domain: "sensorimotor",
-    duration: "5 min",
-    instructions:
-      "During a warm bath or a warm water pour with a cup, narrate what you are doing. The warmth activates thermoreceptors; the gentle water flow stimulates cutaneous mechanoreceptors across baby's skin.",
-    why: "Multi-sensory experiences (warmth, touch, voice, sight) build cross-modal neural connections. Routine narration also reinforces language input.",
-  },
-  {
-    id: "massage",
-    title: "Gentle Massage Strokes",
-    domain: "sensorimotor",
-    duration: "5–10 min",
-    instructions:
-      "Using a small amount of plain baby oil or none at all, use long gentle strokes from shoulder to wrist on each arm, and hip to ankle on each leg. Use light, confident pressure — not feather-light which can feel ticklish.",
-    why: "Infant massage has replicated evidence for reduced cortisol, improved sleep, and improved parent-infant bonding (Field et al., multiple studies).",
-  },
-  {
-    id: "serve-return",
-    title: "Serve and Return Cooing",
+    id: "conversation-turn",
+    title: "The conversation turn",
     domain: "language",
-    duration: "5 min",
-    instructions:
-      "In a quiet moment, make a simple sound toward baby (a soft \"ooh\" or gentle coo). Wait. If they respond with a sound or movement, respond back. You are not teaching a word — you are teaching the structure of conversation.",
-    why: "Contingent vocal exchange is the foundation of language. The Harvard Center on the Developing Child identifies \"serve and return\" as one of the most important predictors of long-term language and social development.",
+    ageWindowWeeks: "0–12",
+    processSupported: "Prosodic pattern learning; serve-and-return neural circuit development",
+    evidenceBasis:
+      "Infants at 0–3 months are absorbing prosodic patterns — rhythm, stress, intonation — which are the primary auditory units available to their developing auditory cortex (Werker & Tees; Kuhl et al.).",
+    instructions: [
+      "Hold baby at ~25 cm from your face.",
+      "Say something simple in a warm tone: 'Hi. How are you feeling?'",
+      "Stop completely and wait 5–10 seconds.",
+      "If baby makes any sound, expression change, or movement: respond as if it was a word. 'Oh really? That's interesting.'",
+      "Then pause again. Give them another turn.",
+      "Let it be a real (if slow) conversation — 3–5 minutes.",
+    ],
+    durationMinutes: 5,
+    whyItWorks:
+      "Pausing and waiting teaches the temporal structure of conversation — turn-taking is a learned social-cognitive pattern, and 0–3 months is when its scaffolding begins.",
+    weekRecommended: 2,
   },
   {
-    id: "favourite-song",
-    title: "Favourite Song Repetition",
+    id: "voice-mapping",
+    title: "Voice mapping",
     domain: "language",
-    duration: "5 min",
-    instructions:
-      "Sing the same simple song every day, at the same time if possible (bath time, nappy change). The repetition is the point — familiarity is detectable by 2-week-olds and is associated with reduced cortisol.",
-    why: "Repeated melodic input strengthens auditory memory and the developing prosodic map of the home language.",
+    ageWindowWeeks: "0–8",
+    processSupported: "Auditory localisation; cross-modal integration of voice and face",
+    evidenceBasis:
+      "Newborns turn toward the mother's voice (DeCasper & Fifer, 1980, Science); voice localisation depends on binaural auditory pathways functional at birth.",
+    instructions: [
+      "Lay baby on their back on a safe flat surface.",
+      "Move to their right side, just outside their visual field (~45 degrees off centre).",
+      "Call their name or say 'hello' in a warm, clear voice.",
+      "Wait and watch — many babies will orient their eyes or turn their head.",
+      "Move to the left and repeat. Try from above, then from below.",
+      "Keep voice volume normal — no need to be loud.",
+    ],
+    durationMinutes: 3,
+    whyItWorks:
+      "Auditory localisation requires coordinating binaural timing differences — this simple activity is actively exercising those circuits.",
+    weekRecommended: 2,
   },
   {
-    id: "name-calling",
-    title: "Name Calling",
+    id: "same-song",
+    title: "Singing the same song",
     domain: "language",
-    duration: "2–3 min",
-    instructions:
-      "In a quiet room, call baby's name softly from different positions (left, right, above). Watch for stilling, head turning attempts, or eye widening. Do not repeat rapidly — give a 5-second pause between each call.",
-    why: "Auditory localisation is developing in the first months. Pauses give the immature nervous system time to process and orient.",
+    ageWindowWeeks: "0–12",
+    processSupported: "Auditory pattern memory; prosodic learning; stress regulation via familiar sound",
+    evidenceBasis:
+      "Newborns recognise and prefer sounds heard repeatedly in utero; familiar songs activate memory and calming circuits (DeCasper & Fifer, 1980; prenatal learning literature).",
+    instructions: [
+      "Pick one or two very simple songs or rhymes.",
+      "Sing them slowly, at the same time and in the same context each day (e.g. always at diaper change).",
+      "Keep the melody and words consistent — don't vary it much.",
+      "By 4–6 weeks, watch for anticipatory stilling when you begin — a sign of recognition.",
+      "Volume: soft to moderate. Baby is very close.",
+    ],
+    durationMinutes: 3,
+    whyItWorks:
+      "Repeated exposure to the same prosodic sequence builds auditory memory traces — the first building blocks of pattern recognition and predictive processing.",
+    weekRecommended: 1,
   },
   {
-    id: "mobile-watching",
-    title: "Mobile Watching",
-    domain: "cognitive",
-    duration: "5 min",
-    instructions:
-      "Hang a high-contrast mobile or hold a simple object 25–30 cm above baby. Move it slowly. The key sign it is working: baby stills and stares intently (the \"orienting response\"). Remove it before they become fussy.",
-    why: "Sustained attention at this age is the precursor of later focused learning. The orienting response is the brain's signal of active processing.",
+    id: "reading-aloud",
+    title: "Reading aloud — anything",
+    domain: "language",
+    ageWindowWeeks: "0–12",
+    processSupported: "Prosodic exposure; language rhythm absorption; stress regulation via caregiver voice",
+    evidenceBasis:
+      "The content of what is read does not matter at this age — prosodic pattern exposure is the active ingredient (Werker & Tees; Soderstrom, 2007).",
+    instructions: [
+      "Hold baby in a comfortable position facing you.",
+      "Read aloud from anything — your own book, a recipe, the back of a cereal box.",
+      "Read slowly, with natural expression. Let your voice rise and fall.",
+      "Pause occasionally and make eye contact.",
+      "No need for a baby book. The point is your voice, your prosody, and your presence.",
+    ],
+    durationMinutes: 5,
+    whyItWorks:
+      "Continuous natural speech exposure provides the prosodic data the auditory cortex is actively seeking and storing in this period.",
+    weekRecommended: 2,
   },
   {
-    id: "contingency-kick",
-    title: "Contingency Kicking",
+    id: "facial-expression-copying",
+    title: "Facial expression copying",
     domain: "cognitive",
-    duration: "5–10 min",
-    instructions:
-      "Tie a soft ribbon from baby's ankle to a lightweight mobile above (ensure it is safely attached and cannot tighten). Baby discovers their leg kick moves the mobile.",
-    why: "This replicates Rovee-Collier's landmark studies on infant contingency learning and memory — among the earliest evidence that very young infants form lasting memories of cause-and-effect relationships.",
+    ageWindowWeeks: "0–8",
+    processSupported: "Cross-modal matching; contingency detection; early social cognition",
+    evidenceBasis:
+      "Neonatal imitation of facial gestures (tongue protrusion, mouth widening) was reported by Meltzoff & Moore (1977, Science); cross-modal face sensitivity is well-replicated though mechanistic interpretation remains debated.",
+    instructions: [
+      "Hold baby at ~20–25 cm from your face during a calm, alert period.",
+      "Make eye contact.",
+      "Slowly, clearly stick out your tongue — hold it for 3–4 seconds.",
+      "Pull it back and wait 10–15 seconds.",
+      "Watch baby's face carefully — especially mouth and tongue.",
+      "In younger babies (0–4 weeks) responses may be delayed by 30+ seconds — patience is the whole skill here.",
+    ],
+    durationMinutes: 5,
+    whyItWorks:
+      "Whether or not early imitation is true mimicry, face-to-face contingent interaction at close range activates social and visual processing circuits simultaneously.",
+    weekRecommended: 4,
+  },
+  {
+    id: "contingency-mobile",
+    title: "Contingency mobile (DIY)",
+    domain: "cognitive",
+    ageWindowWeeks: "4–12",
+    processSupported: "Contingency detection; early causal learning; motor-visual coupling",
+    evidenceBasis:
+      "Rovee-Collier's mobile studies (replicated) showed 2-month-olds learn within minutes that their leg kicks move a mobile, and remember this across days — the first robust demonstration of infant causal learning.",
+    instructions: [
+      "Tie 3–4 lightweight objects on strings from a horizontal stick (a ruler or wooden spoon).",
+      "Hang it ~30 cm above baby's chest.",
+      "Attach a long string loosely from the mobile to baby's wrist or ankle with a very loose loop — loose enough to slide off easily.",
+      "When baby moves, the mobile moves.",
+      "Watch for baby to notice the connection — they will often pause, then move more deliberately.",
+      "IMPORTANT: Remove the string connection when the session ends. Never leave baby unattended with string attached.",
+    ],
+    durationMinutes: 5,
+    whyItWorks:
+      "When baby discovers their movement causes the mobile to move, they are learning contingency — that their actions have effects — which is the root of intentional behaviour and early problem-solving.",
+    weekRecommended: 5,
+  },
+  {
+    id: "scent-pairing",
+    title: "Scent cloth settling",
+    domain: "sensory-motor",
+    ageWindowWeeks: "0–8",
+    processSupported: "Olfactory pathway development; association learning; stress regulation",
+    evidenceBasis:
+      "Olfactory system is among the most mature at birth; newborns recognise and prefer mother's breast milk scent within days (Macfarlane, 1975; replicated); olfactory-emotional learning pathways are functional neonatally.",
+    instructions: [
+      "Wear a cloth or piece of fabric against your skin for a few hours.",
+      "When you need to set baby down, place this cloth next to (not over) their face.",
+      "Notice whether baby turns toward it or stills.",
+      "Refresh every 24 hours — scent fades quickly.",
+    ],
+    durationMinutes: 2,
+    whyItWorks:
+      "Newborns navigate their world largely by smell in the first weeks. Familiar olfactory cues activate stress-buffering responses and demonstrate early associative learning.",
+    weekRecommended: 3,
+  },
+  {
+    id: "light-shadow",
+    title: "Light and shadow play",
+    domain: "sensory-motor",
+    ageWindowWeeks: "0–12",
+    processSupported: "Luminance contrast detection; visual orienting reflex",
+    evidenceBasis:
+      "Orienting toward light and high-luminance contrast is mediated by subcortical pathways (superior colliculus) functional at birth — among the earliest visual behaviours.",
+    instructions: [
+      "In a dimly lit room, turn on a single lamp with a shade.",
+      "Hold baby facing the light (not directly at a bare bulb).",
+      "Move your hand between the light source and baby's face, casting a shadow that moves slowly across their visual field.",
+      "Watch for orienting — eyes or head turning toward the light edge.",
+      "Keep it simple and slow.",
+    ],
+    durationMinutes: 3,
+    whyItWorks:
+      "Luminance contrast and moving edges are the two most salient visual stimuli for the neonatal visual system — this directly targets the circuits that are active earliest.",
+    weekRecommended: 1,
+  },
+  {
+    id: "joint-compression",
+    title: "Gentle joint compression",
+    domain: "sensory-motor",
+    ageWindowWeeks: "0–12",
+    processSupported: "Proprioceptive pathway activation; body-schema development",
+    evidenceBasis:
+      "Proprioceptive input activates joint mechanoreceptors and muscle spindles, providing body-boundary data to the developing somatosensory cortex — important for early body schema formation.",
+    instructions: [
+      "Lay baby on their back on a firm surface.",
+      "Gently hold baby's foot with both hands and apply a very gentle steady pressure toward the hip. Hold 5 seconds, release.",
+      "Repeat on the other leg.",
+      "Optionally: gently hold baby's hand and apply gentle steady pressure toward the shoulder along the arm's axis.",
+      "This should feel like firm-but-gentle contact, not manipulation or stretching.",
+    ],
+    durationMinutes: 3,
+    whyItWorks:
+      "Joint compression activates deep proprioceptors that give the brain information about body position — the data source for building a body map.",
+    weekRecommended: 4,
+  },
+  {
+    id: "varied-carrying",
+    title: "Varied carrying positions",
+    domain: "sensory-motor",
+    ageWindowWeeks: "0–12",
+    processSupported: "Vestibular and proprioceptive input variety; postural circuit development",
+    evidenceBasis:
+      "Vestibular system develops early and responds to varied spatial orientations; varied carrying positions provide different gravitational loads to developing postural circuits.",
+    instructions: [
+      "Over the course of a day, try 3–4 different holding positions:",
+      "1. Cradle hold (face up, head in crook of arm)",
+      "2. Upright against chest, facing you",
+      "3. Upright against chest, facing outward",
+      "4. Football hold (baby face-down along your forearm, head at your hand)",
+      "Move slowly between positions. Never shake or jolt.",
+      "Each position offers a different vestibular experience.",
+    ],
+    durationMinutes: 5,
+    whyItWorks:
+      "Different orientations activate different semicircular canals and otolith organs, giving the vestibular cortex varied input to calibrate against.",
+    weekRecommended: 2,
+  },
+  {
+    id: "heartbeat-settling",
+    title: "Heartbeat sound settling",
+    domain: "language",
+    ageWindowWeeks: "0–6",
+    processSupported: "Auditory-somatic association; stress regulation; prenatal auditory memory",
+    evidenceBasis:
+      "The fetal auditory environment is dominated by maternal heartbeat and vascular sound; heartbeat-like rhythmic sounds have replicated calming effects on neonates (Salk, 1960; subsequent replications).",
+    instructions: [
+      "When baby is fussy but fed, changed, and held:",
+      "Hold baby's left ear against your chest so they can hear your heartbeat.",
+      "Or: hold baby near a ticking clock (~60–80 ticks per minute).",
+      "Rock very gently and slowly.",
+      "Keep ambient noise low.",
+      "Works better for unsettled but not acutely distressed babies.",
+    ],
+    durationMinutes: 5,
+    whyItWorks:
+      "Familiar prenatal sounds trigger auditory memory traces and activate calming responses — one of the earliest examples of long-term memory from in-utero experience.",
+    weekRecommended: 1,
+  },
+  {
+    id: "attention-recovery",
+    title: "Attention recovery wait",
+    domain: "cognitive",
+    ageWindowWeeks: "4–12",
+    processSupported: "Self-regulation of attention; habituation and dishabituation",
+    evidenceBasis:
+      "When an infant looks away during interaction, this is active self-regulation — not withdrawal. Allowing recovery time then re-engaging when they return is the correct contingent response (Tronick still-face research; attention regulation literature).",
+    instructions: [
+      "During any face-to-face interaction, when baby breaks eye contact and looks away:",
+      "Stop all stimulation — speaking, moving, touching.",
+      "Wait quietly. 10–30 seconds is normal.",
+      "When baby turns back toward you, resume with a warm expression.",
+      "This is a skill for you, not the baby. The baby is already doing it correctly.",
+    ],
+    durationMinutes: 5,
+    whyItWorks:
+      "Gaze aversion is the infant's primary self-regulatory tool. When caregivers wait and return, they teach the brain that the world is safe to re-engage with — foundational for attention and stress regulation.",
+    weekRecommended: 4,
+  },
+  {
+    id: "name-repetition",
+    title: "Name repetition at close range",
+    domain: "language",
+    ageWindowWeeks: "0–12",
+    processSupported: "Own-name representation; auditory discrimination; social signal learning",
+    evidenceBasis:
+      "By 4–5 months, infants show measurable brain responses to their own name (ERP studies); this recognition is built through repeated hearing in caregiving contexts starting from birth.",
+    instructions: [
+      "During diaper changes, feeding, or any close-contact moment:",
+      "Say baby's name clearly at the start and end of sentences.",
+      "Don't overdo it — 2–3 times per interaction is plenty.",
+      "Also use it when they are fussy: call their name first before picking up, to see if voice alone orients them.",
+      "Keep your tone warm and your face visible when saying their name.",
+    ],
+    durationMinutes: 3,
+    whyItWorks:
+      "Repeated pairing of name with face, touch, and context begins building the neural representation that will later allow the infant to recognise their own name from across a room.",
+    weekRecommended: 1,
+  },
+  {
+    id: "limb-movement",
+    title: "Gentle limb movement",
+    domain: "sensory-motor",
+    ageWindowWeeks: "0–12",
+    processSupported: "Proprioceptive calibration; motor efference copy learning",
+    evidenceBasis:
+      "Passive limb movement provides afferent proprioceptive input alongside the developing efferent motor pathways, contributing to the body schema being built in somatosensory and motor cortex.",
+    instructions: [
+      "Lay baby on their back.",
+      "Gently hold one foot and slowly bicycle the legs: left knee bends as right extends, alternating, in a smooth slow rhythm.",
+      "Also try: gently raising both arms above the head, then back down.",
+      "And: gently crossing arms across chest, then opening back out.",
+      "All movements should be extremely slow, smooth, and fully within the joint's natural range. Never force or stretch.",
+      "Narrate as you go: 'Left leg... right leg...'",
+    ],
+    durationMinutes: 4,
+    whyItWorks:
+      "Movement generates proprioceptive signals that train the brain's maps of the body — even passive movement provides the input the motor cortex uses to calibrate.",
+    weekRecommended: 3,
+  },
+  {
+    id: "still-face-recovery",
+    title: "Still face recovery",
+    domain: "cognitive",
+    ageWindowWeeks: "6–12",
+    processSupported: "Stress response system; social expectation and re-engagement; emotional regulation circuitry",
+    evidenceBasis:
+      "The Still-Face Paradigm (Tronick et al., 1978) reveals that brief, mild interactive disruption followed by warm reconnection is a normal feature of real caregiving that exercises recovery circuits.",
+    instructions: [
+      "During a warm face-to-face interaction, let your expression briefly become neutral (not cold, just still) for 5–10 seconds.",
+      "Then return warmly — smile, speak softly.",
+      "Do this no more than once per interaction session.",
+      "Only when baby is calm and alert — never when distressed.",
+    ],
+    durationMinutes: 3,
+    whyItWorks:
+      "Recovery from mild interactive disruption strengthens the brain circuits involved in expectation, co-regulation, and emotional resilience — the same reason the still-face paradigm is so informative scientifically.",
+    weekRecommended: 6,
+  },
+  {
+    id: "quiet-alert-observation",
+    title: "Quiet alert window observation",
+    domain: "cognitive",
+    ageWindowWeeks: "0–12",
+    processSupported: "Attention system; environmental visual scanning; habituation",
+    evidenceBasis:
+      "Quiet alert state is the optimal state for visual processing and attention in neonates (Brazelton, 1973 — Neonatal Behavioral Assessment Scale; replicated in state-based infant research).",
+    instructions: [
+      "Learn to recognise the quiet alert state: eyes open and bright, body still, breathing regular, not hungry or distressed.",
+      "When you see it, place baby in an infant seat or hold them reclined at 45 degrees facing a window.",
+      "Do nothing else — let them look.",
+      "Watch what they attend to, how long they sustain it, when they look away.",
+      "After a few minutes: gently bring your face into their visual field and see if they shift attention to you.",
+    ],
+    durationMinutes: 5,
+    whyItWorks:
+      "Environmental scanning during quiet alert state is active cognitive work — the infant's attention system is calibrating visual salience, contrast, and novelty without any additional input required.",
+    weekRecommended: 2,
+  },
+  {
+    id: "water-sound-bath",
+    title: "Water sound bath",
+    domain: "sensory-motor",
+    ageWindowWeeks: "0–12",
+    processSupported: "Multi-modal sensory integration; tactile thermoreception; auditory input",
+    evidenceBasis:
+      "Warm water immersion activates thermoreceptors and tactile mechanoreceptors across the body surface simultaneously, providing multi-modal input to developing somatosensory cortex.",
+    instructions: [
+      "Support baby's head firmly throughout.",
+      "Lower them slowly into warm (not hot — test with your elbow) water.",
+      "Let them experience the water on limbs first, then lower the body.",
+      "Gently pour water over the trunk with a cupped hand.",
+      "Narrate: 'Warm water on your tummy. Now your arms.'",
+      "Keep it short: 5–7 minutes is plenty. Dry thoroughly and quickly after.",
+    ],
+    durationMinutes: 7,
+    whyItWorks:
+      "Warm water provides simultaneous activation of thermoreceptors, mechanoreceptors, and proprioceptors across the entire body — among the richest multi-modal sensory experiences available at home.",
+    weekRecommended: 3,
+  },
+  {
+    id: "hum-chest",
+    title: "Hum and chest feel",
+    domain: "language",
+    ageWindowWeeks: "0–8",
+    processSupported: "Auditory-vibrotactile cross-modal integration; prosodic pattern exposure",
+    evidenceBasis:
+      "Bone conduction of sound through the chest is detectable as both auditory and vibrotactile input; cross-modal integration of sound and vibration activates overlapping cortical regions (reviewed in multisensory integration literature).",
+    instructions: [
+      "Hold baby against your chest, their ear pressed gently to your sternum.",
+      "Hum slowly and steadily — any tune you like.",
+      "Baby feels your chest vibrate AND hears the sound through your ribcage.",
+      "Vary the pitch slowly up and then down.",
+      "Notice if baby stills or presses closer — a sign of engagement.",
+    ],
+    durationMinutes: 4,
+    whyItWorks:
+      "Sound delivered simultaneously through air (auditory) and bone conduction (vibrotactile) activates two sensory modalities at once, exercising the cross-modal integration circuits that are building throughout this period.",
+    weekRecommended: 2,
+  },
+  {
+    id: "novel-object-pause",
+    title: "Novel object pause",
+    domain: "cognitive",
+    ageWindowWeeks: "6–12",
+    processSupported: "Dishabituation response; novelty detection; visual memory",
+    evidenceBasis:
+      "Dishabituation — increased attention to a novel stimulus after habituation to a familiar one — is a foundational measure of infant memory and cognitive processing (Fantz, 1963; Sokolov habituation theory; hundreds of replications).",
+    instructions: [
+      "Hold one object in front of baby at ~25 cm during a quiet alert period.",
+      "Hold it still and let baby look until they look away.",
+      "Pause 10 seconds.",
+      "Bring out a second, different object.",
+      "Watch for renewed attention: wider eyes, re-engagement, possible stilling.",
+      "This renewed attention to the new item is the dishabituation response — direct evidence the brain remembers what it just saw.",
+    ],
+    durationMinutes: 5,
+    whyItWorks:
+      "Renewed attention to novelty is the brain signalling 'this is new' — evidence the memory trace for the first object was encoded. You are watching memory and recognition in real time.",
+    weekRecommended: 5,
+  },
+  {
+    id: "outdoor-listening",
+    title: "Outdoor ambient listening",
+    domain: "language",
+    ageWindowWeeks: "0–12",
+    processSupported: "Auditory scene analysis; complex sound environment calibration",
+    evidenceBasis:
+      "The auditory cortex in the first months is calibrating to the statistical structure of sounds in its environment; varied natural acoustic environments support broader auditory scene analysis development.",
+    instructions: [
+      "Take baby outside or sit near an open window during a calm moment.",
+      "Hold baby in a comfortable position.",
+      "Just sit quietly and listen together — let natural sounds arrive: wind, birdsong, passing cars (from a distance), leaves.",
+      "Softly name what you hear: 'That's a bird. That's the wind in the tree.'",
+      "5–10 minutes is sufficient. Avoid very loud environments.",
+    ],
+    durationMinutes: 8,
+    whyItWorks:
+      "Real-world acoustic environments contain complex, layered sounds the brain must learn to parse — exposure to this richness supports the auditory cortex's statistical learning work.",
+    weekRecommended: 4,
+  },
+  {
+    id: "skin-to-skin",
+    title: "Skin-to-skin time",
+    domain: "sensory-motor",
+    ageWindowWeeks: "0–12",
+    processSupported: "Autonomic nervous system regulation; cortisol buffering; tactile and thermoregulatory pathway activation",
+    evidenceBasis:
+      "Kangaroo care has strong replicated evidence (multiple RCTs, endorsed by WHO) for stabilising heart rate, temperature regulation, and cortisol levels in both preterm and term infants. Physical holding is neurologically active stimulation.",
+    instructions: [
+      "Lay baby on your bare chest, skin to skin.",
+      "Cover with a light blanket if cool.",
+      "Allow baby to hear your heartbeat and feel your warmth.",
+      "Do during a calm, alert window — no specific activity required.",
+    ],
+    durationMinutes: 30,
+    whyItWorks:
+      "Skin-to-skin contact simultaneously activates thermoregulatory, tactile, olfactory, and auditory pathways. It is caregiving and neurostimulation at the same time.",
+    weekRecommended: 3,
+  },
+  {
+    id: "narrated-day",
+    title: "The narrated day",
+    domain: "language",
+    ageWindowWeeks: "0–12",
+    processSupported: "Language exposure; prosodic pattern absorption; social contingency learning",
+    evidenceBasis:
+      "Quantity of talk in the first year predicts vocabulary at age 3 (Hart & Risley, 1995). Prosodic structure — the melody and rhythm of speech — is absorbed before individual words. Infant-directed speech preferentially attended over adult-directed speech (Soderstrom, 2007; cross-cultural replications).",
+    instructions: [
+      "Narrate what you are doing as you do it, in a calm, slightly slower voice.",
+      "'Now I'm changing your nappy — the wipe is going to be cold.'",
+      "'Here comes your milk.'",
+      "No need for forced cheerfulness — your natural voice and pace is what matters.",
+      "Ongoing throughout the day — no special session needed.",
+    ],
+    durationMinutes: 0,
+    whyItWorks:
+      "Continuous natural speech exposure provides the prosodic data the auditory cortex is actively seeking and storing — and every response you give to baby's cues teaches them that their actions matter.",
+    weekRecommended: 3,
   },
 ];
 
