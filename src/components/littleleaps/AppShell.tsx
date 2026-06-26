@@ -3,12 +3,13 @@ import { Home, CalendarDays, Sparkles, MessageCircleQuestion, Sprout } from "luc
 import { Toaster } from "@/components/ui/sonner";
 import type { ReactNode } from "react";
 
-const TABS = [
+type Tab = { to: "/" | "/this-week" | "/activities" | "/ask"; label: string; icon: typeof Home; exact?: boolean };
+const TABS: Tab[] = [
   { to: "/", label: "Home", icon: Home, exact: true },
   { to: "/this-week", label: "This Week", icon: CalendarDays },
   { to: "/activities", label: "Activities", icon: Sparkles },
   { to: "/ask", label: "Ask", icon: MessageCircleQuestion },
-] as const;
+];
 
 export function AppShell({ children }: { children?: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
