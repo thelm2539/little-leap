@@ -1,6 +1,7 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { Home, CalendarDays, Sparkles, MessageCircleQuestion, Sprout } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
+import { FamilyKeyGate } from "./FamilyKeyGate";
 import type { ReactNode } from "react";
 
 type Tab = { to: "/" | "/this-week" | "/activities" | "/ask"; label: string; icon: typeof Home; exact?: boolean };
@@ -51,6 +52,7 @@ export function AppShell({ children }: { children?: ReactNode }) {
         </nav>
       </div>
       <Toaster position="top-center" />
+      <FamilyKeyGate />
     </div>
   );
 }

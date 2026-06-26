@@ -12,7 +12,8 @@ import {
   RatingBadge,
   RatingButtons,
 } from "@/components/littleleaps/ActivityBits";
-import { Search } from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
+import { useActivityLog } from "@/lib/littleleaps/storage";
 
 export const Route = createFileRoute("/activities")({
   head: () => ({
@@ -37,6 +38,7 @@ function ActivitiesPage() {
   const [filter, setFilter] = useState<Filter>("all");
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState<Activity | null>(null);
+  const { loading, error } = useActivityLog();
 
   const list = useMemo(() => {
     return ACTIVITIES.filter((a) => filter === "all" || a.domain === filter).filter((a) =>
@@ -84,6 +86,17 @@ function ActivitiesPage() {
             );
           })}
         </div>
+
+        {loading && (
+          <div className="flex items-center justify-center gap-2 py-3 text-xs text-muted-foreground">
+            <Loader2 size={14} className="animate-spin" /> Loading your ratings…
+          </div>
+        )}
+        {error && !loading && (
+          <div className="rounded-2xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-xs text-destructive">
+            Couldn't load your ratings. Check your connection and try again.
+          </div>
+        )}
 
         <div className="space-y-3">
           {list.map((a) => (
