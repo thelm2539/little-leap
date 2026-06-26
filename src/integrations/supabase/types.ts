@@ -44,6 +44,27 @@ export type Database = {
         }
         Relationships: []
       }
+      family_members: {
+        Row: {
+          auth_uid: string
+          family_key: string
+          id: string
+          joined_at: string
+        }
+        Insert: {
+          auth_uid: string
+          family_key: string
+          id?: string
+          joined_at?: string
+        }
+        Update: {
+          auth_uid?: string
+          family_key?: string
+          id?: string
+          joined_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
