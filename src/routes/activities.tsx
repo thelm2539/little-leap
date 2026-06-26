@@ -38,6 +38,7 @@ function ActivitiesPage() {
   const [filter, setFilter] = useState<Filter>("all");
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState<Activity | null>(null);
+  const { loading, error } = useActivityLog();
 
   const list = useMemo(() => {
     return ACTIVITIES.filter((a) => filter === "all" || a.domain === filter).filter((a) =>
