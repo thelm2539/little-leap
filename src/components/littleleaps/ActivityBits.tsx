@@ -38,10 +38,19 @@ const RATING_LABEL: Record<Rating, string> = {
 
 export function RatingButtons({ activityId, compact = false }: { activityId: string; compact?: boolean }) {
   const { logRating } = useActivityLog();
+  const [pending, setPending] = useState<Rating | null>(null);
 
-  const handle = (r: Rating) => {
-    logRating(activityId, r);
-    toast.success("Logged!", { description: `Marked as ${RATING_LABEL[r]}.` });
+  const handle = async (r: Rating) => {
+    setPending(r);
+    try {
+      await logRating(activityId, r);
+      toast.success("Logged!", { description: `Marked as ${RATING_LABEL[r]}.` });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Could not save. Please try again.";
+      toast.error("Couldn't save", { description: msg });
+    } finally {
+      setPending(null);
+    }
   };
 
   const items: { r: Rating; icon: typeof Smile; label: string }[] = [
