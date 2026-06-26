@@ -87,6 +87,17 @@ function ActivitiesPage() {
           })}
         </div>
 
+        {loading && (
+          <div className="flex items-center justify-center gap-2 py-3 text-xs text-muted-foreground">
+            <Loader2 size={14} className="animate-spin" /> Loading your ratings…
+          </div>
+        )}
+        {error && !loading && (
+          <div className="rounded-2xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-xs text-destructive">
+            Couldn't load your ratings. Check your connection and try again.
+          </div>
+        )}
+
         <div className="space-y-3">
           {list.map((a) => (
             <button
