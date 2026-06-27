@@ -1,5 +1,10 @@
 export type Domain = "sensory-motor" | "language" | "cognitive";
 
+export interface Source {
+  citation: string;
+  url: string;
+}
+
 export interface Activity {
   id: string;
   title: string;
@@ -11,6 +16,9 @@ export interface Activity {
   durationMinutes: number;
   whyItWorks: string;
   weekRecommended: number;
+  sources: Source[];
+  shortTermBenefits: string[];
+  longTermBenefits: string[];
 }
 
 export const DOMAIN_LABEL: Record<Domain, string> = {
@@ -56,6 +64,15 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "High-contrast face image at optimal focal distance activates developing face-detection circuits without requiring fine visual acuity.",
     weekRecommended: 3,
+    sources: [],
+    shortTermBenefits: [
+      "Provides a high-contrast face-like image at baby's optimal focal range",
+      "Activates developing face-detection circuits in visual cortex",
+      "Sustained looking is direct evidence of active visual processing",
+    ],
+    longTermBenefits: [
+      "Early face-processing experience supports the development of face-specific cortical regions that underlie social recognition later in childhood",
+    ],
   },
   {
     id: "bw-card-gallery",
@@ -75,6 +92,26 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "High-contrast patterns are the most robustly processed visual stimuli in the 0–2 month window, directly matching the infant visual system's sensitivity profile.",
     weekRecommended: 1,
+    sources: [
+      {
+        citation: "Fantz R.L. (1963). Pattern vision in newborn infants. Science, 140, 296–297.",
+        url: "https://www.science.org/doi/10.1126/science.140.3564.296",
+      },
+      {
+        citation:
+          "Norcia A.M. & Tyler C.W. (1985). Spatial frequency sweep VEP: visual acuity during the first year of life. Vision Research.",
+        url: "https://pubmed.ncbi.nlm.nih.gov/4052359/",
+      },
+    ],
+    shortTermBenefits: [
+      "High-contrast patterns drive the strongest visual cortex responses in the 0–8 week window",
+      "Sustained gaze (the 'orienting response') is the brain's signal that it is actively processing the input",
+      "Supports early contrast sensitivity calibration",
+    ],
+    longTermBenefits: [
+      "Visual cortex calibration in the first weeks sets the sensitivity range for later pattern recognition; deprivation of high-contrast input during this sensitive period is associated with reduced spatial frequency sensitivity (animal and clinical data)",
+      "Early visual engagement predicts later visual-spatial processing abilities",
+    ],
   },
   {
     id: "slow-face",
@@ -96,6 +133,28 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Contingent responsiveness — your reaction following their cue — is the fundamental unit of social-brain wiring in this period.",
     weekRecommended: 3,
+    sources: [
+      {
+        citation:
+          "Tronick E. et al. (1978). The infant's response to entrapment between contradictory messages in face-to-face interaction. Journal of the American Academy of Child Psychiatry.",
+        url: "https://pubmed.ncbi.nlm.nih.gov/632477/",
+      },
+      {
+        citation:
+          "Harvard Center on the Developing Child — Serve and Return framework (based on Tronick, Brazelton et al., 1970s–present)",
+        url: "https://developingchild.harvard.edu/science/key-concepts/serve-and-return/",
+      },
+    ],
+    shortTermBenefits: [
+      "Activates face-detection circuits at baby's exact focal range (25 cm)",
+      "Teaches baby the turn-taking structure of social exchange from day one",
+      "Reduces fussiness when interaction is contingent and responsive",
+    ],
+    longTermBenefits: [
+      "Consistent serve-and-return interactions are linked to larger vocabulary at 18 months and stronger language development by age 3 (Harvard CDChild)",
+      "Disrupted serve-and-return (as revealed by the Still-Face Paradigm) is associated with elevated cortisol and, over time, altered stress-response architecture — the inverse effect confirms the causal link",
+      "Predicts theory of mind development and social competence in school-age children",
+    ],
   },
   {
     id: "tummy-time-chest",
@@ -117,6 +176,15 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Prone positioning requires active neck extension — even attempts count — and the familiar sound of your heartbeat and voice provides a calming context.",
     weekRecommended: 2,
+    sources: [],
+    shortTermBenefits: [
+      "Activates neck and upper-back extensor muscles needed for later head control",
+      "Calming context — heartbeat, scent, warmth — reduces the typical distress of floor tummy time",
+      "Provides early proprioceptive and vestibular input from a supported prone position",
+    ],
+    longTermBenefits: [
+      "Consistent supervised tummy time supports timely development of postural control and is associated with on-time achievement of rolling and sitting milestones",
+    ],
   },
   {
     id: "sway-narrate",
@@ -137,6 +205,15 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Gentle linear and rotational motion activates semicircular canal pathways — the vestibular system develops early and responds well to slow rhythmic input.",
     weekRecommended: 1,
+    sources: [],
+    shortTermBenefits: [
+      "Slow rhythmic motion activates parasympathetic calming and reduces crying",
+      "Stimulates semicircular canals — the vestibular system's primary input channels",
+      "Pairs movement with continuous prosodic speech exposure",
+    ],
+    longTermBenefits: [
+      "Repeated varied vestibular input in infancy supports postural control development and is associated with smoother motor milestones in the first year",
+    ],
   },
   {
     id: "palmar-grasp",
@@ -157,6 +234,26 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Each reflex activation is a neural circuit firing — repeated activation strengthens the pathways that will eventually become voluntary grasping.",
     weekRecommended: 3,
+    sources: [
+      {
+        citation:
+          "NIH StatPearls: Primitive Reflexes — clinical reference on brainstem-mediated reflexes and their integration",
+        url: "https://www.ncbi.nlm.nih.gov/books/NBK557657/",
+      },
+      {
+        citation: "Forssberg H. (1999). Neural control of human motor development. Current Opinion in Neurobiology.",
+        url: "https://pubmed.ncbi.nlm.nih.gov/10607638/",
+      },
+    ],
+    shortTermBenefits: [
+      "Activates brainstem-mediated palmar grasp reflex, a marker of intact neurological function",
+      "Fires corticospinal motor circuits that will later underpin voluntary reach",
+      "Provides proprioceptive input to the developing hand and forearm",
+    ],
+    longTermBenefits: [
+      "Primitive reflexes that fail to integrate on schedule (typically 3–6 months) are associated with later difficulties in fine motor control, handwriting, and attention regulation",
+      "Repeated reflex activation during the sensitive window supports timely cortical inhibition and the transition to voluntary grasping — a milestone correlated with cognitive development at 12 months",
+    ],
   },
   {
     id: "cloth-texture",
@@ -177,6 +274,15 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Different textures activate distinct mechanoreceptor populations, providing varied somatosensory input to a cortex hungry for calibration data.",
     weekRecommended: 4,
+    sources: [],
+    shortTermBenefits: [
+      "Different textures recruit different mechanoreceptor populations, broadening somatosensory input",
+      "Pairs tactile sensation with spoken texture words — early multimodal language exposure",
+      "Baby's facial expression changes give caregivers practice reading sensory cues",
+    ],
+    longTermBenefits: [
+      "Rich tactile experience in infancy supports body-schema development, which underlies later fine motor control and exploratory play",
+    ],
   },
   {
     id: "object-tracking",
@@ -198,6 +304,27 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Repeated tracking practice strengthens the cortical smooth-pursuit pathways being laid down in real time.",
     weekRecommended: 4,
+    sources: [
+      {
+        citation:
+          "Norcia A.M. & Tyler C.W. (1985). Spatial frequency sweep VEP: visual acuity during the first year of life. Vision Research.",
+        url: "https://pubmed.ncbi.nlm.nih.gov/4052359/",
+      },
+      {
+        citation:
+          "Atkinson J. (2000). The Developing Visual Brain. Oxford University Press. (review of smooth pursuit and cortical visual development)",
+        url: "https://pubmed.ncbi.nlm.nih.gov/11129162/",
+      },
+    ],
+    shortTermBenefits: [
+      "Exercises the superior colliculus pathway (functional at birth) and emerging cortical smooth-pursuit circuits",
+      "Even failed tracking attempts are neurologically valuable — they generate prediction-error signals",
+      "Supports eye muscle coordination",
+    ],
+    longTermBenefits: [
+      "Smooth pursuit development in the first 3 months predicts visual-motor integration at 12 months",
+      "Children with poor smooth pursuit development show higher rates of reading difficulties — early exercise of these circuits may confer protective benefit",
+    ],
   },
   {
     id: "conversation-turn",
@@ -219,6 +346,26 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Pausing and waiting teaches the temporal structure of conversation — turn-taking is a learned social-cognitive pattern, and 0–3 months is when its scaffolding begins.",
     weekRecommended: 2,
+    sources: [
+      {
+        citation:
+          "Werker J.F. & Tees R.C. (1984). Cross-language speech perception: Evidence for perceptual reorganization during the first year of life. Infant Behavior and Development.",
+        url: "https://doi.org/10.1016/S0163-6383(84)80022-3",
+      },
+      {
+        citation: "Tronick E. et al. (1978). Still-Face Paradigm. Journal of the American Academy of Child Psychiatry.",
+        url: "https://pubmed.ncbi.nlm.nih.gov/632477/",
+      },
+    ],
+    shortTermBenefits: [
+      "Teaches the temporal structure of conversation: speak, pause, listen, respond",
+      "Provides prosodic input matched to baby's current perceptual window",
+      "Contingent responses confirm to baby that their communication has effect",
+    ],
+    longTermBenefits: [
+      "Werker & Tees (1984): the window for absorbing the prosodic and phonemic patterns of the native language is open now and begins closing around 6–10 months — conversational exposure in this window is irreplaceable",
+      "Turn-taking practice in infancy predicts conversational fluency and pragmatic language skills at age 5 (Gratier et al.)",
+    ],
   },
   {
     id: "voice-mapping",
@@ -240,6 +387,21 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Auditory localisation requires coordinating binaural timing differences — this simple activity is actively exercising those circuits.",
     weekRecommended: 2,
+    sources: [
+      {
+        citation: "DeCasper A.J. & Fifer W.P. (1980). Of human bonding: newborns prefer their mothers' voices. Science.",
+        url: "https://www.science.org/doi/10.1126/science.7375928",
+      },
+    ],
+    shortTermBenefits: [
+      "Exercises binaural auditory pathways functional at birth",
+      "Builds the link between caregiver's voice (heard in utero) and spatial location",
+      "Promotes early head turning and orienting — precursors to intentional social attention",
+    ],
+    longTermBenefits: [
+      "Auditory localisation develops rapidly in the first 6 months and is predictive of later spatial cognition and attention",
+      "Social attention to voices (orienting when called) at 6 months is an early screening indicator for typical social-communicative development",
+    ],
   },
   {
     id: "same-song",
@@ -260,6 +422,26 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Repeated exposure to the same prosodic sequence builds auditory memory traces — the first building blocks of pattern recognition and predictive processing.",
     weekRecommended: 1,
+    sources: [
+      {
+        citation: "DeCasper A.J. & Fifer W.P. (1980). Of human bonding: newborns prefer their mothers' voices. Science, 208, 1174–1176.",
+        url: "https://www.science.org/doi/10.1126/science.7375928",
+      },
+      {
+        citation:
+          "DeCasper A.J. & Spence M.J. (1986). Prenatal maternal speech influences newborns' perception of speech sounds. Infant Behavior and Development.",
+        url: "https://pubmed.ncbi.nlm.nih.gov/3743543/",
+      },
+    ],
+    shortTermBenefits: [
+      "Familiar melody activates prenatal auditory memory traces from birth",
+      "Repeated prosodic sequences build the earliest auditory pattern-recognition circuits",
+      "Measurable calming effect — reduces cortisol and behavioural distress in the first weeks",
+    ],
+    longTermBenefits: [
+      "By 4–6 weeks, babies show anticipatory stilling (beginning to still before the song starts) — an early form of predictive processing that is foundational for learning",
+      "Musical pattern exposure in infancy is associated with stronger phonological awareness at school age (Anvari et al., 2002)",
+    ],
   },
   {
     id: "reading-aloud",
@@ -280,6 +462,15 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Continuous natural speech exposure provides the prosodic data the auditory cortex is actively seeking and storing in this period.",
     weekRecommended: 2,
+    sources: [],
+    shortTermBenefits: [
+      "Provides continuous, varied prosodic input the auditory cortex is actively learning from",
+      "Caregiver voice settles baby via familiar prenatal sound exposure",
+      "Builds the habit and rhythm of shared book time from the very beginning",
+    ],
+    longTermBenefits: [
+      "Quantity of language exposure in the first year predicts vocabulary at age 3 and reading readiness at school entry",
+    ],
   },
   {
     id: "facial-expression-copying",
@@ -301,6 +492,26 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Whether or not early imitation is true mimicry, face-to-face contingent interaction at close range activates social and visual processing circuits simultaneously.",
     weekRecommended: 4,
+    sources: [
+      {
+        citation:
+          "Meltzoff A.N. & Moore M.K. (1977). Imitation of facial and manual gestures by human neonates. Science, 198, 75–78.",
+        url: "https://www.science.org/doi/10.1126/science.198.4312.75",
+      },
+      {
+        citation: "Meltzoff A.N. & Moore M.K. (1983). Newborn infants imitate adult facial gestures. Child Development.",
+        url: "https://pubmed.ncbi.nlm.nih.gov/6851717/",
+      },
+    ],
+    shortTermBenefits: [
+      "Face-to-face contingent interaction at close range simultaneously activates visual, social, and motor circuits",
+      "Models emotional expression and recognition from the earliest weeks",
+      "Stimulates cross-modal matching between seen and felt body states",
+    ],
+    longTermBenefits: [
+      "Early face-to-face interaction quality predicts emotional recognition ability at 12 months",
+      "Meltzoff's 'like me' framework — the capacity to map others' expressions onto one's own body — is considered a developmental precursor to empathy and theory of mind",
+    ],
   },
   {
     id: "contingency-mobile",
@@ -322,6 +533,26 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "When baby discovers their movement causes the mobile to move, they are learning contingency — that their actions have effects — which is the root of intentional behaviour and early problem-solving.",
     weekRecommended: 5,
+    sources: [
+      {
+        citation: "Rovee-Collier C. (1999). The development of infant memory. Current Directions in Psychological Science.",
+        url: "https://journals.sagepub.com/doi/10.1111/1467-8721.00019",
+      },
+      {
+        citation:
+          "Rovee-Collier C. (1997). Dissociations in infant memory: Rethinking the development of implicit and explicit memory. Psychological Review.",
+        url: "https://pubmed.ncbi.nlm.nih.gov/9161312/",
+      },
+    ],
+    shortTermBenefits: [
+      "Baby learns within minutes that their leg kicks move the mobile — a direct demonstration of causal learning",
+      "Memory for the contingency persists across days — demonstrable at 2 months",
+      "Motivates sustained attention and deliberate movement",
+    ],
+    longTermBenefits: [
+      "Contingency learning is the cognitive precursor to agency, intentionality, and problem-solving — children who experience consistent contingent environments show earlier development of executive function",
+      "Rovee-Collier's work established that implicit memory (procedural, contextual) is functional from 2 months, challenging earlier assumptions that infants lack memory — with implications for how early experience shapes the brain's memory architecture long-term",
+    ],
   },
   {
     id: "scent-pairing",
@@ -341,6 +572,22 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Newborns navigate their world largely by smell in the first weeks. Familiar olfactory cues activate stress-buffering responses and demonstrate early associative learning.",
     weekRecommended: 3,
+    sources: [
+      {
+        citation:
+          "Macfarlane A. (1975). Olfaction in the development of social preferences in the human neonate. Ciba Foundation Symposium, 33, 103–113.",
+        url: "https://pubmed.ncbi.nlm.nih.gov/1039532/",
+      },
+    ],
+    shortTermBenefits: [
+      "Familiar caregiver scent activates the olfactory system — one of the most mature sensory pathways at birth",
+      "Measurable calming effect within minutes",
+      "Demonstrates early associative learning: this smell = safety",
+    ],
+    longTermBenefits: [
+      "Olfactory-emotional associations formed in the newborn period are encoded in the amygdala and can persist for years — some of the most durable early memories are olfactory",
+      "Reliable scent-based comfort builds the earliest association between caregiver and safety — a building block of secure attachment",
+    ],
   },
   {
     id: "light-shadow",
@@ -361,6 +608,15 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Luminance contrast and moving edges are the two most salient visual stimuli for the neonatal visual system — this directly targets the circuits that are active earliest.",
     weekRecommended: 1,
+    sources: [],
+    shortTermBenefits: [
+      "Engages the subcortical orienting pathway active from birth",
+      "Moving light edges are among the most salient stimuli for the neonatal visual system",
+      "Easy way to observe baby's emerging head and eye orienting",
+    ],
+    longTermBenefits: [
+      "Exercising early orienting pathways supports the transition to cortical visual attention control later in infancy",
+    ],
   },
   {
     id: "joint-compression",
@@ -381,6 +637,15 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Joint compression activates deep proprioceptors that give the brain information about body position — the data source for building a body map.",
     weekRecommended: 4,
+    sources: [],
+    shortTermBenefits: [
+      "Activates deep joint and muscle-spindle proprioceptors",
+      "Provides clear body-boundary signals to the somatosensory cortex",
+      "Tends to be organising and calming for many babies",
+    ],
+    longTermBenefits: [
+      "A well-developed body schema in infancy underpins later fine motor control, coordination, and intentional reach",
+    ],
   },
   {
     id: "varied-carrying",
@@ -403,6 +668,15 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Different orientations activate different semicircular canals and otolith organs, giving the vestibular cortex varied input to calibrate against.",
     weekRecommended: 2,
+    sources: [],
+    shortTermBenefits: [
+      "Each position activates different semicircular canals and otolith organs",
+      "Varies gravitational load on neck and trunk extensors",
+      "Prevents prolonged single-position pressure on the head",
+    ],
+    longTermBenefits: [
+      "Varied vestibular and postural input in infancy supports balanced postural control and on-time achievement of head control and sitting milestones at around 6 months",
+    ],
   },
   {
     id: "heartbeat-settling",
@@ -424,6 +698,22 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Familiar prenatal sounds trigger auditory memory traces and activate calming responses — one of the earliest examples of long-term memory from in-utero experience.",
     weekRecommended: 1,
+    sources: [
+      {
+        citation:
+          "Salk L. (1960). The effects of the normal heartbeat sound on the behavior of the newborn infant: Implications for mental health. World Mental Health.",
+        url: "https://psycnet.apa.org/record/1963-03736-001",
+      },
+    ],
+    shortTermBenefits: [
+      "Familiar prenatal sound activates existing auditory memory traces from birth",
+      "Reduces cortisol and behavioural signs of distress in unsettled infants",
+      "Promotes parasympathetic (calming) nervous system activation",
+    ],
+    longTermBenefits: [
+      "Demonstrates that memory traces formed in utero persist after birth and influence behaviour — an early example of how prenatal experience shapes postnatal neurology",
+      "Effective settling strategies in the newborn period reduce cumulative cortisol exposure, which is associated with better stress regulation architecture over the first year",
+    ],
   },
   {
     id: "attention-recovery",
@@ -444,6 +734,21 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Gaze aversion is the infant's primary self-regulatory tool. When caregivers wait and return, they teach the brain that the world is safe to re-engage with — foundational for attention and stress regulation.",
     weekRecommended: 4,
+    sources: [
+      {
+        citation: "Tronick E. et al. (1978). Still-Face Paradigm. Journal of the American Academy of Child Psychiatry.",
+        url: "https://pubmed.ncbi.nlm.nih.gov/632477/",
+      },
+    ],
+    shortTermBenefits: [
+      "Correctly honouring gaze aversion prevents overstimulation and models respect for baby's self-regulatory signals",
+      "Baby's return to interaction after a break demonstrates the cycle of engagement and recovery",
+      "Caregiver learns to read and match baby's natural attention rhythm",
+    ],
+    longTermBenefits: [
+      "Sensitive attunement to infant gaze aversion in the first 3 months predicts more secure attachment at 12 months (Ainsworth; Isabella & Belsky)",
+      "Children whose caregivers consistently respected their attentional limits in infancy show better emotional self-regulation and executive function at age 4–5",
+    ],
   },
   {
     id: "name-repetition",
@@ -464,6 +769,15 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Repeated pairing of name with face, touch, and context begins building the neural representation that will later allow the infant to recognise their own name from across a room.",
     weekRecommended: 1,
+    sources: [],
+    shortTermBenefits: [
+      "Pairs a single repeated sound pattern with face, touch, and warm context",
+      "Provides clear, discriminable auditory input embedded in caregiving moments",
+      "Builds the earliest neural traces for self-relevant social signals",
+    ],
+    longTermBenefits: [
+      "Own-name recognition (measurable by 4–5 months) is a foundation for joint attention and intentional social communication later in the first year",
+    ],
   },
   {
     id: "limb-movement",
@@ -485,6 +799,15 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Movement generates proprioceptive signals that train the brain's maps of the body — even passive movement provides the input the motor cortex uses to calibrate.",
     weekRecommended: 3,
+    sources: [],
+    shortTermBenefits: [
+      "Generates proprioceptive input that trains the brain's body map",
+      "Mobilises joints through their natural range without stretching",
+      "Pairs movement with simple narration — multimodal input",
+    ],
+    longTermBenefits: [
+      "Early body-schema development underpins later voluntary reach, midline crossing, and coordinated whole-body movement",
+    ],
   },
   {
     id: "quiet-alert-observation",
@@ -505,6 +828,22 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Environmental scanning during quiet alert state is active cognitive work — the infant's attention system is calibrating visual salience, contrast, and novelty without any additional input required.",
     weekRecommended: 2,
+    sources: [
+      {
+        citation:
+          "Brazelton T.B. (1973). Neonatal Behavioral Assessment Scale. Clinics in Developmental Medicine. Spastics International Medical Publications.",
+        url: "https://pubmed.ncbi.nlm.nih.gov/4129339/",
+      },
+    ],
+    shortTermBenefits: [
+      "Quiet alert state is when visual processing, attention, and social responsiveness are at their peak",
+      "Letting baby lead in this state respects their attentional capacity and prevents overstimulation",
+      "Observation builds your ability to read baby's cues accurately",
+    ],
+    longTermBenefits: [
+      "Caregiver sensitivity to infant state — specifically recognising and responding to quiet alert windows — is one of the strongest predictors of secure attachment at 12 months (Ainsworth Strange Situation research)",
+      "Sensitive state-matching in the first weeks predicts child self-regulation at age 3–5",
+    ],
   },
   {
     id: "water-sound-bath",
@@ -526,6 +865,15 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Warm water provides simultaneous activation of thermoreceptors, mechanoreceptors, and proprioceptors across the entire body — among the richest multi-modal sensory experiences available at home.",
     weekRecommended: 3,
+    sources: [],
+    shortTermBenefits: [
+      "Simultaneously activates thermoreceptors, mechanoreceptors, and proprioceptors across the body",
+      "Warmth and gentle pressure are organising and calming for most babies",
+      "Provides a rich multi-modal sensory event that is hard to replicate elsewhere",
+    ],
+    longTermBenefits: [
+      "Multi-modal sensory integration practice in infancy supports the maturation of cortical regions that combine touch, temperature, and body position into a coherent body sense",
+    ],
   },
   {
     id: "hum-chest",
@@ -546,6 +894,15 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Sound delivered simultaneously through air (auditory) and bone conduction (vibrotactile) activates two sensory modalities at once, exercising the cross-modal integration circuits that are building throughout this period.",
     weekRecommended: 2,
+    sources: [],
+    shortTermBenefits: [
+      "Delivers sound through air and bone conduction at the same time — a true cross-modal stimulus",
+      "Caregiver's voice plus warmth and contact are reliably calming",
+      "Slow pitch variation exposes baby to prosodic contour",
+    ],
+    longTermBenefits: [
+      "Cross-modal integration practice in infancy supports later auditory processing and the brain's ability to combine speech sound with visible mouth movement during language learning",
+    ],
   },
   {
     id: "novel-object-pause",
@@ -567,6 +924,25 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Renewed attention to novelty is the brain signalling 'this is new' — evidence the memory trace for the first object was encoded. You are watching memory and recognition in real time.",
     weekRecommended: 5,
+    sources: [
+      {
+        citation: "Fantz R.L. (1963). Pattern vision in newborn infants. Science.",
+        url: "https://www.science.org/doi/10.1126/science.140.3564.296",
+      },
+      {
+        citation: "Rovee-Collier C. (1999). The development of infant memory. Current Directions in Psychological Science.",
+        url: "https://journals.sagepub.com/doi/10.1111/1467-8721.00019",
+      },
+    ],
+    shortTermBenefits: [
+      "Renewed attention to a novel stimulus (dishabituation) is direct, observable evidence that the brain encoded memory of the first object",
+      "Exercises novelty detection — a core cognitive function from 6 weeks",
+      "Provides visual working memory practice in real time",
+    ],
+    longTermBenefits: [
+      "Dishabituation rate in infancy (how quickly a baby responds to novelty) is one of the strongest infant predictors of IQ at age 5–7 (Fagan & Singer; meta-analyses by McCall & Carriger)",
+      "Novelty preference scores at 3–4 months predict vocabulary at 2 years",
+    ],
   },
   {
     id: "outdoor-listening",
@@ -587,13 +963,23 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Real-world acoustic environments contain complex, layered sounds the brain must learn to parse — exposure to this richness supports the auditory cortex's statistical learning work.",
     weekRecommended: 4,
+    sources: [],
+    shortTermBenefits: [
+      "Exposes the auditory cortex to complex, layered real-world sounds",
+      "Pairs ambient sound with quiet naming — early vocabulary embedded in context",
+      "Outdoor light and air tend to settle and alert baby simultaneously",
+    ],
+    longTermBenefits: [
+      "Auditory scene analysis (the ability to parse multiple sounds in a noisy environment) develops over the first year and supports later speech-in-noise comprehension and listening in classrooms",
+    ],
   },
   {
     id: "skin-to-skin",
     title: "Skin-to-skin time",
     domain: "sensory-motor",
     ageWindowWeeks: "0–12",
-    processSupported: "Autonomic nervous system regulation; cortisol buffering; tactile and thermoregulatory pathway activation",
+    processSupported:
+      "Autonomic nervous system regulation; cortisol buffering; tactile and thermoregulatory pathway activation",
     evidenceBasis:
       "Kangaroo care has strong replicated evidence (multiple RCTs, endorsed by WHO) for stabilising heart rate, temperature regulation, and cortisol levels in both preterm and term infants. Physical holding is neurologically active stimulation.",
     instructions: [
@@ -606,6 +992,31 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Skin-to-skin contact simultaneously activates thermoregulatory, tactile, olfactory, and auditory pathways. It is caregiving and neurostimulation at the same time.",
     weekRecommended: 3,
+    sources: [
+      {
+        citation: "WHO Kangaroo Mother Care Evidence (2023)",
+        url: "https://www.who.int/tools/elena/interventions/kangaroo-care-infants",
+      },
+      {
+        citation:
+          "Feldman et al. (2014) — 10-year longitudinal RCT. Maternal-preterm skin-to-skin contact enhances child physiologic organization and cognitive control across the first 10 years of life. Biological Psychiatry.",
+        url: "https://pubmed.ncbi.nlm.nih.gov/24094511/",
+      },
+      {
+        citation:
+          "IPISTOSS trial (2024) — Immediate skin-to-skin contact at very preterm birth and effect on infant socio-emotional stress response and mother-infant cortisol co-regulation.",
+        url: "https://pubmed.ncbi.nlm.nih.gov/41672603/",
+      },
+    ],
+    shortTermBenefits: [
+      "Stabilises heart rate and body temperature within minutes",
+      "Reduces salivary cortisol (stress hormone) in both baby and caregiver",
+      "Promotes milk production and breastfeeding success",
+    ],
+    longTermBenefits: [
+      "Feldman et al. (2014) followed children for 10 years: those who received kangaroo care showed better autonomic nervous system regulation, lower anxiety, and stronger cognitive control at age 10 compared to controls",
+      "Improved cortisol co-regulation between parent and child at 4 months, correlating with better emotional self-regulation in toddlerhood",
+    ],
   },
   {
     id: "narrated-day",
@@ -626,6 +1037,26 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Continuous natural speech exposure provides the prosodic data the auditory cortex is actively seeking and storing — and every response you give to baby's cues teaches them that their actions matter.",
     weekRecommended: 3,
+    sources: [
+      {
+        citation:
+          "Hart B. & Risley T.R. (1995). Meaningful Differences in the Everyday Experience of Young American Children. Baltimore: Paul H. Brookes.",
+        url: "https://pubs.asha.org/doi/10.1044/jshd.5701.149",
+      },
+      {
+        citation:
+          "Soderstrom M. (2007). Beyond babytalk: Re-evaluating the nature and content of speech input to preverbal infants. Developmental Review.",
+        url: "https://doi.org/10.1016/j.dr.2006.11.003",
+      },
+    ],
+    shortTermBenefits: [
+      "Provides continuous prosodic input — the rhythm and melody of language — which the auditory cortex is actively processing from birth",
+      "Gives baby a turn-by-turn model of how language accompanies action",
+    ],
+    longTermBenefits: [
+      "Hart & Risley (1995): children who heard significantly more words by age 3 had vocabularies 4× larger and IQ scores measurably higher at age 9 — the 'word gap' begins in the first months of life",
+      "Word exposure in the first year (measured by LENA devices) independently predicts language skills and school readiness at age 5, even controlling for socioeconomic status",
+    ],
   },
 ];
 
