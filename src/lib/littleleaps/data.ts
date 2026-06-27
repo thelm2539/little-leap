@@ -487,25 +487,6 @@ export const ACTIVITIES: Activity[] = [
     weekRecommended: 3,
   },
   {
-    id: "still-face-recovery",
-    title: "Still face recovery",
-    domain: "cognitive",
-    ageWindowWeeks: "6–12",
-    processSupported: "Stress response system; social expectation and re-engagement; emotional regulation circuitry",
-    evidenceBasis:
-      "The Still-Face Paradigm (Tronick et al., 1978) reveals that brief, mild interactive disruption followed by warm reconnection is a normal feature of real caregiving that exercises recovery circuits.",
-    instructions: [
-      "During a warm face-to-face interaction, let your expression briefly become neutral (not cold, just still) for 5–10 seconds.",
-      "Then return warmly — smile, speak softly.",
-      "Do this no more than once per interaction session.",
-      "Only when baby is calm and alert — never when distressed.",
-    ],
-    durationMinutes: 3,
-    whyItWorks:
-      "Recovery from mild interactive disruption strengthens the brain circuits involved in expectation, co-regulation, and emotional resilience — the same reason the still-face paradigm is so informative scientifically.",
-    weekRecommended: 6,
-  },
-  {
     id: "quiet-alert-observation",
     title: "Quiet alert window observation",
     domain: "cognitive",
