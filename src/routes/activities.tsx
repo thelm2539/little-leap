@@ -18,7 +18,7 @@ import {
   RatingBadge,
   RatingButtons,
 } from "@/components/littleleaps/ActivityBits";
-import { Search, Loader2, FlaskConical, Sparkles } from "lucide-react";
+import { Search, Loader2, FlaskConical, Sparkles, ExternalLink, Heart, Zap, TrendingUp } from "lucide-react";
 import { useActivityLog } from "@/lib/littleleaps/storage";
 
 export const Route = createFileRoute("/activities")({
