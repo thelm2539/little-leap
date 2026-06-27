@@ -18,7 +18,7 @@ import {
   RatingBadge,
   RatingButtons,
 } from "@/components/littleleaps/ActivityBits";
-import { Search, Loader2, FlaskConical, Sparkles } from "lucide-react";
+import { Search, Loader2, FlaskConical, Sparkles, ExternalLink, Heart, Zap, TrendingUp } from "lucide-react";
 import { useActivityLog } from "@/lib/littleleaps/storage";
 
 export const Route = createFileRoute("/activities")({
@@ -176,7 +176,59 @@ function ActivitiesPage() {
                     <FlaskConical size={13} />
                     The science
                   </div>
-                  <p className="text-sm leading-relaxed text-foreground/80">{open.evidenceBasis}</p>
+                  {open.sources.length > 0 ? (
+                    <ul className="space-y-2">
+                      {open.sources.map((s, i) => (
+                        <li key={i} className="text-[13px] leading-relaxed text-foreground/80">
+                          <a
+                            href={s.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline italic hover:underline"
+                          >
+                            {s.citation}
+                            <ExternalLink
+                              size={12}
+                              className="ml-1 inline-block -translate-y-px text-muted-foreground"
+                            />
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-sm leading-relaxed text-foreground/80">{open.evidenceBasis}</p>
+                  )}
+                </section>
+
+                <section>
+                  <div className="mb-3 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    <Heart size={12} />
+                    Why this matters
+                  </div>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="rounded-2xl border border-sage/20 bg-sage/10 p-3">
+                      <div className="mb-2 flex items-center gap-1.5 text-[12px] font-semibold text-sage">
+                        <Zap size={13} />
+                        Right now
+                      </div>
+                      <ul className="space-y-1.5 pl-4 text-[13px] leading-relaxed text-foreground/85 list-disc marker:text-sage/60">
+                        {open.shortTermBenefits.map((b, i) => (
+                          <li key={i}>{b}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="rounded-2xl border border-blue-200/60 bg-blue-50/70 p-3">
+                      <div className="mb-2 flex items-center gap-1.5 text-[12px] font-semibold text-blue-700">
+                        <TrendingUp size={13} />
+                        Over time
+                      </div>
+                      <ul className="space-y-1.5 pl-4 text-[13px] leading-relaxed text-foreground/85 list-disc marker:text-blue-400">
+                        {open.longTermBenefits.map((b, i) => (
+                          <li key={i}>{b}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
                 </section>
 
                 <section>
