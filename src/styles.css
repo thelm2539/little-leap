@@ -83,6 +83,9 @@
   --color-domain-language-communication: var(--domain-language-communication);
   --color-domain-cognitive:             var(--domain-cognitive);
   --color-domain-sleep:                 var(--domain-sleep);
+  --color-domain-gross-motor:           var(--domain-gross-motor);
+  --color-domain-fine-motor:            var(--domain-fine-motor);
+  --color-domain-social:                var(--domain-social);
   /* legacy aliases — remove once all references are updated */
   --color-domain-sensorimotor:          var(--domain-sensory);
   --color-domain-language:              var(--domain-language-communication);
@@ -109,6 +112,10 @@
   --border: oklch(0.92 0.015 95);
   --input: oklch(0.92 0.015 95);
   --ring: oklch(0.7 0.05 150);
+  -domain-sleep: oklch(0.45 0.12 270);
+  --domain-gross-motor: oklch(0.62 0.14 35);   /* terracotta */
+  --domain-fine-motor:  oklch(0.55 0.12 290);  
+  --domain-social:      oklch(0.60 0.11 350);  
 
   /* Little Leaps palette */
   --app: oklch(0.985 0.012 95);
