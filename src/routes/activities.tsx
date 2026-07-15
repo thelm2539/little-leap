@@ -1,254 +1,80 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState, useMemo } from "react";
-import { AppShell } from "@/components/littleleaps/AppShell";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import {
-  ACTIVITIES,
-  type Activity,
-  type Domain,
-  DOMAIN_LABEL,
-  formatDuration,
-} from "@/lib/littleleaps/data";
-import {
-  DomainBadge,
-  DomainDot,
-  DurationPill,
-  RatingBadge,
-  RatingButtons,
-} from "@/components/littleleaps/ActivityBits";
-import { Search, Loader2, FlaskConical, Sparkles, ExternalLink, Heart, Zap, TrendingUp } from "lucide-react";
-import { useActivityLog } from "@/lib/littleleaps/storage";
+/**
+ * activities.tsx
+ *
+ * The route file for the /activities screen — now the Milestones screen.
+ * In TanStack Router, each file in src/routes/ maps to a URL path.
+ * This file = the /activities URL = the "Activities" tab in the bottom nav.
+ *
+ * This file's only job is to:
+ *   1. Define the route (tell the router this page exists at /activities)
+ *   2. Read the baby's birth date from the user profile
+ *   3. Render the page shell (header) + pass the birth date to MilestoneTimeline
+ *
+ * All the timeline logic lives in MilestoneTimeline.tsx — this file just
+ * wires it up to the router and provides the data it needs.
+ */
 
-export const Route = createFileRoute("/activities")({
-  head: () => ({
-    meta: [
-      { title: "Activities — Little Leaps" },
-      { name: "description", content: "Browse evidence-based newborn activities." },
-    ],
-  }),
+// createFileRoute is TanStack Router's way of registering this file as a route.
+// The string '/activities' must match the file name (activities.tsx).
+import { createFileRoute } from '@tanstack/react-router';
+
+// The timeline component that does the actual rendering.
+import { MilestoneTimeline } from '../components/MilestoneTimeline';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HOW TO GET birthDate FROM THE USER'S PROFILE:
+//
+// Open src/routes/this-week.tsx and look at the top of the file.
+// Find where it reads the baby's birth date — there will be a Supabase query
+// or a custom hook (e.g. useQuery, useBabyProfile, useProfile, useBaby etc.).
+//
+// Copy that import and hook call here, then replace the hardcoded date below.
+//
+// Example of what it might look like (your actual code will differ):
+//   import { useProfile } from '../lib/littleleaps/data';
+//   const { data: profile } = useProfile();
+//   const birthDate = profile?.birth_date ?? '';
+//
+// The ?? '' means: "if birth_date is null or undefined, use an empty string."
+// An empty string passed to getBabyAgeWeeks() returns 0 weeks, which is safe.
+// ─────────────────────────────────────────────────────────────────────────────
+
+
+// ─── Route definition ─────────────────────────────────────────────────────────
+// This registers the route with TanStack Router.
+// The component property tells the router which component to render for /activities.
+export const Route = createFileRoute('/activities')({
   component: ActivitiesPage,
 });
 
-type Filter = "all" | Domain;
 
-const FILTERS: { value: Filter; label: string }[] = [
-  { value: "all", label: "All" },
-  { value: "sensory-motor", label: "Sensory & Motor" },
-  { value: "language", label: "Language" },
-  { value: "cognitive", label: "Cognitive" },
-];
-
+// ─── Page component ───────────────────────────────────────────────────────────
 function ActivitiesPage() {
-  const [filter, setFilter] = useState<Filter>("all");
-  const [query, setQuery] = useState("");
-  const [open, setOpen] = useState<Activity | null>(null);
-  const { loading, error } = useActivityLog();
 
-  const list = useMemo(() => {
-    return ACTIVITIES.filter((a) => filter === "all" || a.domain === filter).filter((a) =>
-      a.title.toLowerCase().includes(query.toLowerCase()),
-    );
-  }, [filter, query]);
+  // TODO: Replace this hardcoded date with the birth date from the user's profile.
+  // See the comment block above for instructions on how to find the right hook.
+  const birthDate = '2026-06-09';
 
   return (
-    <AppShell>
-      <div className="space-y-4 px-5 pt-5">
-        <header>
-          <h1 className="font-serif text-2xl font-semibold tracking-tight text-foreground">
-            Activities
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Evidence-based things to try with your baby.
-          </p>
-        </header>
+    // min-h-screen: makes the page at least as tall as the screen.
+    // bg-app: uses the app's warm cream background colour (defined in styles.css).
+    <div className="min-h-screen bg-app">
 
-        <div className="relative">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search activities"
-            className="h-11 rounded-full border-border/60 bg-cream/40 pl-9"
-          />
-        </div>
-
-        <div className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-1">
-          {FILTERS.map((f) => {
-            const active = filter === f.value;
-            return (
-              <button
-                key={f.value}
-                onClick={() => setFilter(f.value)}
-                className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-medium transition ${
-                  active
-                    ? "bg-sage text-sage-foreground"
-                    : "bg-cream/60 text-foreground/70 hover:bg-cream"
-                }`}
-              >
-                {f.label}
-              </button>
-            );
-          })}
-        </div>
-
-        {loading && (
-          <div className="flex items-center justify-center gap-2 py-3 text-xs text-muted-foreground">
-            <Loader2 size={14} className="animate-spin" /> Loading your ratings…
-          </div>
-        )}
-        {error && !loading && (
-          <div className="rounded-2xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-xs text-destructive">
-            Couldn't load your ratings. Check your connection and try again.
-          </div>
-        )}
-
-        <div className="space-y-3">
-          {list.map((a) => (
-            <button key={a.id} onClick={() => setOpen(a)} className="w-full text-left">
-              <Card className="rounded-2xl border-border/60 p-4 shadow-none transition active:scale-[0.99] hover:bg-cream/30">
-                <div className="flex items-start gap-3">
-                  <DomainDot domain={a.domain} />
-                  <div className="flex-1">
-                    <div className="font-serif text-base font-semibold text-foreground">{a.title}</div>
-                    <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
-                      <span>{DOMAIN_LABEL[a.domain]}</span>
-                      <span>·</span>
-                      <DurationPill duration={formatDuration(a.durationMinutes)} />
-                    </div>
-                  </div>
-                  <RatingBadge activityId={a.id} />
-                </div>
-              </Card>
-            </button>
-          ))}
-          {list.length === 0 && (
-            <p className="py-10 text-center text-sm text-muted-foreground">No activities found.</p>
-          )}
-        </div>
-        <div className="h-4" />
+      {/* Page header — consistent with other screens in the app */}
+      <div className="px-5 pt-6 pb-1">
+        {/* font-serif uses the Fraunces font defined in styles.css */}
+        <h1 className="font-serif text-[26px] font-bold text-foreground leading-tight">
+          Milestones
+        </h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          Week-by-week developmental timeline
+        </p>
       </div>
 
-      <Sheet open={!!open} onOpenChange={(o) => !o && setOpen(null)}>
-        <SheetContent side="bottom" className="max-h-[88vh] overflow-y-auto rounded-t-3xl">
-          {open && (
-            <>
-              <SheetHeader className="text-left">
-                <SheetTitle className="font-serif text-xl">{open.title}</SheetTitle>
-                <div className="mt-1 flex flex-wrap items-center gap-2">
-                  <DomainBadge domain={open.domain} />
-                  <DurationPill duration={formatDuration(open.durationMinutes)} />
-                  <span className="text-xs text-muted-foreground">· Ages {open.ageWindowWeeks} wks</span>
-                </div>
-                <div className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-sage/12 px-2.5 py-1 text-[11px] font-medium text-sage">
-                  <Sparkles size={12} />
-                  Recommended from week {open.weekRecommended}
-                </div>
-              </SheetHeader>
+      {/* The timeline component — receives birthDate as its only prop */}
+      {/* MilestoneTimeline handles everything from here: filter pills, spine, cards */}
+      <MilestoneTimeline birthDate={birthDate} />
 
-              <div className="mt-5 space-y-5">
-                <section>
-                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                    How to
-                  </p>
-                  <ol className="space-y-2 pl-0">
-                    {open.instructions.map((step, i) => (
-                      <li key={i} className="flex gap-3 text-sm leading-relaxed text-foreground/85">
-                        <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-cream-dark text-[11px] font-semibold text-foreground/70">
-                          {i + 1}
-                        </span>
-                        <span>{step}</span>
-                      </li>
-                    ))}
-                  </ol>
-                </section>
-
-                <section>
-                  <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                    What this supports
-                  </p>
-                  <p className="text-sm leading-relaxed text-foreground/85">{open.processSupported}</p>
-                </section>
-
-                <section className="rounded-2xl border border-sage/20 bg-sage/5 p-4">
-                  <div className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-sage">
-                    <FlaskConical size={13} />
-                    The science
-                  </div>
-                  {open.sources.length > 0 ? (
-                    <ul className="space-y-2">
-                      {open.sources.map((s, i) => (
-                        <li key={i} className="text-[13px] leading-relaxed text-foreground/80">
-                          <a
-                            href={s.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline italic hover:underline"
-                          >
-                            {s.citation}
-                            <ExternalLink
-                              size={12}
-                              className="ml-1 inline-block -translate-y-px text-muted-foreground"
-                            />
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-sm leading-relaxed text-foreground/80">{open.evidenceBasis}</p>
-                  )}
-                </section>
-
-                <section>
-                  <div className="mb-3 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                    <Heart size={12} />
-                    Why this matters
-                  </div>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <div className="rounded-2xl border border-sage/20 bg-sage/10 p-3">
-                      <div className="mb-2 flex items-center gap-1.5 text-[12px] font-semibold text-sage">
-                        <Zap size={13} />
-                        Right now
-                      </div>
-                      <ul className="space-y-1.5 pl-4 text-[13px] leading-relaxed text-foreground/85 list-disc marker:text-sage/60">
-                        {open.shortTermBenefits.map((b, i) => (
-                          <li key={i}>{b}</li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div className="rounded-2xl border border-blue-200/60 bg-blue-50/70 p-3">
-                      <div className="mb-2 flex items-center gap-1.5 text-[12px] font-semibold text-blue-700">
-                        <TrendingUp size={13} />
-                        Over time
-                      </div>
-                      <ul className="space-y-1.5 pl-4 text-[13px] leading-relaxed text-foreground/85 list-disc marker:text-blue-400">
-                        {open.longTermBenefits.map((b, i) => (
-                          <li key={i}>{b}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </section>
-
-                <section>
-                  <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                    Why it works
-                  </p>
-                  <p className="text-sm leading-relaxed text-foreground/75">{open.whyItWorks}</p>
-                </section>
-
-                <section>
-                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                    How did it go?
-                  </p>
-                  <RatingButtons activityId={open.id} compact />
-                </section>
-              </div>
-            </>
-          )}
-        </SheetContent>
-      </Sheet>
-    </AppShell>
+    </div>
   );
 }
