@@ -17,7 +17,7 @@ export function AppShell({ children }: { children?: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-app">
-      <div className="mx-auto flex min-h-screen max-w-[420px] flex-col bg-background shadow-sm">
+      <div className="mx-auto flex min-h-screen max-w-[420px] md:max-w-2xl flex-col bg-background shadow-sm">
         <header className="flex items-center gap-2 border-b border-border/60 bg-background/80 px-5 py-4 backdrop-blur sticky top-0 z-20">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sage/15 text-sage">
             <Sprout size={18} />
@@ -29,7 +29,7 @@ export function AppShell({ children }: { children?: ReactNode }) {
 
         <main className="flex-1 pb-24">{children ?? <Outlet />}</main>
 
-        <nav className="fixed bottom-0 left-1/2 z-30 w-full max-w-[420px] -translate-x-1/2 border-t border-border/60 bg-background/95 backdrop-blur">
+        <nav className="fixed bottom-0 left-1/2 z-30 w-full max-w-[420px] md:max-w-2xl -translate-x-1/2 border-t border-border/60 bg-background/95 backdrop-blur">
           <ul className="grid grid-cols-4">
             {TABS.map((t) => {
               const Icon = t.icon;
