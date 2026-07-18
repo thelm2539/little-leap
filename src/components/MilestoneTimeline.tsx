@@ -153,7 +153,7 @@ export function MilestoneTimeline({ birthDate }: MilestoneTimelineProps) {
         */}
         <div
           className="absolute top-0 bottom-0 w-px bg-border"
-          style={{ left: '33px' }}
+          style={{ left: '43px' }}
           aria-hidden
         />
 
