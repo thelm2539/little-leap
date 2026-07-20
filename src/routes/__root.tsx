@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { OnboardingGate } from "../components/littleleaps/OnboardingGate";
+import { BirthDateGate } from "../components/littleleaps/BirthDateGate";
 
 function NotFoundComponent() {
   return (
@@ -126,12 +127,13 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/*
-        OnboardingGate lives here at the root — outside all page routes.
-        It's always mounted, so it shows even when pages return null early
-        (which they do when birthDate isn't set yet).
-        Replaces the old BirthDateGate + FamilyKeyGate pair.
+        OnboardingGate: first-run setup (new family or restore).
+        BirthDateGate: edit-only dialog opened by the pencil button in AppShell.
+        Both live here — outside all page routes — so they're always mounted,
+        even when pages return null early because birthDate isn't set yet.
       */}
       <OnboardingGate />
+      <BirthDateGate />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
     </QueryClientProvider>

@@ -67,56 +67,96 @@ export async function setFamilyKey(key: string) {
 
 // ── Onboarding helpers ──────────────────────────────────────────────────────
 
-/** Generate a short, readable random family code e.g. "bloom-4729" */
+/**
+ * Generate a unique family code.
+ * Format: word-word-NNNN  e.g. "bloom-haven-4729"
+ * Two independent word slots × 4-digit number = ~576,000 combinations.
+ * The code is entirely random — not derived from the birth date.
+ */
 export function generateFamilyCode(): string {
-  const words = ["bloom", "grove", "haven", "spark", "ember", "cloud", "daisy", "fern"];
-  const word = words[Math.floor(Math.random() * words.length)];
+  const words = [
+    "bloom", "grove", "haven", "spark", "ember", "cloud", "daisy", "fern",
+    "river", "stone", "maple", "cedar", "lark",  "robin", "wren",  "moss",
+  ];
+  const pick = () => words[Math.floor(Math.random() * words.length)];
   const num  = Math.floor(Math.random() * 9000) + 1000;
-  return `${word}-${num}`;
+  return `${pick()}-${pick()}-${num}`;
 }
 
 /**
  * Create a new family profile.
- * Auto-generates a family code, saves birth_date + code to Supabase and localStorage.
+ * Auto-generates a family code and saves it to Supabase.
+ * Birth date is saved to localStorage immediately, then synced to Supabase
+ * separately — so the profile creation never fails due to a missing schema column.
  * Returns the generated code so it can be shown to the user.
  */
 export async function createFamilyProfile(birthDate: string): Promise<string> {
   await ensureAnonAuth();
   const key = generateFamilyCode();
-  await persistFamilyMembership(key, birthDate);
+
+  // Step 1: create the family membership row (auth_uid + family_key only).
+  // This uses the existing proven path — no new columns, so it can't fail
+  // due to a missing birth_date column.
+  await persistFamilyMembership(key);
+
+  // Step 2: save family key to localStorage and notify hooks.
   window.localStorage.setItem(FAMILY_KEY_STORE, key);
-  window.localStorage.setItem(DOB_STORE, birthDate);
   window.dispatchEvent(new CustomEvent("littleleaps:familyKey"));
-  window.dispatchEvent(new CustomEvent("littleleaps:birthDate"));
+
+  // Step 3: save birth date — localStorage first (instant), Supabase non-fatal.
+  // saveBirthDateToProfile has its own try/catch around the Supabase call,
+  // so even if the birth_date column doesn't exist yet, this won't throw.
+  await saveBirthDateToProfile(birthDate);
+
   return key;
 }
 
 /**
  * Join an existing family by code.
- * Looks up birth_date from Supabase for that family.
- * Returns { birthDate } — null if the code has no stored birth date.
+ * Validates the code exists first, then registers this device as a member
+ * and fetches birth_date from Supabase.
+ * Returns { birthDate } — null if not found (caller will ask the user to enter it).
+ * Throws if the code doesn't exist, preventing phantom family rows.
  */
 export async function joinFamilyProfile(familyKey: string): Promise<{ birthDate: string | null }> {
   await ensureAnonAuth();
   const key = familyKey.trim().toLowerCase().replace(/\s+/g, "-");
 
-  // Fetch birth_date from any member of this family who has it
-  const { data: existing } = await supabase
+  // Step 1: validate the code exists before creating any row.
+  // RLS policy allows reading family_members by family_key so another device's
+  // row is visible — this is required for birth_date restoration to work at all.
+  const { data: check, error: checkErr } = await supabase
     .from("family_members")
-    .select("birth_date")
+    .select("auth_uid")
     .eq("family_key", key)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .not("birth_date" as any, "is", null)
     .limit(1)
     .maybeSingle();
+  if (checkErr) throw checkErr;
+  if (!check) throw new Error("Family code not found. Check the code and try again.");
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const birthDate = (existing as any)?.birth_date as string | null ?? null;
-
-  // Register this device as a member of that family
-  await persistFamilyMembership(key, birthDate ?? undefined);
+  // Step 2: register this device as a member (auth_uid + family_key only)
+  await persistFamilyMembership(key);
   window.localStorage.setItem(FAMILY_KEY_STORE, key);
   window.dispatchEvent(new CustomEvent("littleleaps:familyKey"));
+
+  // Step 3: try to fetch birth_date from any member who has it stored.
+  // Wrapped in try/catch — if the column doesn't exist yet this fails silently
+  // and the caller (OnboardingGate) will ask the user to enter it manually.
+  let birthDate: string | null = null;
+  try {
+    const { data: existing } = await supabase
+      .from("family_members")
+      .select("birth_date")
+      .eq("family_key", key)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .not("birth_date" as any, "is", null)
+      .limit(1)
+      .maybeSingle();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    birthDate = (existing as any)?.birth_date as string | null ?? null;
+  } catch (e) {
+    console.warn("[littleleaps] birth_date lookup failed (column may not exist yet)", e);
+  }
 
   if (birthDate) {
     window.localStorage.setItem(DOB_STORE, birthDate);

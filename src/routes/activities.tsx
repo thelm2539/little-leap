@@ -27,7 +27,7 @@ export const Route = createFileRoute('/activities')({
 // ─── Page component ───────────────────────────────────────────────────────────
 function ActivitiesPage() {
   // birthDate comes from localStorage via the hook.
-  // BirthDateGate (mounted in AppShell) shows a setup dialog if it's null.
+  // BirthDateGate (mounted in __root.tsx) shows a setup dialog if it's null.
   const { birthDate } = useBirthDate();
   if (!birthDate) return null;
 

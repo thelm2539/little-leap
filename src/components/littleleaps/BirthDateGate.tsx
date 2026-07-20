@@ -1,14 +1,14 @@
 /**
  * BirthDateGate.tsx
  *
- * A dialog that appears in two situations:
- *   1. First run — no birth date stored yet. The dialog blocks the app until
- *      the user enters a date (can't be dismissed with Escape or clicking outside).
- *   2. Edit mode — the user clicks the pencil icon in the AppShell header, which
- *      dispatches the "littleleaps:editBirthDate" custom event. The gate opens
- *      in dismissible mode, pre-filled with the current date.
+ * Edit-only dialog for updating the baby's birth date.
+ * Opened by the pencil button in AppShell which dispatches the
+ * "littleleaps:editBirthDate" custom event.
  *
- * This component lives in __root.tsx (outside all page components) so it is
+ * First-run setup is handled entirely by OnboardingGate (in __root.tsx).
+ * This component only ever shows in response to the edit event.
+ *
+ * This component lives in __root.tsx (outside all page routes) so it is
  * always mounted — even when pages return null early because no birth date is set.
  *
  * Communication with AppShell uses a custom event (same pattern as familyKey
@@ -28,12 +28,12 @@ import { Sprout } from "lucide-react";
 import { useBirthDate, saveBirthDateToProfile } from "@/lib/littleleaps/storage";
 
 export function BirthDateGate() {
-  const { birthDate, setBirthDate } = useBirthDate();
+  const { birthDate } = useBirthDate();
 
   // editMode = true when the AppShell edit button fires the custom event
   const [editMode, setEditMode] = useState(false);
 
-  // Pre-fill with existing date when editing; start blank for first run
+  // Pre-fill with the currently stored date
   const [value, setValue] = useState(birthDate ?? "");
 
   // Listen for the edit button event dispatched by AppShell.
@@ -48,12 +48,9 @@ export function BirthDateGate() {
     return () => window.removeEventListener("littleleaps:editBirthDate", handler);
   }, [birthDate]); // Re-register when birthDate changes so we always pre-fill the latest
 
-  // isFirstRun = never had a date stored. The gate is blocking in this case.
-  const isFirstRun = !birthDate;
-
-  // Open when: first run (no date stored) OR edit mode was triggered
-  const isOpen = isFirstRun || editMode;
-  if (!isOpen) return null;
+  // Edit-only: only open when the user explicitly triggers an edit.
+  // OnboardingGate handles first-run — this gate must never compete with it.
+  if (!editMode) return null;
 
   const submit = () => {
     if (!value) return;
@@ -72,27 +69,20 @@ export function BirthDateGate() {
     <Dialog
       open
       onOpenChange={(open) => {
-        // Only allow closing via the Cancel button in edit mode.
-        // First-run gate is blocking — must submit a date.
-        if (!open && !isFirstRun) cancel();
+        // Dismiss on outside click or Escape (edit mode is always dismissible)
+        if (!open) cancel();
       }}
     >
       <DialogContent
         className="max-w-[380px] rounded-3xl border-border/60 p-6 [&>button]:hidden"
-        onInteractOutside={(e) => { if (isFirstRun) e.preventDefault(); }}
-        onEscapeKeyDown={(e) => { if (isFirstRun) e.preventDefault(); }}
       >
         <DialogHeader className="items-center text-center">
           <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-sage/15 text-sage">
             <Sprout size={22} />
           </div>
-          <DialogTitle className="font-serif text-xl">
-            {isFirstRun ? "Welcome to Little Leaps" : "Change birth date"}
-          </DialogTitle>
+          <DialogTitle className="font-serif text-xl">Change birth date</DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">
-            {isFirstRun
-              ? "Enter your baby's birth date to personalise the timeline and milestones."
-              : "Update the birth date and the app will recalculate everything."}
+            Update the birth date and the app will recalculate everything.
           </DialogDescription>
         </DialogHeader>
 
@@ -116,19 +106,16 @@ export function BirthDateGate() {
             disabled={!value}
             className="h-11 w-full rounded-full bg-sage text-sage-foreground hover:bg-sage/90"
           >
-            {isFirstRun ? "Get started" : "Save"}
+            Save
           </Button>
 
-          {/* Cancel only available in edit mode — first-run gate has no escape */}
-          {!isFirstRun && (
-            <Button
-              variant="ghost"
-              onClick={cancel}
-              className="h-9 w-full rounded-full text-muted-foreground"
-            >
-              Cancel
-            </Button>
-          )}
+          <Button
+            variant="ghost"
+            onClick={cancel}
+            className="h-9 w-full rounded-full text-muted-foreground"
+          >
+            Cancel
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

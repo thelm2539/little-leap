@@ -28,12 +28,13 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Sprout, Baby, RotateCcw } from "lucide-react";
+import { Sprout, Baby, RotateCcw, Copy, Check } from "lucide-react";
 import {
   useFamilyKey,
   useBirthDate,
   createFamilyProfile,
   joinFamilyProfile,
+  saveBirthDateToProfile,
 } from "@/lib/littleleaps/storage";
 
 // ─── Step types ───────────────────────────────────────────────────────────────
@@ -41,6 +42,7 @@ import {
 type Step =
   | "choice"          // Welcome: "New family" vs "Restore with code"
   | "new-birth"       // Enter birth date for a new family
+  | "new-success"     // Show the generated family code (share with partner)
   | "restore-code"    // Enter family code to restore
   | "restore-birth";  // Birth date not found for that code — enter manually
 
@@ -49,15 +51,21 @@ export function OnboardingGate() {
   const { familyKey, ready } = useFamilyKey();
   const { birthDate } = useBirthDate();
 
-  const [step, setStep]           = useState<Step>("choice");
+  const [step, setStep]             = useState<Step>("choice");
   const [birthValue, setBirthValue] = useState("");
   const [codeValue, setCodeValue]   = useState("");
   const [busy, setBusy]             = useState(false);
   const [error, setError]           = useState<string | null>(null);
+  // generatedCode is set after createFamilyProfile so we can show it to the user.
+  // Keeping it in state (not just returning from handler) means the success screen
+  // stays visible even if the gate's auto-close condition becomes true.
+  const [generatedCode, setGeneratedCode] = useState<string | null>(null);
+  const [codeCopied, setCodeCopied]       = useState(false);
 
   // ── Gate is invisible when the user is fully set up ──
   // Both values are needed: familyKey identifies the session, birthDate drives the UI.
-  if (ready && familyKey && birthDate) return null;
+  // Exception: keep showing the gate if we're on "new-success" (showing the code).
+  if (ready && familyKey && birthDate && !generatedCode) return null;
 
   // ── Loading state ──
   // useFamilyKey runs async Supabase auth + recovery on mount.
@@ -97,8 +105,10 @@ export function OnboardingGate() {
     setBusy(true);
     setError(null);
     try {
-      await createFamilyProfile(birthValue);
-      // Gate auto-closes because useFamilyKey + useBirthDate hooks update
+      const key = await createFamilyProfile(birthValue);
+      // Show the success step so the user can copy/share their family code
+      setGeneratedCode(key);
+      setStep("new-success");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not create profile. Please try again.");
     } finally {
@@ -132,15 +142,24 @@ export function OnboardingGate() {
     setBusy(true);
     setError(null);
     try {
-      // saveBirthDateToProfile updates localStorage + Supabase
-      // Import inline to avoid circular ref at module level
-      const { saveBirthDateToProfile } = await import("@/lib/littleleaps/storage");
       await saveBirthDateToProfile(birthValue);
       // Gate auto-closes because useBirthDate hook updates
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not save. Please try again.");
     } finally {
       setBusy(false);
+    }
+  };
+
+  /** Copy the family code to clipboard */
+  const handleCopyCode = async () => {
+    if (!generatedCode) return;
+    try {
+      await navigator.clipboard.writeText(generatedCode);
+      setCodeCopied(true);
+      setTimeout(() => setCodeCopied(false), 2000);
+    } catch {
+      // clipboard API unavailable — the code is visible on screen
     }
   };
 
@@ -228,6 +247,47 @@ export function OnboardingGate() {
           </>
         )}
 
+        {/* ── Step: new-success ── */}
+        {activeStep === "new-success" && generatedCode && (
+          <>
+            <DialogHeader className="items-center text-center">
+              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-sage/15 text-sage">
+                <Sprout size={22} />
+              </div>
+              <DialogTitle className="font-serif text-xl">You're all set!</DialogTitle>
+              <DialogDescription className="text-sm text-muted-foreground">
+                This is your family code. Save it somewhere — you'll need it to access
+                Little Leaps on another device or share it with your partner.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="mt-4 space-y-3">
+              {/* Code display + copy button */}
+              <div className="flex items-center gap-2 rounded-2xl border border-border/60 bg-cream/40 px-4 py-3">
+                <span className="flex-1 font-mono text-sm font-semibold tracking-wide text-foreground">
+                  {generatedCode}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleCopyCode}
+                  aria-label="Copy family code"
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-muted-foreground
+                             hover:bg-secondary hover:text-foreground transition-colors"
+                >
+                  {codeCopied ? <Check size={14} className="text-sage" /> : <Copy size={14} />}
+                </button>
+              </div>
+
+              <Button
+                onClick={() => setGeneratedCode(null)}
+                className="h-11 w-full rounded-full bg-sage text-sage-foreground hover:bg-sage/90"
+              >
+                Got it, let's go
+              </Button>
+            </div>
+          </>
+        )}
+
         {/* ── Step: restore-code ── */}
         {activeStep === "restore-code" && (
           <>
@@ -247,7 +307,7 @@ export function OnboardingGate() {
                 value={codeValue}
                 onChange={(e) => setCodeValue(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") handleRestore(); }}
-                placeholder="e.g. bloom-4729"
+                placeholder="e.g. bloom-haven-4729"
                 className="h-11 rounded-2xl border-border/60 bg-cream/40"
               />
               <Button
