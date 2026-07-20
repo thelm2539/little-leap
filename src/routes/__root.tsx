@@ -10,7 +10,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
+import { reportError } from "../lib/error-reporting";
 import { OnboardingGate } from "../components/littleleaps/OnboardingGate";
 import { BirthDateGate } from "../components/littleleaps/BirthDateGate";
 
@@ -40,7 +40,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
+    reportError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
 
   return (
@@ -88,8 +88,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "theme-color", content: "#f7f3ea" },
       { name: "twitter:title", content: "Little Leaps" },
       { name: "twitter:description", content: "Evidence-based weekly development companion for your newborn." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6356e558-fe53-4a6e-b2cc-388362bb0185/id-preview-fe309424--b9b644cc-14cb-4773-af07-1b3a9948e687.lovable.app-1782459581503.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6356e558-fe53-4a6e-b2cc-388362bb0185/id-preview-fe309424--b9b644cc-14cb-4773-af07-1b3a9948e687.lovable.app-1782459581503.png" },
+      // og:image / twitter:image intentionally omitted. They previously pointed at
+      // an auto-generated screenshot of the Lovable preview deployment, hosted on
+      // Lovable's R2 bucket -- a URL we do not control and that leaks the old
+      // preview hostname to anyone who shares a link. Add a self-hosted image
+      // under public/ and reference it as "/og-image.png" when there is artwork.
     ],
     links: [
       { rel: "stylesheet", href: appCss },
