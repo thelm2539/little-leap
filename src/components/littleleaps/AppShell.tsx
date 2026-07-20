@@ -16,12 +16,9 @@
  *   - The fixed nav tracks the same max-width so it stays aligned with the content
  */
 
-import { useState } from "react";
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { Home, CalendarDays, Sparkles, MessageCircleQuestion, Sprout, Pencil } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
-import { FamilyKeyGate } from "./FamilyKeyGate";
-import { BirthDateGate } from "./BirthDateGate";
 import type { ReactNode } from "react";
 
 // ─── Tab definitions ──────────────────────────────────────────────────────────
@@ -39,10 +36,6 @@ const TABS: Tab[] = [
 export function AppShell({ children }: { children?: ReactNode }) {
   // Track the current URL so we can highlight the active tab
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-
-  // Controls whether the "edit birth date" dialog is open.
-  // The first-run gate opens automatically via BirthDateGate's own logic.
-  const [editingDOB, setEditingDOB] = useState(false);
 
   return (
     <div className="min-h-screen bg-app">
@@ -68,10 +61,12 @@ export function AppShell({ children }: { children?: ReactNode }) {
             onClick opens the BirthDateGate in edit mode.
             aria-label makes it accessible to screen readers.
           */}
+          {/* Pencil icon dispatches a custom event that BirthDateGate (in __root.tsx) listens for.
+              Using an event keeps AppShell and BirthDateGate decoupled — no shared state needed. */}
           <button
             type="button"
             aria-label="Edit baby's birth date"
-            onClick={() => setEditingDOB(true)}
+            onClick={() => window.dispatchEvent(new CustomEvent("littleleaps:editBirthDate"))}
             className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground
                        hover:bg-secondary hover:text-foreground transition-colors"
           >
@@ -114,11 +109,7 @@ export function AppShell({ children }: { children?: ReactNode }) {
         </nav>
       </div>
 
-      {/* ── Gates ── */}
-      {/* BirthDateGate: blocks on first run; opens as edit dialog when editingDOB=true */}
-      <BirthDateGate forceOpen={editingDOB} onClose={() => setEditingDOB(false)} />
-      {/* FamilyKeyGate: blocks until a family code is set (for shared activity log) */}
-      <FamilyKeyGate />
+      {/* OnboardingGate (in __root.tsx) handles first-run setup — no gate needed here */}
 
       {/* ── Toast notifications ── */}
       <Toaster position="top-center" />

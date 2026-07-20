@@ -45,13 +45,16 @@ export function getFamilyKey(): string | null {
   return window.localStorage.getItem(FAMILY_KEY_STORE);
 }
 
-async function persistFamilyMembership(key: string) {
+async function persistFamilyMembership(key: string, birthDate?: string) {
   const { data: userData } = await supabase.auth.getUser();
   const uid = userData.user?.id;
   if (!uid) throw new Error("Not signed in");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const row: Record<string, string> = { auth_uid: uid, family_key: key };
+  if (birthDate) row.birth_date = birthDate;
   const { error } = await supabase
     .from("family_members")
-    .upsert({ auth_uid: uid, family_key: key }, { onConflict: "auth_uid" });
+    .upsert(row as any, { onConflict: "auth_uid" });
   if (error) throw error;
 }
 
@@ -60,6 +63,93 @@ export async function setFamilyKey(key: string) {
   await persistFamilyMembership(key);
   window.localStorage.setItem(FAMILY_KEY_STORE, key);
   window.dispatchEvent(new CustomEvent("littleleaps:familyKey"));
+}
+
+// ── Onboarding helpers ──────────────────────────────────────────────────────
+
+/** Generate a short, readable random family code e.g. "bloom-4729" */
+export function generateFamilyCode(): string {
+  const words = ["bloom", "grove", "haven", "spark", "ember", "cloud", "daisy", "fern"];
+  const word = words[Math.floor(Math.random() * words.length)];
+  const num  = Math.floor(Math.random() * 9000) + 1000;
+  return `${word}-${num}`;
+}
+
+/**
+ * Create a new family profile.
+ * Auto-generates a family code, saves birth_date + code to Supabase and localStorage.
+ * Returns the generated code so it can be shown to the user.
+ */
+export async function createFamilyProfile(birthDate: string): Promise<string> {
+  await ensureAnonAuth();
+  const key = generateFamilyCode();
+  await persistFamilyMembership(key, birthDate);
+  window.localStorage.setItem(FAMILY_KEY_STORE, key);
+  window.localStorage.setItem(DOB_STORE, birthDate);
+  window.dispatchEvent(new CustomEvent("littleleaps:familyKey"));
+  window.dispatchEvent(new CustomEvent("littleleaps:birthDate"));
+  return key;
+}
+
+/**
+ * Join an existing family by code.
+ * Looks up birth_date from Supabase for that family.
+ * Returns { birthDate } — null if the code has no stored birth date.
+ */
+export async function joinFamilyProfile(familyKey: string): Promise<{ birthDate: string | null }> {
+  await ensureAnonAuth();
+  const key = familyKey.trim().toLowerCase().replace(/\s+/g, "-");
+
+  // Fetch birth_date from any member of this family who has it
+  const { data: existing } = await supabase
+    .from("family_members")
+    .select("birth_date")
+    .eq("family_key", key)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .not("birth_date" as any, "is", null)
+    .limit(1)
+    .maybeSingle();
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const birthDate = (existing as any)?.birth_date as string | null ?? null;
+
+  // Register this device as a member of that family
+  await persistFamilyMembership(key, birthDate ?? undefined);
+  window.localStorage.setItem(FAMILY_KEY_STORE, key);
+  window.dispatchEvent(new CustomEvent("littleleaps:familyKey"));
+
+  if (birthDate) {
+    window.localStorage.setItem(DOB_STORE, birthDate);
+    window.dispatchEvent(new CustomEvent("littleleaps:birthDate"));
+  }
+
+  return { birthDate };
+}
+
+/**
+ * Save an updated birth date to both localStorage and Supabase.
+ * Used when editing the birth date from the AppShell header.
+ */
+export async function saveBirthDateToProfile(birthDate: string): Promise<void> {
+  // Update localStorage immediately so the UI responds
+  window.localStorage.setItem(DOB_STORE, birthDate);
+  window.dispatchEvent(new CustomEvent("littleleaps:birthDate"));
+
+  // Sync to Supabase so other devices and restore flows get the updated date
+  try {
+    const { data: userData } = await supabase.auth.getUser();
+    const uid = userData.user?.id;
+    const key = getFamilyKey();
+    if (!uid || !key) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await supabase.from("family_members").upsert(
+      { auth_uid: uid, family_key: key, birth_date: birthDate } as any,
+      { onConflict: "auth_uid" }
+    );
+  } catch (e) {
+    console.error("[littleleaps] could not sync birth date to Supabase", e);
+    // Non-fatal — localStorage is already updated
+  }
 }
 
 export function useFamilyKey() {
@@ -73,14 +163,22 @@ export function useFamilyKey() {
         await ensureAnonAuth();
         let current = getFamilyKey();
         if (!current) {
-          // Recover from server in case localStorage was cleared on this device
+          // Recover from Supabase in case localStorage was cleared on this device.
+          // Also restore birth_date so the app is fully functional after recovery.
           const { data } = await supabase
             .from("family_members")
-            .select("family_key")
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .select("family_key, birth_date" as any)
             .maybeSingle();
-          if (data?.family_key) {
-            window.localStorage.setItem(FAMILY_KEY_STORE, data.family_key);
-            current = data.family_key;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const row = data as any;
+          if (row?.family_key) {
+            window.localStorage.setItem(FAMILY_KEY_STORE, row.family_key);
+            current = row.family_key;
+          }
+          if (row?.birth_date && !getBirthDate()) {
+            window.localStorage.setItem(DOB_STORE, row.birth_date);
+            window.dispatchEvent(new CustomEvent("littleleaps:birthDate"));
           }
         }
         if (cancelled) return;
