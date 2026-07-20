@@ -9,8 +9,8 @@ import {
 } from "@/components/ui/accordion";
 import { ACTIVITIES, WEEK_EXPECTATIONS, formatDuration } from "@/lib/littleleaps/data";
 import { DomainBadge, DurationPill, RatingButtons } from "@/components/littleleaps/ActivityBits";
-import { getAge } from "@/lib/littleleaps/age";
-import { dobFormatted } from "@/lib/littleleaps/age";
+import { getAge, dobFormatted } from "@/lib/littleleaps/age";
+import { useBirthDate } from "@/lib/littleleaps/storage";
 import { FlaskConical } from "lucide-react";
 
 export const Route = createFileRoute("/this-week")({
@@ -24,7 +24,10 @@ export const Route = createFileRoute("/this-week")({
 });
 
 function ThisWeek() {
-  const { weeks } = getAge();
+  const { birthDate } = useBirthDate();
+  if (!birthDate) return null;
+
+  const { weeks } = getAge(birthDate);
   const activities = ACTIVITIES.filter((a) => a.weekRecommended === weeks);
 
   return (
@@ -34,7 +37,7 @@ function ThisWeek() {
           <h1 className="font-serif text-2xl font-semibold tracking-tight text-foreground">
             Week {weeks} Report
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">Born {dobFormatted()}</p>
+          <p className="mt-1 text-sm text-muted-foreground">Born {dobFormatted(birthDate)}</p>
         </header>
 
         <section>

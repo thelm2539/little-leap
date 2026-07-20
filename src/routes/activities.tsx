@@ -7,7 +7,7 @@
  *
  * This file's only job:
  *   1. Register the route with TanStack Router
- *   2. Derive the birth date from the shared DOB constant
+ *   2. Read the birth date from localStorage via useBirthDate()
  *   3. Wrap the page in AppShell (nav + header) and render MilestoneTimeline
  *
  * All timeline logic lives in MilestoneTimeline.tsx.
@@ -16,7 +16,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { AppShell } from '@/components/littleleaps/AppShell';
 import { MilestoneTimeline } from '@/components/MilestoneTimeline';
-import { DOB } from '@/lib/littleleaps/data';
+import { useBirthDate } from '@/lib/littleleaps/storage';
 
 // ─── Route definition ─────────────────────────────────────────────────────────
 // The string '/activities' must match this file's name (activities.tsx).
@@ -26,17 +26,10 @@ export const Route = createFileRoute('/activities')({
 
 // ─── Page component ───────────────────────────────────────────────────────────
 function ActivitiesPage() {
-  // DOB is the Date object exported from data.ts — the single source of truth
-  // for the baby's birth date across the whole app (used in Home, This Week, and here).
-  //
-  // We build "YYYY-MM-DD" using local date parts rather than .toISOString()
-  // to avoid timezone issues: .toISOString() returns UTC, which can shift the
-  // date by one day for users east of UTC.
-  const birthDate = [
-    DOB.getFullYear(),
-    String(DOB.getMonth() + 1).padStart(2, '0'), // getMonth() is 0-indexed; +1 fixes that
-    String(DOB.getDate()).padStart(2, '0'),
-  ].join('-');
+  // birthDate comes from localStorage via the hook.
+  // BirthDateGate (mounted in AppShell) shows a setup dialog if it's null.
+  const { birthDate } = useBirthDate();
+  if (!birthDate) return null;
 
   return (
     <AppShell>

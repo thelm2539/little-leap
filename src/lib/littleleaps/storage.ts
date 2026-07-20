@@ -183,6 +183,56 @@ export function countThisWeek(log: ActivityLogRow[]) {
   return log.filter((e) => new Date(e.logged_at).getTime() >= start).length;
 }
 
+// ---------- Birth date (localStorage only) ----------
+// We store the birth date as an ISO string "YYYY-MM-DD" in localStorage so it
+// persists between sessions without requiring a login. When we migrate to Supabase
+// user accounts this will move server-side, but the hook interface stays the same.
+
+const DOB_STORE = "littleleaps.birthDate";
+
+/** Read the stored birth date, or null if the user hasn't entered one yet. */
+export function getBirthDate(): string | null {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem(DOB_STORE);
+}
+
+/**
+ * Save a new birth date and notify all useBirthDate() hooks to re-read.
+ * @param iso - date string in "YYYY-MM-DD" format (what <input type="date"> returns)
+ */
+export function setBirthDate(iso: string): void {
+  window.localStorage.setItem(DOB_STORE, iso);
+  // A custom event notifies every useBirthDate() hook in the same tab.
+  // The "storage" event covers other tabs on the same device.
+  window.dispatchEvent(new CustomEvent("littleleaps:birthDate"));
+}
+
+/**
+ * React hook that reads the birth date from localStorage and stays in sync.
+ * Returns null if no birth date has been entered yet — the BirthDateGate
+ * component handles showing the setup dialog in that case.
+ */
+export function useBirthDate() {
+  const [birthDate, setBirthDateState] = useState<string | null>(() => getBirthDate());
+
+  useEffect(() => {
+    const handler = () => setBirthDateState(getBirthDate());
+    window.addEventListener("littleleaps:birthDate", handler);
+    window.addEventListener("storage", handler); // Sync across browser tabs
+    return () => {
+      window.removeEventListener("littleleaps:birthDate", handler);
+      window.removeEventListener("storage", handler);
+    };
+  }, []);
+
+  return {
+    birthDate,
+    // setBirthDate is exposed so BirthDateGate can update without importing
+    // the raw setBirthDate function separately
+    setBirthDate: (iso: string) => setBirthDate(iso),
+  };
+}
+
 // ---------- Check-in (still localStorage) ----------
 
 export function getCheckin(): Record<string, unknown> {

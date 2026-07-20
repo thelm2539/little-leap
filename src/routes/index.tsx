@@ -4,7 +4,7 @@ import { AppShell } from "@/components/littleleaps/AppShell";
 import { Card } from "@/components/ui/card";
 import { ageLabel, getAge, greeting } from "@/lib/littleleaps/age";
 import { ACTIVITIES, WEEKLY_TIP, formatDuration } from "@/lib/littleleaps/data";
-import { useActivityLog, countThisWeek } from "@/lib/littleleaps/storage";
+import { useActivityLog, countThisWeek, useBirthDate } from "@/lib/littleleaps/storage";
 import { DomainBadge, DurationPill, RatingButtons } from "@/components/littleleaps/ActivityBits";
 import { Lightbulb } from "lucide-react";
 
@@ -25,8 +25,14 @@ function Home() {
     return () => clearInterval(id);
   }, []);
 
-  const { weeks } = getAge(now);
+  // All hooks must be called before any conditional return (React rules of hooks).
+  // birthDate is null until the user enters one — BirthDateGate handles that case.
+  const { birthDate } = useBirthDate();
   const { log } = useActivityLog();
+
+  if (!birthDate) return null;
+
+  const { weeks } = getAge(birthDate, now);
   const weekCount = countThisWeek(log);
 
   const todayActivity = ACTIVITIES.find((a) => a.id === "slow-face")!;
@@ -38,7 +44,7 @@ function Home() {
           <p className="text-2xl font-serif font-semibold tracking-tight text-foreground">
             {greeting(now)}
           </p>
-          <p className="mt-1 text-sm text-muted-foreground">Baby is {ageLabel(now)}</p>
+          <p className="mt-1 text-sm text-muted-foreground">Baby is {ageLabel(birthDate, now)}</p>
         </section>
 
         <section className="grid grid-cols-3 gap-2">
