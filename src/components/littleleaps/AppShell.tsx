@@ -28,7 +28,7 @@ type Tab = { to: "/" | "/this-week" | "/activities" | "/ask"; label: string; ico
 const TABS: Tab[] = [
   { to: "/",            label: "Home",      icon: Home,                   exact: true },
   { to: "/this-week",  label: "This Week",  icon: CalendarDays },
-  { to: "/activities", label: "Activities", icon: Sparkles },
+  { to: "/activities", label: "Milestones", icon: Sparkles },
   { to: "/ask",        label: "Ask",        icon: MessageCircleQuestion },
 ];
 

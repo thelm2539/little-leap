@@ -30,7 +30,7 @@ export interface Milestone {
   resources: MilestoneResource[];
   checkIn: string;
   accelerator: string;
-  lastestResearch: string;
+  latestResearch: string;
 }
 
 export const MILESTONES: Milestone[] = [
@@ -56,7 +56,7 @@ export const MILESTONES: Milestone[] = [
     ],
     checkIn: 'Did her gaze seem to find your face and stay there, even briefly?',
     accelerator: 'Sustained face-fixation > 8 seconds → cortical face processing likely emerging early; move to conversation-turn and slow-face activities sooner',
-    lastestResearch: 'Johnson MH (2011) — Face-sensitive cortical responses in early infancy',
+    latestResearch: 'Johnson MH (2011) — Face-sensitive cortical responses in early infancy',
 },
 
   {
@@ -78,7 +78,7 @@ export const MILESTONES: Milestone[] = [
     ],
     checkIn: 'How quickly did she calm when you started swaying — under 1 minute, 1–3 minutes, or longer?',
     accelerator: 'Calms in < 30 seconds consistently → vestibular regulation maturing ahead of curve',
-    lastestResearch: 'Deng W et al. (2025) — Vestibular contributions to infant postural control',
+    latestResearch: 'Deng W et al. (2025) — Vestibular contributions to infant postural control',
 },
 
   {
@@ -100,7 +100,7 @@ export const MILESTONES: Milestone[] = [
     ],
     checkIn: 'Did she seem to respond differently to this song vs. a new one — stilling, turning, or changing expression?',
     accelerator: 'Consistent orienting to voice at > 30 cm distance → auditory localisation ahead of curve',
-    lastestResearch: 'Kuhl PK et al. (2011) — Early language acquisition: neural substrates and theoretical models',
+    latestResearch: 'Kuhl PK et al. (2011) — Early language acquisition: neural substrates and theoretical models',
 },
 
   // ── PHASE 2 · Weeks 2–6 · First Alertness ────────────────────────────────
@@ -123,7 +123,7 @@ export const MILESTONES: Milestone[] = [
     ],
     checkIn: 'How long was this quiet alert window — under 10 minutes, 10–30 minutes, or over 30 minutes?',
     accelerator: 'Alert windows > 30 minutes before week 4 → contingency detection (M08) likely accessible earlier',
-    lastestResearch: 'Adolph KE & Franchak JM (2017) — The development of motor behavior',
+    latestResearch: 'Adolph KE & Franchak JM (2017) — The development of motor behavior',
 },
 
   {
@@ -145,7 +145,7 @@ export const MILESTONES: Milestone[] = [
     ],
     checkIn: 'When you placed your finger in her palm, did she grip it firmly and hold — or was it brief and loose?',
     accelerator: 'Strong sustained grip > 5 seconds before week 4 → corticospinal pathway maturation ahead of curve',
-    lastestResearch: 'Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling',
+    latestResearch: 'Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling',
 },
 
   {
@@ -167,7 +167,7 @@ export const MILESTONES: Milestone[] = [
     ],
     checkIn: 'Did she smile back at your face — a real smile, not just a grimace? Did she make eye contact while doing it?',
     accelerator: 'Social smile reliably before week 5 → unlock conversation-turn and facial-expression-copying activities earlier',
-    lastestResearch: 'Johnson MH (2011) — Face-sensitive cortical responses in early infancy',
+    latestResearch: 'Johnson MH (2011) — Face-sensitive cortical responses in early infancy',
 },
 
   // ── PHASE 3 · Weeks 6–12 · Visual & Motor Awakening ─────────────────────
@@ -191,7 +191,7 @@ export const MILESTONES: Milestone[] = [
     ],
     checkIn: 'Did her eyes follow the toy smoothly as you moved it — or did her gaze jump to catch up with it?',
     accelerator: 'Tracks past midline before week 7 → unlock novel-object-pause activity earlier',
-    lastestResearch: 'Johnson MH (2011) — Face-sensitive cortical responses in early infancy',
+    latestResearch: 'Johnson MH (2011) — Face-sensitive cortical responses in early infancy',
 },
 
   {
@@ -214,7 +214,7 @@ export const MILESTONES: Milestone[] = [
     ],
     checkIn: 'Did she seem to notice when the mobile moved? Did she kick more, then look to see the effect?',
     accelerator: 'Clear cause-effect excitement before week 10 → unlock novel-object-pause; advance cognitive timeline by 1 week',
-    lastestResearch: 'Hill WL, Borovsky D & Rovee-Collier C (1988) — Continuities in infant memory development',
+    latestResearch: 'Hill WL, Borovsky D & Rovee-Collier C (1988) — Continuities in infant memory development',
   },
 
   {
@@ -237,7 +237,7 @@ export const MILESTONES: Milestone[] = [
     ],
     checkIn: 'Did she lift her head at all? If yes — briefly (under 3 seconds), for a few seconds, or held it up? Was she resting on her forearms or pushing up on her hands?',
     accelerator: 'Sustained 3-second hold before week 7, or pushing up on extended arms before week 12 → motor cascade accelerating; suggest varied-carrying progression sooner',
-    lastestResearch: 'Adolph KE & Hoch JE (2020) — Motor skill learning: to generalize or not to generalize',
+    latestResearch: 'Adolph KE & Hoch JE (2020) — Motor skill learning: to generalize or not to generalize',
   },
 
   // ── PHASE 4 · Weeks 12–20 · Reaching & Language Emergence ───────────────
@@ -262,7 +262,7 @@ export const MILESTONES: Milestone[] = [
     ],
     checkIn: 'Did she reach toward or bat at the fabric, or were her movements near the object?',
     accelerator: 'Intentional contact grasp before week 12 → visuomotor integration accelerated; advance contingency-mobile complexity',
-    lastestResearch: 'Adolph KE & Franchak JM (2017) — The development of motor behavior',
+    latestResearch: 'Adolph KE & Franchak JM (2017) — The development of motor behavior',
   },
 
   {
@@ -284,7 +284,7 @@ export const MILESTONES: Milestone[] = [
     ],
     checkIn: 'Did she make any sounds back at you — even a small "ooh" or sigh — during the pauses? Did she look at your face while doing it?',
     accelerator: 'Clear vocal turn-taking (waits, then vocalises) before week 10 → language circuit accelerating; advance voice-mapping and name-repetition',
-    lastestResearch: 'Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness',
+    latestResearch: 'Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness',
   },
 
   {
@@ -306,7 +306,7 @@ export const MILESTONES: Milestone[] = [
     ],
     checkIn: 'Did she roll at all during or after tummy time — even a partial roll to her side?',
     accelerator: 'Rolling front-to-back before week 20 → trunk rotation ahead of curve; pulling-to-sit and sitting likely to follow sooner',
-    lastestResearch: 'Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling',
+    latestResearch: 'Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling',
   },
 
   // ── PHASE 5 · Weeks 20–36 · Sitting, Grasping, Object Permanence ─────────
@@ -329,7 +329,7 @@ export const MILESTONES: Milestone[] = [
     ],
     checkIn: 'Did she pick up the object with her whole hand — or trying to use just her finger and thumb?',
     accelerator: 'Index finger isolation (poking behaviour) before week 30 → fine motor ahead of curve; introduce smaller objects and containers',
-    lastestResearch: 'Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling',
+    latestResearch: 'Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling',
   },
 
   {
@@ -352,7 +352,7 @@ export const MILESTONES: Milestone[] = [
     ],
     checkIn: 'During supported sitting, how long before she toppled — under 5 seconds, 5–15 seconds, or held for longer?',
     accelerator: 'Stable sitting with minimal support before week 20 → accelerate object manipulation activities',
-    lastestResearch: 'Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling',
+    latestResearch: 'Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling',
   },
 
   {
@@ -375,7 +375,7 @@ export const MILESTONES: Milestone[] = [
     ],
     checkIn: 'Did she vocalise back, or watch your mouth intently while you were reading?',
     accelerator: 'Canonical babbling before week 24 → language circuit ahead of curve; increase variety and complexity of language exposure',
-    lastestResearch: 'Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness',
+    latestResearch: 'Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness',
   },
 
   {
@@ -397,7 +397,7 @@ export const MILESTONES: Milestone[] = [
     ],
     checkIn: 'When you covered the toy briefly, did she look toward where it had been — or immediately look away?',
     accelerator: 'Consistent search for hidden objects before week 24 → object permanence ahead of curve',
-    lastestResearch: 'Rovee-Collier C et al. (1985) — Reactivation of infant memory',
+    latestResearch: 'Rovee-Collier C et al. (1985) — Reactivation of infant memory',
 },
 
   {
@@ -419,7 +419,7 @@ export const MILESTONES: Milestone[] = [
     ],
     checkIn: 'Before touching something new or uncertain today, did she look at your face first — as if checking how you felt about it?',
     accelerator: 'Clear social referencing (look-back before novel approach) before week 36 → triadic social cognition developing rapidly; proto-declarative pointing likely to emerge sooner',
-    lastestResearch: 'Reddy V et al. (1997) — Communication in infancy: mutual regulation of affect and attention',
+    latestResearch: 'Reddy V et al. (1997) — Communication in infancy: mutual regulation of affect and attention',
   },
 
   // ── PHASE 6 · Weeks 36–52 · Standing, First Words, Intentionality ─────────
@@ -443,7 +443,7 @@ export const MILESTONES: Milestone[] = [
     ],
     checkIn: 'Did she try to pull herself upright on anything today — your hands, furniture, you?',
     accelerator: 'Pulling to stand before week 32 → locomotion cascade (cruising, first steps) ahead of curve',
-    lastestResearch: 'Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling',
+    latestResearch: 'Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling',
   },
 
   {
@@ -465,7 +465,7 @@ export const MILESTONES: Milestone[] = [
     ],
     checkIn: 'Did she use any consistent sound for a specific thing today? Or point at something and look back at you to check your reaction?',
     accelerator: 'Consistent name-sound pairing before week 40 → first words ahead of curve; increase naming and referential activities',
-    lastestResearch: 'Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness',
+    latestResearch: 'Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness',
   },
 ];
 
@@ -504,3 +504,69 @@ export const DOMAIN_CSS_VAR: Record<MilestoneDomain, string> = {
   'cognitive':              'var(--domain-cognitive)',
   'social':                 'var(--domain-social)',
 };
+
+// ── Activity helpers ──────────────────────────────────────────────────────────
+
+/**
+ * All activity IDs referenced by milestones that are active during `week`.
+ * "Active" = weekStart <= week <= weekEnd.
+ * Returned in milestone order, deduplicated.
+ * Used by: This Week tab (activity list), Home page (today's activities).
+ */
+export function getActivitiesForWeek(week: number): string[] {
+  const seen = new Set<string>();
+  const ids: string[] = [];
+  for (const m of MILESTONES) {
+    if (m.weekStart <= week && week <= m.weekEnd) {
+      for (const id of m.activityIds) {
+        if (!seen.has(id)) { seen.add(id); ids.push(id); }
+      }
+    }
+  }
+  return ids;
+}
+
+/**
+ * Count of activities being introduced for the first time this week.
+ * "New" = appears in a milestone starting at `week` AND was not already
+ * active from a milestone that started before `week`.
+ * Returns 0 for weeks where no new milestone window opens — accurate and expected.
+ */
+export function getNewActivityCount(week: number): number {
+  // Activities already active from prior milestone windows
+  const priorIds = new Set<string>();
+  for (const m of MILESTONES) {
+    if (m.weekStart < week && m.weekEnd >= week) {
+      for (const id of m.activityIds) priorIds.add(id);
+    }
+  }
+  // Activities in milestones that START this week, minus those already active
+  const newIds = new Set<string>();
+  for (const m of MILESTONES) {
+    if (m.weekStart === week) {
+      for (const id of m.activityIds) {
+        if (!priorIds.has(id)) newIds.add(id);
+      }
+    }
+  }
+  return newIds.size;
+}
+
+/**
+ * A one-line parent-facing tip for the current week.
+ * Picks the milestone whose peak is closest to `week` and uses its first
+ * observable sign, so the tip tracks the baby's actual developmental moment.
+ */
+export function getWeekTip(week: number): string {
+  const active = MILESTONES.filter(m => m.weekStart <= week && week <= m.weekEnd);
+  if (active.length === 0) {
+    return 'Keep following your baby\'s cues — every week brings something new.';
+  }
+  // Prefer the milestone peaking closest to now
+  const relevant = [...active].sort(
+    (a, b) => Math.abs(a.weekPeak - week) - Math.abs(b.weekPeak - week)
+  )[0];
+  const sign = relevant.parentCanSee[0];
+  if (!sign) return 'Keep following your baby\'s cues this week.';
+  return `This week: ${sign.charAt(0).toLowerCase()}${sign.slice(1)}`;
+}

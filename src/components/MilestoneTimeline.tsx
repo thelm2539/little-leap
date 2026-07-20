@@ -19,6 +19,7 @@
 //          its dependencies change. Used here for filtering and grouping milestones.
 // useState: tracks which domain filter pill is selected.
 import { useMemo, useState } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 
 import {
   MILESTONES,           // The full array of milestone objects from milestones.ts
@@ -60,12 +61,18 @@ interface MilestoneTimelineProps {
 export function MilestoneTimeline({ birthDate }: MilestoneTimelineProps) {
 
   // Track which domain filter pill is currently selected.
-  // Starts as 'all' — show every milestone on first load.
   const [activeFilter, setActiveFilter] = useState<MilestoneDomain | 'all'>('all');
 
   // Calculate the baby's current age in whole weeks from their birth date.
-  // This drives the "now" marker placement and the opacity fade logic below.
   const currentWeek = getBabyAgeWeeks(birthDate);
+
+  // Navigate to the This Week tab and signal which activity to focus.
+  // sessionStorage is used to pass the ID across the navigation boundary.
+  const navigate = useNavigate();
+  const handleActivityClick = (activityId: string) => {
+    sessionStorage.setItem('littleleaps.focusActivity', activityId);
+    void navigate({ to: '/this-week' });
+  };
 
 
   // ── Filter milestones by selected domain ──────────────────────────────────
@@ -235,15 +242,13 @@ export function MilestoneTimeline({ birthDate }: MilestoneTimelineProps) {
               <div className="flex-1 pb-5 pt-2 pl-3 space-y-2">
                 {milestones.map(m => (
                   <MilestoneCard
-                    key={m.id}    // React needs a unique key for each item in a list
+                    key={m.id}
                     milestone={m}
-                    // Auto-expand cards only in the first week group that counts as "current".
-                    // findIndex finds the position of that group; we compare to groupIndex
-                    // so only that group gets defaultExpanded=true.
                     defaultExpanded={
                       isCurrent &&
                       groupIndex === weekGroups.findIndex(([w]) => Math.abs(w - currentWeek) <= 1)
                     }
+                    onActivityClick={handleActivityClick}
                   />
                 ))}
               </div>
