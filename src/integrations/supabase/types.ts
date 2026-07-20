@@ -19,7 +19,7 @@ export type Database = {
           activity_id: string
           activity_name: string
           domain: string
-          family_key: string
+          family_id: string
           id: string
           logged_at: string
           rating: string
@@ -28,41 +28,35 @@ export type Database = {
           activity_id: string
           activity_name: string
           domain: string
-          family_key: string
+          family_id: string
           id?: string
           logged_at?: string
           rating: string
         }
-        Update: {
-          activity_id?: string
-          activity_name?: string
-          domain?: string
-          family_key?: string
-          id?: string
-          logged_at?: string
-          rating?: string
+        // No UPDATE grant exists on this table -- the log is append-only.
+        Update: never
+        Relationships: []
+      }
+      families: {
+        Row: {
+          birth_date: string | null
+          created_at: string
+          id: string
         }
+        // families rows are created by the create_family() RPC only.
+        Insert: never
+        Update: never
         Relationships: []
       }
       family_members: {
         Row: {
-          auth_uid: string
-          family_key: string
-          id: string
+          family_id: string
           joined_at: string
+          user_id: string
         }
-        Insert: {
-          auth_uid: string
-          family_key: string
-          id?: string
-          joined_at?: string
-        }
-        Update: {
-          auth_uid?: string
-          family_key?: string
-          id?: string
-          joined_at?: string
-        }
+        // Membership is granted by redeem_family_invite() / create_family() only.
+        Insert: never
+        Update: never
         Relationships: []
       }
     }
@@ -70,7 +64,30 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_family: {
+        Args: { p_birth_date: string }
+        Returns: string
+      }
+      create_family_invite: {
+        Args: { p_family_id: string; p_ttl?: string; p_max_uses?: number }
+        Returns: string
+      }
+      delete_my_account: {
+        Args: Record<string, never>
+        Returns: undefined
+      }
+      redeem_family_invite: {
+        Args: { p_code: string }
+        Returns: string
+      }
+      revoke_family_invite: {
+        Args: { p_family_id: string }
+        Returns: undefined
+      }
+      set_family_birth_date: {
+        Args: { p_family_id: string; p_birth_date: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

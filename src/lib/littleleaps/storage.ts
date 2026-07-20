@@ -1,3 +1,29 @@
+/**
+ * storage.ts
+ *
+ * All client-side data access for Little Leaps.
+ *
+ * SECURITY MODEL
+ * --------------
+ * Every query here runs from the browser straight against PostgREST, so RLS is
+ * the entire security boundary. Two rules follow from that, and both matter:
+ *
+ *   1. This file NEVER writes to `family_members` or `families` directly.
+ *      Those tables have no INSERT/UPDATE grant. Membership is granted only by
+ *      the `create_family` and `redeem_family_invite` RPCs, which validate that
+ *      the caller is actually entitled to join. (The old code upserted
+ *      `family_members` from the client, which meant anyone could join any
+ *      family by guessing a 21-bit code. See the migration for the full story.)
+ *
+ *   2. A family is identified by an opaque uuid, never by anything a user types.
+ *      Invite codes are ~65-bit, hashed at rest, expiring and use-capped. They
+ *      grant membership once and are then irrelevant -- they are not a password.
+ *
+ * localStorage holds only caches (family id, birth date) for instant first
+ * paint. Nothing here trusts it for authorisation; the server re-derives
+ * membership from the JWT on every request.
+ */
+
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ACTIVITIES, DOMAIN_LABEL } from "./data";
@@ -6,7 +32,7 @@ export type Rating = "engaged" | "neutral" | "fussy";
 
 export interface ActivityLogRow {
   id: string;
-  family_key: string;
+  family_id: string;
   activity_id: string;
   activity_name: string;
   domain: string;
@@ -14,13 +40,29 @@ export interface ActivityLogRow {
   logged_at: string;
 }
 
-const FAMILY_KEY_STORE = "littleleaps.familyKey";
+const FAMILY_ID_STORE = "littleleaps.familyId";
+const DOB_STORE = "littleleaps.birthDate";
 const CHECKIN_KEY = "littleleaps.checkin";
+
+// Legacy keys from the pre-uuid model. Cleared on first run so a stale
+// family code can never be mistaken for a session.
+const LEGACY_KEYS = ["littleleaps.familyKey"];
+
+const FAMILY_EVENT = "littleleaps:family";
+const BIRTHDATE_EVENT = "littleleaps:birthDate";
+const LOG_EVENT = "littleleaps:log";
 
 // ---------- Anonymous auth ----------
 
 let authReadyPromise: Promise<void> | null = null;
 
+/**
+ * Ensure we have a Supabase session. Anonymous sign-in keeps onboarding
+ * frictionless, which is the right call for this audience -- but it means the
+ * account is only as durable as this browser's storage. Enable captcha on
+ * anonymous sign-in in the Supabase dashboard before going public, or anyone
+ * can mint unlimited auth.users rows.
+ */
 export function ensureAnonAuth(): Promise<void> {
   if (typeof window === "undefined") return Promise.resolve();
   if (!authReadyPromise) {
@@ -38,231 +80,261 @@ export function ensureAnonAuth(): Promise<void> {
   return authReadyPromise;
 }
 
-// ---------- Family key (localStorage + family_members) ----------
+// ---------- Family id (cached locally, authoritative on the server) ----------
 
-export function getFamilyKey(): string | null {
+export function getFamilyId(): string | null {
   if (typeof window === "undefined") return null;
-  return window.localStorage.getItem(FAMILY_KEY_STORE);
+  return window.localStorage.getItem(FAMILY_ID_STORE);
 }
 
-async function persistFamilyMembership(key: string, birthDate?: string) {
-  const { data: userData } = await supabase.auth.getUser();
-  const uid = userData.user?.id;
-  if (!uid) throw new Error("Not signed in");
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const row: Record<string, string> = { auth_uid: uid, family_key: key };
-  if (birthDate) row.birth_date = birthDate;
-  const { error } = await supabase
+function cacheFamilyId(id: string) {
+  window.localStorage.setItem(FAMILY_ID_STORE, id);
+  window.dispatchEvent(new CustomEvent(FAMILY_EVENT));
+}
+
+function clearLocalSession() {
+  window.localStorage.removeItem(FAMILY_ID_STORE);
+  window.localStorage.removeItem(DOB_STORE);
+  window.localStorage.removeItem(CHECKIN_KEY);
+  window.dispatchEvent(new CustomEvent(FAMILY_EVENT));
+  window.dispatchEvent(new CustomEvent(BIRTHDATE_EVENT));
+}
+
+/** Resolve this user's family from the server. RLS scopes it to their own rows. */
+async function fetchMyFamilyId(): Promise<string | null> {
+  const { data, error } = await supabase
     .from("family_members")
-    .upsert(row as any, { onConflict: "auth_uid" });
+    .select("family_id, joined_at")
+    .order("joined_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
   if (error) throw error;
+  return data?.family_id ?? null;
 }
 
-export async function setFamilyKey(key: string) {
-  await ensureAnonAuth();
-  await persistFamilyMembership(key);
-  window.localStorage.setItem(FAMILY_KEY_STORE, key);
-  window.dispatchEvent(new CustomEvent("littleleaps:familyKey"));
+async function fetchBirthDate(familyId: string): Promise<string | null> {
+  const { data, error } = await supabase
+    .from("families")
+    .select("birth_date")
+    .eq("id", familyId)
+    .maybeSingle();
+  if (error) throw error;
+  return data?.birth_date ?? null;
 }
 
-// ── Onboarding helpers ──────────────────────────────────────────────────────
+// ---------- Onboarding ----------
 
 /**
- * Generate a unique family code.
- * Format: word-word-NNNN  e.g. "bloom-haven-4729"
- * Two independent word slots × 4-digit number = ~576,000 combinations.
- * The code is entirely random — not derived from the birth date.
- */
-export function generateFamilyCode(): string {
-  const words = [
-    "bloom", "grove", "haven", "spark", "ember", "cloud", "daisy", "fern",
-    "river", "stone", "maple", "cedar", "lark",  "robin", "wren",  "moss",
-  ];
-  const pick = () => words[Math.floor(Math.random() * words.length)];
-  const num  = Math.floor(Math.random() * 9000) + 1000;
-  return `${pick()}-${pick()}-${num}`;
-}
-
-/**
- * Create a new family profile.
- * Auto-generates a family code and saves it to Supabase.
- * Birth date is saved to localStorage immediately, then synced to Supabase
- * separately — so the profile creation never fails due to a missing schema column.
- * Returns the generated code so it can be shown to the user.
+ * Create a new family and enrol this device as its first member.
+ * Returns an invite code for sharing with a partner or a second device.
  */
 export async function createFamilyProfile(birthDate: string): Promise<string> {
   await ensureAnonAuth();
-  const key = generateFamilyCode();
 
-  // Step 1: create the family membership row (auth_uid + family_key only).
-  // This uses the existing proven path — no new columns, so it can't fail
-  // due to a missing birth_date column.
-  await persistFamilyMembership(key);
+  const { data: familyId, error } = await supabase.rpc("create_family", {
+    p_birth_date: birthDate,
+  });
+  if (error) throw error;
+  if (!familyId) throw new Error("Could not create your family profile.");
 
-  // Step 2: save family key to localStorage and notify hooks.
-  window.localStorage.setItem(FAMILY_KEY_STORE, key);
-  window.dispatchEvent(new CustomEvent("littleleaps:familyKey"));
+  cacheFamilyId(familyId);
+  window.localStorage.setItem(DOB_STORE, birthDate);
+  window.dispatchEvent(new CustomEvent(BIRTHDATE_EVENT));
 
-  // Step 3: save birth date — localStorage first (instant), Supabase non-fatal.
-  // saveBirthDateToProfile has its own try/catch around the Supabase call,
-  // so even if the birth_date column doesn't exist yet, this won't throw.
-  await saveBirthDateToProfile(birthDate);
-
-  return key;
+  return createInviteCode(familyId);
 }
 
 /**
- * Join an existing family by code.
- * Validates the code exists first, then registers this device as a member
- * and fetches birth_date from Supabase.
- * Returns { birthDate } — null if not found (caller will ask the user to enter it).
- * Throws if the code doesn't exist, preventing phantom family rows.
+ * Mint a shareable invite code. The plaintext is returned once and never
+ * stored -- only its SHA-256 hash lives in the database, so a leak of that
+ * table yields nothing usable.
  */
-export async function joinFamilyProfile(familyKey: string): Promise<{ birthDate: string | null }> {
+export async function createInviteCode(familyId?: string): Promise<string> {
+  const id = familyId ?? getFamilyId();
+  if (!id) throw new Error("No family profile yet.");
+  const { data, error } = await supabase.rpc("create_family_invite", {
+    p_family_id: id,
+  });
+  if (error) throw error;
+  if (!data) throw new Error("Could not create an invite code.");
+  return data;
+}
+
+/** Immediately invalidate every outstanding invite for this family. */
+export async function revokeInviteCodes(): Promise<void> {
+  const id = getFamilyId();
+  if (!id) return;
+  const { error } = await supabase.rpc("revoke_family_invite", { p_family_id: id });
+  if (error) throw error;
+}
+
+/**
+ * Join a family by redeeming an invite code.
+ *
+ * The RPC returns a deliberately vague error for invalid/expired/exhausted
+ * codes so it cannot be used to probe which codes exist.
+ */
+export async function joinFamilyProfile(code: string): Promise<{ birthDate: string | null }> {
   await ensureAnonAuth();
-  const key = familyKey.trim().toLowerCase().replace(/\s+/g, "-");
 
-  // Step 1: validate the code exists before creating any row.
-  // RLS policy allows reading family_members by family_key so another device's
-  // row is visible — this is required for birth_date restoration to work at all.
-  const { data: check, error: checkErr } = await supabase
-    .from("family_members")
-    .select("auth_uid")
-    .eq("family_key", key)
-    .limit(1)
-    .maybeSingle();
-  if (checkErr) throw checkErr;
-  if (!check) throw new Error("Family code not found. Check the code and try again.");
+  const { data: familyId, error } = await supabase.rpc("redeem_family_invite", {
+    p_code: code,
+  });
+  if (error) throw error;
+  if (!familyId) throw new Error("That code is not valid. Check it and try again.");
 
-  // Step 2: register this device as a member (auth_uid + family_key only)
-  await persistFamilyMembership(key);
-  window.localStorage.setItem(FAMILY_KEY_STORE, key);
-  window.dispatchEvent(new CustomEvent("littleleaps:familyKey"));
+  cacheFamilyId(familyId);
 
-  // Step 3: try to fetch birth_date from any member who has it stored.
-  // Wrapped in try/catch — if the column doesn't exist yet this fails silently
-  // and the caller (OnboardingGate) will ask the user to enter it manually.
-  let birthDate: string | null = null;
-  try {
-    const { data: existing } = await supabase
-      .from("family_members")
-      .select("birth_date")
-      .eq("family_key", key)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .not("birth_date" as any, "is", null)
-      .limit(1)
-      .maybeSingle();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    birthDate = (existing as any)?.birth_date as string | null ?? null;
-  } catch (e) {
-    console.warn("[littleleaps] birth_date lookup failed (column may not exist yet)", e);
-  }
-
+  const birthDate = await fetchBirthDate(familyId);
   if (birthDate) {
     window.localStorage.setItem(DOB_STORE, birthDate);
-    window.dispatchEvent(new CustomEvent("littleleaps:birthDate"));
+    window.dispatchEvent(new CustomEvent(BIRTHDATE_EVENT));
   }
-
   return { birthDate };
 }
 
 /**
- * Save an updated birth date to both localStorage and Supabase.
- * Used when editing the birth date from the AppShell header.
+ * Save the birth date. The RPC re-validates the range server-side -- the
+ * `max=` on the date input is a convenience, not a control.
  */
 export async function saveBirthDateToProfile(birthDate: string): Promise<void> {
-  // Update localStorage immediately so the UI responds
-  window.localStorage.setItem(DOB_STORE, birthDate);
-  window.dispatchEvent(new CustomEvent("littleleaps:birthDate"));
+  const familyId = getFamilyId();
+  if (!familyId) throw new Error("No family profile yet.");
 
-  // Sync to Supabase so other devices and restore flows get the updated date
-  try {
-    const { data: userData } = await supabase.auth.getUser();
-    const uid = userData.user?.id;
-    const key = getFamilyKey();
-    if (!uid || !key) return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await supabase.from("family_members").upsert(
-      { auth_uid: uid, family_key: key, birth_date: birthDate } as any,
-      { onConflict: "auth_uid" }
-    );
-  } catch (e) {
-    console.error("[littleleaps] could not sync birth date to Supabase", e);
-    // Non-fatal — localStorage is already updated
-  }
+  const { error } = await supabase.rpc("set_family_birth_date", {
+    p_family_id: familyId,
+    p_birth_date: birthDate,
+  });
+  if (error) throw error;
+
+  window.localStorage.setItem(DOB_STORE, birthDate);
+  window.dispatchEvent(new CustomEvent(BIRTHDATE_EVENT));
 }
 
-export function useFamilyKey() {
-  const [key, setKey] = useState<string | null>(null);
+/**
+ * Erase this account: drops the caller's membership and hard-deletes the family
+ * (and its logs) if nobody else is left in it. Required for GDPR erasure --
+ * this app stores a child's date of birth and developmental observations.
+ */
+export async function deleteMyAccount(): Promise<void> {
+  const { error } = await supabase.rpc("delete_my_account");
+  if (error) throw error;
+  clearLocalSession();
+  await supabase.auth.signOut();
+}
+
+/**
+ * Export everything held about this family, for GDPR portability.
+ */
+export async function exportMyData(): Promise<{
+  birthDate: string | null;
+  activities: ActivityLogRow[];
+}> {
+  const familyId = getFamilyId();
+  if (!familyId) return { birthDate: null, activities: [] };
+  const [birthDate, logs] = await Promise.all([
+    fetchBirthDate(familyId),
+    supabase
+      .from("activity_logs")
+      .select("*")
+      .order("logged_at", { ascending: false })
+      .then(({ data, error }) => {
+        if (error) throw error;
+        return (data ?? []) as ActivityLogRow[];
+      }),
+  ]);
+  return { birthDate, activities: logs };
+}
+
+// ---------- Family hook ----------
+
+export function useFamily() {
+  const [familyId, setFamilyId] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
+
     (async () => {
       try {
+        // A stale pre-migration family code must never look like a session.
+        LEGACY_KEYS.forEach((k) => window.localStorage.removeItem(k));
+
         await ensureAnonAuth();
-        let current = getFamilyKey();
-        if (!current) {
-          // Recover from Supabase in case localStorage was cleared on this device.
-          // Also restore birth_date so the app is fully functional after recovery.
-          const { data } = await supabase
-            .from("family_members")
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            .select("family_key, birth_date" as any)
-            .maybeSingle();
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const row = data as any;
-          if (row?.family_key) {
-            window.localStorage.setItem(FAMILY_KEY_STORE, row.family_key);
-            current = row.family_key;
-          }
-          if (row?.birth_date && !getBirthDate()) {
-            window.localStorage.setItem(DOB_STORE, row.birth_date);
-            window.dispatchEvent(new CustomEvent("littleleaps:birthDate"));
-          }
-        }
+
+        // The server is authoritative. The cached id is only a first-paint hint,
+        // so if the two disagree the server wins.
+        const serverId = await fetchMyFamilyId();
         if (cancelled) return;
-        setKey(current);
+
+        if (serverId) {
+          if (serverId !== getFamilyId()) cacheFamilyId(serverId);
+
+          // Backfill: birth_date never existed as a column before this release,
+          // so migrated families have NULL. Push up the local copy once.
+          const remote = await fetchBirthDate(serverId);
+          const local = getBirthDate();
+          if (!remote && local) {
+            try {
+              await saveBirthDateToProfile(local);
+            } catch (e) {
+              console.warn("[littleleaps] birth date backfill failed", e);
+            }
+          } else if (remote && remote !== local) {
+            window.localStorage.setItem(DOB_STORE, remote);
+            window.dispatchEvent(new CustomEvent(BIRTHDATE_EVENT));
+          }
+        } else if (getFamilyId()) {
+          // Cached id but no membership on the server -- the account was deleted
+          // or the cache is from another profile. Drop it and re-onboard.
+          clearLocalSession();
+        }
+
+        if (!cancelled) setFamilyId(serverId);
       } catch (e) {
         console.error("[littleleaps] auth/family init failed", e);
+        if (!cancelled) setFamilyId(getFamilyId());
       } finally {
         if (!cancelled) setReady(true);
       }
     })();
 
-    const handler = () => setKey(getFamilyKey());
-    window.addEventListener("littleleaps:familyKey", handler);
+    const handler = () => setFamilyId(getFamilyId());
+    window.addEventListener(FAMILY_EVENT, handler);
     window.addEventListener("storage", handler);
     return () => {
       cancelled = true;
-      window.removeEventListener("littleleaps:familyKey", handler);
+      window.removeEventListener(FAMILY_EVENT, handler);
       window.removeEventListener("storage", handler);
     };
   }, []);
 
-  return { familyKey: key, setFamilyKey, ready };
+  return { familyId, ready };
 }
 
-// ---------- Activity log (Supabase) ----------
+// ---------- Activity log ----------
 
 export function useActivityLog() {
-  const { familyKey, ready } = useFamilyKey();
+  const { familyId, ready } = useFamily();
   const [log, setLog] = useState<ActivityLogRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchLog = useCallback(async () => {
-    if (!familyKey) {
+    if (!familyId) {
       setLog([]);
       setLoading(false);
       return;
     }
     setLoading(true);
     setError(null);
+    // No .eq("family_id", ...) needed for correctness -- RLS scopes this to the
+    // caller's families. It stays as an index hint and an explicit statement of
+    // intent, but the security does not depend on it.
     const { data, error: err } = await supabase
       .from("activity_logs")
       .select("*")
-      .eq("family_key", familyKey)
+      .eq("family_id", familyId)
       .order("logged_at", { ascending: false });
     if (err) {
       setError(err.message);
@@ -271,34 +343,40 @@ export function useActivityLog() {
       setLog((data ?? []) as ActivityLogRow[]);
     }
     setLoading(false);
-  }, [familyKey]);
+  }, [familyId]);
 
   useEffect(() => {
     if (!ready) return;
     void fetchLog();
     const handler = () => void fetchLog();
-    window.addEventListener("littleleaps:log", handler);
-    return () => window.removeEventListener("littleleaps:log", handler);
+    window.addEventListener(LOG_EVENT, handler);
+    return () => window.removeEventListener(LOG_EVENT, handler);
   }, [ready, fetchLog]);
 
   const logRating = useCallback(
     async (activityId: string, rating: Rating) => {
-      if (!familyKey) throw new Error("No family code set");
+      if (!familyId) throw new Error("No family profile yet");
       const activity = ACTIVITIES.find((a) => a.id === activityId);
       const { error: err } = await supabase.from("activity_logs").insert({
-        family_key: familyKey,
+        family_id: familyId,
         activity_id: activityId,
         activity_name: activity?.title ?? activityId,
         domain: activity ? DOMAIN_LABEL[activity.domain] : "Unknown",
         rating,
       });
       if (err) throw err;
-      window.dispatchEvent(new CustomEvent("littleleaps:log"));
+      window.dispatchEvent(new CustomEvent(LOG_EVENT));
     },
-    [familyKey],
+    [familyId],
   );
 
-  return { log, loading, error, logRating, refetch: fetchLog };
+  const deleteEntry = useCallback(async (id: string) => {
+    const { error: err } = await supabase.from("activity_logs").delete().eq("id", id);
+    if (err) throw err;
+    window.dispatchEvent(new CustomEvent(LOG_EVENT));
+  }, []);
+
+  return { log, loading, error, logRating, deleteEntry, refetch: fetchLog };
 }
 
 export function startOfWeek(d = new Date()) {
@@ -321,57 +399,36 @@ export function countThisWeek(log: ActivityLogRow[]) {
   return log.filter((e) => new Date(e.logged_at).getTime() >= start).length;
 }
 
-// ---------- Birth date (localStorage only) ----------
-// We store the birth date as an ISO string "YYYY-MM-DD" in localStorage so it
-// persists between sessions without requiring a login. When we migrate to Supabase
-// user accounts this will move server-side, but the hook interface stays the same.
+// ---------- Birth date ----------
+// Authoritative copy lives in families.birth_date. localStorage is a cache so
+// the UI can paint before the round trip completes; useFamily() reconciles them.
 
-const DOB_STORE = "littleleaps.birthDate";
-
-/** Read the stored birth date, or null if the user hasn't entered one yet. */
 export function getBirthDate(): string | null {
   if (typeof window === "undefined") return null;
   return window.localStorage.getItem(DOB_STORE);
 }
 
-/**
- * Save a new birth date and notify all useBirthDate() hooks to re-read.
- * @param iso - date string in "YYYY-MM-DD" format (what <input type="date"> returns)
- */
-export function setBirthDate(iso: string): void {
-  window.localStorage.setItem(DOB_STORE, iso);
-  // A custom event notifies every useBirthDate() hook in the same tab.
-  // The "storage" event covers other tabs on the same device.
-  window.dispatchEvent(new CustomEvent("littleleaps:birthDate"));
-}
-
-/**
- * React hook that reads the birth date from localStorage and stays in sync.
- * Returns null if no birth date has been entered yet — the BirthDateGate
- * component handles showing the setup dialog in that case.
- */
 export function useBirthDate() {
   const [birthDate, setBirthDateState] = useState<string | null>(() => getBirthDate());
 
   useEffect(() => {
     const handler = () => setBirthDateState(getBirthDate());
-    window.addEventListener("littleleaps:birthDate", handler);
+    window.addEventListener(BIRTHDATE_EVENT, handler);
     window.addEventListener("storage", handler); // Sync across browser tabs
     return () => {
-      window.removeEventListener("littleleaps:birthDate", handler);
+      window.removeEventListener(BIRTHDATE_EVENT, handler);
       window.removeEventListener("storage", handler);
     };
   }, []);
 
   return {
     birthDate,
-    // setBirthDate is exposed so BirthDateGate can update without importing
-    // the raw setBirthDate function separately
-    setBirthDate: (iso: string) => setBirthDate(iso),
+    // Persists server-side first; the local cache updates on success.
+    setBirthDate: (iso: string) => saveBirthDateToProfile(iso),
   };
 }
 
-// ---------- Check-in (still localStorage) ----------
+// ---------- Check-in (localStorage only -- device-local scratch state) ----------
 
 export function getCheckin(): Record<string, unknown> {
   if (typeof window === "undefined") return {};

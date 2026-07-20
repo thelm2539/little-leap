@@ -35,6 +35,8 @@ export function BirthDateGate() {
 
   // Pre-fill with the currently stored date
   const [value, setValue] = useState(birthDate ?? "");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Listen for the edit button event dispatched by AppShell.
   // Using a window event keeps BirthDateGate and AppShell decoupled —
@@ -52,15 +54,27 @@ export function BirthDateGate() {
   // OnboardingGate handles first-run — this gate must never compete with it.
   if (!editMode) return null;
 
-  const submit = () => {
+  // saveBirthDateToProfile persists server-side first (the RPC re-validates the
+  // date range), so we must await it and surface failures rather than closing
+  // the dialog on an edit that never landed.
+  const submit = async () => {
     if (!value) return;
-    // saveBirthDateToProfile saves to localStorage + syncs to Supabase
-    // so the new date is available on other devices via the restore flow.
-    void saveBirthDateToProfile(value);
-    setEditMode(false);
+    setBusy(true);
+    setError(null);
+    try {
+      await saveBirthDateToProfile(value);
+      setEditMode(false);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not save. Please try again.");
+    } finally {
+      setBusy(false);
+    }
   };
 
-  const cancel = () => setEditMode(false);
+  const cancel = () => {
+    setError(null);
+    setEditMode(false);
+  };
 
   // Today in YYYY-MM-DD — prevents picking a future birth date
   const todayIso = new Date().toISOString().slice(0, 10);
@@ -103,19 +117,22 @@ export function BirthDateGate() {
 
           <Button
             onClick={submit}
-            disabled={!value}
+            disabled={!value || busy}
             className="h-11 w-full rounded-full bg-sage text-sage-foreground hover:bg-sage/90"
           >
-            Save
+            {busy ? "Saving…" : "Save"}
           </Button>
 
           <Button
             variant="ghost"
             onClick={cancel}
+            disabled={busy}
             className="h-9 w-full rounded-full text-muted-foreground"
           >
             Cancel
           </Button>
+
+          {error && <p className="text-center text-xs text-destructive">{error}</p>}
         </div>
       </DialogContent>
     </Dialog>
