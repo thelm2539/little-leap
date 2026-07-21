@@ -52,6 +52,44 @@ const FAMILY_EVENT = "littleleaps:family";
 const BIRTHDATE_EVENT = "littleleaps:birthDate";
 const LOG_EVENT = "littleleaps:log";
 
+// ---------- Error normalisation ----------
+
+/**
+ * Turn a Supabase error into a real `Error` with a message worth showing.
+ *
+ * supabase-js rejects with a plain `{ message, code, details, hint }` object,
+ * not an Error instance. Call sites that do `e instanceof Error ? e.message :
+ * fallback` therefore threw away the real reason and showed only the fallback --
+ * which is how a missing database migration surfaced as an unhelpful
+ * "Could not create profile. Please try again."
+ */
+function asError(cause: unknown, fallback: string): Error {
+  if (cause instanceof Error) return cause;
+
+  if (cause && typeof cause === "object") {
+    const e = cause as { message?: string; code?: string; hint?: string; details?: string };
+
+    // PGRST202: function missing from the schema cache.
+    // PGRST205: table missing from the schema cache.
+    // Both mean the client is running ahead of the database.
+    if (e.code === "PGRST202" || e.code === "PGRST205") {
+      return new Error(
+        "This version of the app needs a database update that hasn't been applied yet. " +
+          "If you're the developer: run the migrations in supabase/migrations.",
+      );
+    }
+
+    if (e.message) {
+      const err = new Error(e.message);
+      // Keep the structured original for the console without leaking it to the UI.
+      (err as Error & { cause?: unknown }).cause = cause;
+      return err;
+    }
+  }
+
+  return new Error(fallback);
+}
+
 // ---------- Anonymous auth ----------
 
 let authReadyPromise: Promise<void> | null = null;
@@ -108,7 +146,7 @@ async function fetchMyFamilyId(): Promise<string | null> {
     .order("joined_at", { ascending: false })
     .limit(1)
     .maybeSingle();
-  if (error) throw error;
+  if (error) throw asError(error, "Could not load your family profile.");
   return data?.family_id ?? null;
 }
 
@@ -118,7 +156,7 @@ async function fetchBirthDate(familyId: string): Promise<string | null> {
     .select("birth_date")
     .eq("id", familyId)
     .maybeSingle();
-  if (error) throw error;
+  if (error) throw asError(error, "Could not load the birth date.");
   return data?.birth_date ?? null;
 }
 
@@ -134,7 +172,7 @@ export async function createFamilyProfile(birthDate: string): Promise<string> {
   const { data: familyId, error } = await supabase.rpc("create_family", {
     p_birth_date: birthDate,
   });
-  if (error) throw error;
+  if (error) throw asError(error, "Could not create your family profile.");
   if (!familyId) throw new Error("Could not create your family profile.");
 
   cacheFamilyId(familyId);
@@ -155,7 +193,7 @@ export async function createInviteCode(familyId?: string): Promise<string> {
   const { data, error } = await supabase.rpc("create_family_invite", {
     p_family_id: id,
   });
-  if (error) throw error;
+  if (error) throw asError(error, "Could not create an invite code.");
   if (!data) throw new Error("Could not create an invite code.");
   return data;
 }
@@ -165,7 +203,7 @@ export async function revokeInviteCodes(): Promise<void> {
   const id = getFamilyId();
   if (!id) return;
   const { error } = await supabase.rpc("revoke_family_invite", { p_family_id: id });
-  if (error) throw error;
+  if (error) throw asError(error, "Could not revoke invite codes.");
 }
 
 /**
@@ -180,7 +218,7 @@ export async function joinFamilyProfile(code: string): Promise<{ birthDate: stri
   const { data: familyId, error } = await supabase.rpc("redeem_family_invite", {
     p_code: code,
   });
-  if (error) throw error;
+  if (error) throw asError(error, "That code is not valid. Check it and try again.");
   if (!familyId) throw new Error("That code is not valid. Check it and try again.");
 
   cacheFamilyId(familyId);
@@ -205,7 +243,7 @@ export async function saveBirthDateToProfile(birthDate: string): Promise<void> {
     p_family_id: familyId,
     p_birth_date: birthDate,
   });
-  if (error) throw error;
+  if (error) throw asError(error, "Could not save the birth date.");
 
   window.localStorage.setItem(DOB_STORE, birthDate);
   window.dispatchEvent(new CustomEvent(BIRTHDATE_EVENT));
@@ -218,7 +256,7 @@ export async function saveBirthDateToProfile(birthDate: string): Promise<void> {
  */
 export async function deleteMyAccount(): Promise<void> {
   const { error } = await supabase.rpc("delete_my_account");
-  if (error) throw error;
+  if (error) throw asError(error, "Could not delete your account.");
   clearLocalSession();
   await supabase.auth.signOut();
 }
@@ -364,7 +402,7 @@ export function useActivityLog() {
         domain: activity ? DOMAIN_LABEL[activity.domain] : "Unknown",
         rating,
       });
-      if (err) throw err;
+      if (err) throw asError(err, "Could not save that rating.");
       window.dispatchEvent(new CustomEvent(LOG_EVENT));
     },
     [familyId],
@@ -372,7 +410,7 @@ export function useActivityLog() {
 
   const deleteEntry = useCallback(async (id: string) => {
     const { error: err } = await supabase.from("activity_logs").delete().eq("id", id);
-    if (err) throw err;
+    if (err) throw asError(err, "Could not delete that entry.");
     window.dispatchEvent(new CustomEvent(LOG_EVENT));
   }, []);
 
