@@ -10,7 +10,22 @@ export type MilestoneDomain =
   | 'fine-motor'
   | 'language-communication'
   | 'cognitive'
-  | 'social';
+  | 'social'
+  | 'sleep';
+
+/**
+ * Whether a milestone is a capability the baby gains, or a temporary regression
+ * the parent should expect and ride out.
+ *
+ *   'achievement' — "baby can now do X" (the default; every developmental
+ *                   milestone in this file)
+ *   'disruption'  — "this is temporarily harder, here's why, and it's normal"
+ *                   (sleep regressions). For these, `accelerator` carries a
+ *                   what-helps note rather than an ahead-of-curve signal.
+ *
+ * Optional: absence means 'achievement'. Read it through `milestoneKind()`.
+ */
+export type MilestoneKind = 'achievement' | 'disruption';
 
 export interface MilestoneResource {
   title: string;
@@ -21,6 +36,7 @@ export interface Milestone {
   id: string;
   name: string;
   domain: MilestoneDomain;
+  kind?: MilestoneKind; // undefined ⇒ 'achievement'. See MilestoneKind.
   weekStart: number;  // earliest onset
   weekPeak: number;   // typical / mean (used for timeline placement)
   weekEnd: number;    // end of window
@@ -467,6 +483,89 @@ export const MILESTONES: Milestone[] = [
     accelerator: 'Consistent name-sound pairing before week 40 → first words ahead of curve; increase naming and referential activities',
     latestResearch: 'Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness',
   },
+
+  // ── SLEEP & CALMING ───────────────────────────────────────────────────────
+  // Sleep markers. One achievement (circadian onset) and two disruptions
+  // (regressions). For disruptions, `accelerator` carries a what-helps note
+  // rather than an ahead-of-curve signal — see MilestoneKind.
+  //
+  // ⚠️ SOURCES: the DOIs below are placeholders ('verify'). The citations are
+  // real works, but the DOI strings must be confirmed against the source before
+  // publishing — they were NOT auto-verified. The contested "Wonder Weeks"
+  // recurring fussy-period construct was deliberately excluded on evidence
+  // grounds (see BACKLOG / chat history).
+
+  {
+    id: 's01-circadian-onset',
+    name: 'Circadian Rhythm Onset',
+    domain: 'sleep',
+    kind: 'achievement',
+    weekStart: 6, weekPeak: 10, weekEnd: 16,
+    mechanism:
+      'A newborn has no internal day/night clock — sleep is distributed evenly around the clock in ~3–4 hour bouts. Between roughly weeks 6 and 12 an endogenous circadian rhythm emerges: melatonin secretion and the core body-temperature rhythm begin cycling with the 24-hour day, driven by regular light/dark and feeding cues. Night sleep starts to consolidate into longer stretches and daytime alertness lengthens. This is the biological basis of "sleeping through" later on.',
+    parentCanSee: [
+      'Longer unbroken stretches of sleep at night than during the day',
+      'More consistent, longer alert periods in daylight',
+      'Earlier and more predictable evening settling',
+      'A dawning difference between night feeds (quiet, brief) and day feeds (alert)',
+    ],
+    activityIds: ['water-sound-bath', 'white-noise', 'hum-chest'],
+    resources: [
+      { title: 'Rivkees SA (2003) — Developing circadian rhythmicity in infants', doi: 'verify' },
+      { title: 'McGraw K, Hoffmann R, Harker C & Herman JH (1999) — The development of circadian rhythms in a human infant', doi: 'verify' },
+    ],
+    checkIn: 'Is she starting to sleep a noticeably longer stretch at night than in any single daytime nap?',
+    accelerator: 'Bright light and activity by day, dark and calm by night, plus a consistent wind-down (bath → massage → feed) accelerates this rhythm. Avoid stimulating light at night feeds.',
+    latestResearch: 'Rivkees SA (2003) — Developing circadian rhythmicity in infants',
+  },
+
+  {
+    id: 's02-four-month-regression',
+    name: 'Sleep-Cycle Maturation (the "4-month regression")',
+    domain: 'sleep',
+    kind: 'disruption',
+    weekStart: 12, weekPeak: 16, weekEnd: 22,
+    mechanism:
+      'Around 3–4 months, sleep architecture matures from the newborn two-state pattern (active vs quiet sleep) into adult-like cycles with distinct NREM stages and REM. Cycles are short (~35–50 minutes) and the baby now briefly surfaces toward waking at the end of each one. This is a permanent developmental gain, not a true "regression" — but because the baby wakes between cycles and has not yet learned to resettle unaided, night wakings and short naps suddenly increase. It typically eases as self-settling develops.',
+    parentCanSee: [
+      'A sudden increase in night wakings after a period of longer sleep',
+      'Naps shortening to a single sleep cycle (~35–45 minutes)',
+      'Waking fully between cycles and needing help to resettle',
+      'Often coincides with new alertness, rolling attempts and more feeding',
+    ],
+    activityIds: ['white-noise', 'infant-massage', 'water-sound-bath'],
+    resources: [
+      { title: 'de Weerd AW & van den Bossche RAS (2003) — The development of sleep during the first months of life', doi: 'verify' },
+      { title: 'Grigg-Damberger MM (2016) — The visual scoring of sleep in infants 0 to 2 months of age', doi: 'verify' },
+    ],
+    checkIn: 'Have the night wakings increased recently even though nothing else obvious changed — teething, illness, feeding?',
+    accelerator: 'What helps: keep the wind-down routine consistent, use white noise across sleep cycles, and give a beat before responding to a stir so she has room to resettle herself. This is a phase — it passes as self-settling matures.',
+    latestResearch: 'de Weerd AW & van den Bossche RAS (2003) — The development of sleep during the first months of life',
+  },
+
+  {
+    id: 's03-eight-month-disruption',
+    name: 'Eight-Month Sleep Disruption',
+    domain: 'sleep',
+    kind: 'disruption',
+    weekStart: 32, weekPeak: 36, weekEnd: 44,
+    mechanism:
+      'A convergence of developmental gains disrupts sleep around 8–10 months. Object permanence (M14) now means the baby knows you still exist when you leave — so bedtime separation is protested. Separation anxiety peaks in the same window. Simultaneously, major motor skills (crawling, pulling to stand) are being consolidated, and the brain rehearses them during sleep, driving wakings and practice in the cot. Naps are often dropping from three to two. None of it is a step backward — it is several forward steps landing at once.',
+    parentCanSee: [
+      'New resistance and clinginess at bedtime and on waking',
+      'Waking in the night and calling specifically for you, not just fussing',
+      'Practising crawling or standing in the cot instead of settling',
+      'Fought or shortened naps as a nap transition approaches',
+    ],
+    activityIds: ['hum-chest', 'infant-massage', 'water-sound-bath'],
+    resources: [
+      { title: 'Scher A (2005) — Infant sleep at 10 months of age as a window to cognitive development', doi: 'verify' },
+      { title: 'Atkinson E, Vetere A & Grayson K (1995) — Separation anxiety and night waking in infancy', doi: 'verify' },
+    ],
+    checkIn: 'Is the bedtime resistance new, and does it come with more daytime clinginess or separation upset?',
+    accelerator: 'What helps: a predictable, unhurried bedtime routine; brief reassuring check-ins rather than long interventions; and plenty of daytime practice of the new motor skill so it is less "rehearsed" at night. Eases as separation anxiety settles.',
+    latestResearch: 'Scher A (2005) — Infant sleep at 10 months of age as a window to cognitive development',
+  },
 ];
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -488,7 +587,13 @@ export const DOMAIN_LABELS: Record<MilestoneDomain, string> = {
   'language-communication': 'Language',
   'cognitive': 'Cognitive',
   'social': 'Social',
+  'sleep': 'Sleep & Calming',
 };
+
+/** Read a milestone's kind, defaulting to 'achievement' when unset. */
+export function milestoneKind(m: Milestone): MilestoneKind {
+  return m.kind ?? 'achievement';
+}
 
 /**
  * CSS custom property reference for each domain colour.
@@ -503,6 +608,7 @@ export const DOMAIN_CSS_VAR: Record<MilestoneDomain, string> = {
   'language-communication': 'var(--domain-language-communication)',
   'cognitive':              'var(--domain-cognitive)',
   'social':                 'var(--domain-social)',
+  'sleep':                  'var(--domain-sleep)',
 };
 
 // ── Activity helpers ──────────────────────────────────────────────────────────

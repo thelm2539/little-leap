@@ -69,7 +69,7 @@ export const DOMAIN_LABEL: Record<Domain, string> = {
   "visual":                 "Visual",
   "language-communication": "Language & Communication",
   "cognitive":              "Cognitive",
-  "sleep":                  "Sleep",
+  "sleep":                  "Sleep & Calming",
 };
 
 export const DOMAIN_DOT: Record<Domain, string> = {
@@ -99,22 +99,27 @@ export function formatDuration(minutes: number): string {
 }
 
 // ── Activities ────────────────────────────────────────────────────────────────
-// 29 activities across 4 active domains (sleep domain ready, no activities yet).
+// 31 activities across 5 active domains.
 //
 // Domain breakdown:
 //   visual                 4   (mirror-face-time, bw-card-gallery,
 //                               object-tracking, light-shadow)
-//   sensory               10   (tummy-time, sway-narrate, palmar-grasp,
+//   sensory                8   (tummy-time, sway-narrate, palmar-grasp,
 //                               cloth-texture, scent-pairing, joint-compression,
-//                               varied-carrying, limb-movement,
-//                               water-sound-bath, skin-to-skin)
-//   language-communication 10   (slow-face, conversation-turn, voice-mapping,
+//                               varied-carrying, limb-movement, skin-to-skin)
+//   language-communication  9   (slow-face, conversation-turn, voice-mapping,
 //                               same-song, reading-aloud, heartbeat-settling,
-//                               name-repetition, hum-chest, outdoor-listening,
-//                               narrated-day)
+//                               name-repetition, outdoor-listening, narrated-day)
 //   cognitive               5   (facial-expression-copying, contingency-mobile,
 //                               attention-recovery, quiet-alert-observation,
 //                               novel-object-pause)
+//   sleep                   4   (water-sound-bath [Warm calming bath], hum-chest,
+//                               infant-massage, white-noise)
+//
+// NOTE: domain here is the activity's PRIMARY classification. An activity may
+// still be referenced by a milestone in another domain (the milestone⇄activity
+// link is many-to-many) — e.g. hum-chest is Sleep & Calming but supports the
+// auditory-memory milestone. See the domain-taxonomy cleanup in BACKLOG.md.
 
 export const ACTIVITIES: Activity[] = [
   // ── VISUAL ─────────────────────────────────────────────────────────────────
@@ -376,24 +381,24 @@ export const ACTIVITIES: Activity[] = [
   },
   {
     id: "water-sound-bath",
-    title: "Water sound bath",
-    domain: "sensory",
-    subDomain: "multi-sensory",
-    ageWindowWeeks: "0–12",
-    processSupported: "Multi-modal sensory integration; tactile thermoreception; auditory input",
+    title: "Warm calming bath",
+    domain: "sleep",
+    subDomain: "sleep-routine",
+    ageWindowWeeks: "0–52",
+    processSupported: "Parasympathetic wind-down; passive body warming and post-bath cooling that cues sleep onset",
     evidenceBasis:
-      "Warm water immersion activates thermoreceptors and tactile mechanoreceptors across the body surface simultaneously, providing multi-modal input to developing somatosensory cortex.",
+      "A warm bath 1–2 hours before sleep raises skin temperature and then triggers a compensatory core-temperature drop as the body cools — the same nocturnal temperature fall that precedes natural sleep onset. Warm-bath-before-bed is a widely studied component of infant sleep routines.",
     instructions: [
       "Support baby's head firmly throughout.",
       "Lower them slowly into warm (not hot — test with your elbow) water.",
       "Let them experience the water on limbs first, then lower the body.",
-      "Gently pour water over the trunk with a cupped hand.",
-      "Narrate: 'Warm water on your tummy. Now your arms.'",
-      "Keep it short: 5–7 minutes is plenty. Dry thoroughly and quickly after.",
+      "Gently pour water over the trunk with a cupped hand, narrating softly.",
+      "Keep it short and unstimulating: 5–7 minutes, lights low.",
+      "Dry thoroughly and move straight into the quiet part of the bedtime routine.",
     ],
     durationMinutes: 7,
     whyItWorks:
-      "Warm water provides simultaneous activation of thermoreceptors, mechanoreceptors, and proprioceptors across the entire body — among the richest multi-modal sensory experiences available at home.",
+      "The warmth relaxes the body, and the gradual cooling afterwards mimics the core-temperature drop that naturally precedes sleep — which is why a warm bath is one of the most reliable pre-sleep cues. Kept short and low-key, it signals wind-down rather than play.",
     weekRecommended: 3,
   },
   {
@@ -572,8 +577,8 @@ export const ACTIVITIES: Activity[] = [
   {
     id: "hum-chest",
     title: "Hum and chest feel",
-    domain: "language-communication",
-    subDomain: "auditory",
+    domain: "sleep",
+    subDomain: "sleep-routine",
     ageWindowWeeks: "0–8",
     processSupported: "Auditory-vibrotactile cross-modal integration; prosodic pattern exposure",
     evidenceBasis:
@@ -741,6 +746,54 @@ export const ACTIVITIES: Activity[] = [
     whyItWorks:
       "Renewed attention to novelty is the brain signalling 'this is new' — evidence the memory trace for the first object was encoded. You are watching memory and recognition in real time.",
     weekRecommended: 5,
+  },
+
+  // ── SLEEP & CALMING ──────────────────────────────────────────────────────
+  // Wind-down and self-regulation support. Two more activities in this domain
+  // live above (kept in place when re-domained): "Warm calming bath"
+  // (id: water-sound-bath) and "Hum and chest feel" (id: hum-chest).
+  {
+    id: "infant-massage",
+    title: "Bedtime massage",
+    domain: "sleep",
+    subDomain: "sleep-routine",
+    ageWindowWeeks: "0–52",
+    processSupported: "Parasympathetic (rest-and-digest) activation; lowered cortisol; increased vagal tone",
+    evidenceBasis:
+      "Slow, moderate-pressure infant massage is associated with reduced cortisol, increased parasympathetic (vagal) activity, and improved sleep onset and duration in infants. A consistent finding across infant-massage trials and reviews (e.g. Field and colleagues).",
+    instructions: [
+      "Warm the room and warm a little plain oil in your hands first.",
+      "Work when baby is calm but awake, as part of the wind-down before sleep.",
+      "Use slow, firm-but-gentle strokes — legs and feet, then arms, then tummy in a clockwise circle.",
+      "Keep a steady rhythm and talk or hum quietly as you go.",
+      "Watch for cues: turning away, fussing or hiccups mean stop or slow down.",
+      "5–10 minutes is plenty. Keep lights low so it reads as wind-down, not play.",
+    ],
+    durationMinutes: 8,
+    whyItWorks:
+      "Slow, sustained touch activates the parasympathetic nervous system — the 'rest and digest' branch — which lowers heart rate and stress hormones and shifts the body toward sleep. Doing it at the same point each evening also makes it a predictable cue that sleep is coming.",
+    weekRecommended: 2,
+  },
+  {
+    id: "white-noise",
+    title: "White noise for settling",
+    domain: "sleep",
+    subDomain: "sleep-environment",
+    ageWindowWeeks: "0–52",
+    processSupported: "Arousal masking; recreation of the constant intrauterine soundscape that supports sleep onset",
+    evidenceBasis:
+      "Continuous broadband ('white') noise masks sudden environmental sounds that would otherwise trigger arousals, and approximates the constant low-frequency sound level of the womb. Newborns exposed to white noise have been shown to fall asleep faster than those settled in quiet.",
+    instructions: [
+      "Use a steady, continuous white-noise sound (a dedicated machine, not a phone left within reach).",
+      "Place the source across the room — at least 2 metres from baby's head, never in the cot.",
+      "Keep it quiet: around the level of a soft shower, not louder than about 50 dB.",
+      "Turn it on for naps and night sleep as part of the routine.",
+      "Turn it off when baby is awake and alert so they still get quiet, interactive time.",
+    ],
+    durationMinutes: 0,
+    whyItWorks:
+      "A constant, featureless sound hides the abrupt noises (a door, a sibling) that jolt a light-sleeping newborn awake, and echoes the ever-present whooshing they heard in the womb. Kept low and at a distance, it soothes without risking hearing.",
+    weekRecommended: 1,
   },
 ];
 

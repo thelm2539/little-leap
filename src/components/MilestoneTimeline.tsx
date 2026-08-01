@@ -44,6 +44,7 @@ const FILTERS: { key: MilestoneDomain | 'all'; label: string }[] = [
   { key: 'language-communication', label: 'Language' },
   { key: 'cognitive',              label: 'Cognitive' },
   { key: 'social',                 label: 'Social' },
+  { key: 'sleep',                  label: 'Sleep & Calming' },
 ];
 
 
