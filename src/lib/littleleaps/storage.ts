@@ -38,6 +38,11 @@ export interface ActivityLogRow {
   domain: string;
   rating: Rating;
   logged_at: string;
+  // The baby's age in whole days at the moment this rating was logged.
+  // Stored so feedback stays interpretable over time ("fussy at 6 weeks,
+  // engaged at 12"). Null when no birth date was available. Captured now;
+  // whether the UI surfaces it is a separate decision.
+  logged_age_days: number | null;
 }
 
 const FAMILY_ID_STORE = "littleleaps.familyId";
@@ -401,6 +406,7 @@ export function useActivityLog() {
         activity_name: activity?.title ?? activityId,
         domain: activity ? DOMAIN_LABEL[activity.domain] : "Unknown",
         rating,
+        logged_age_days: ageDaysAt(getBirthDate()),
       });
       if (err) throw asError(err, "Could not save that rating.");
       window.dispatchEvent(new CustomEvent(LOG_EVENT));
@@ -435,6 +441,84 @@ export function latestRatingFor(log: ActivityLogRow[], activityId: string): Rati
 export function countThisWeek(log: ActivityLogRow[]) {
   const start = startOfWeek().getTime();
   return log.filter((e) => new Date(e.logged_at).getTime() >= start).length;
+}
+
+/** Baby's age in whole days at `at` (default now), or null if no birth date. */
+export function ageDaysAt(birthDate: string | null, at: Date = new Date()): number | null {
+  if (!birthDate) return null;
+  const days = Math.floor((at.getTime() - new Date(birthDate).getTime()) / 86_400_000);
+  return days >= 0 ? days : 0;
+}
+
+// ---------- Activity reception (the "living record") ----------
+
+export interface ReceptionEntry {
+  rating: Rating;
+  loggedAt: string;
+  ageDays: number | null;
+}
+
+/** How a single activity has been received by this child, over time. */
+export interface ActivityReception {
+  activityId: string;
+  engaged: number;
+  neutral: number;
+  fussy: number;
+  total: number;
+  latest: Rating | null;
+  latestAt: string | null;
+  history: ReceptionEntry[]; // newest first
+}
+
+/**
+ * Fold the raw log into one reception summary per activity.
+ * Expects `log` newest-first (the order useActivityLog returns).
+ */
+export function receptionByActivity(log: ActivityLogRow[]): Map<string, ActivityReception> {
+  const map = new Map<string, ActivityReception>();
+  for (const row of log) {
+    let r = map.get(row.activity_id);
+    if (!r) {
+      r = {
+        activityId: row.activity_id,
+        engaged: 0,
+        neutral: 0,
+        fussy: 0,
+        total: 0,
+        latest: null,
+        latestAt: null,
+        history: [],
+      };
+      map.set(row.activity_id, r);
+    }
+    r[row.rating] += 1;
+    r.total += 1;
+    r.history.push({ rating: row.rating, loggedAt: row.logged_at, ageDays: row.logged_age_days });
+    // First row seen for this activity is the newest (log is desc-ordered).
+    if (r.latest === null) {
+      r.latest = row.rating;
+      r.latestAt = row.logged_at;
+    }
+  }
+  return map;
+}
+
+/**
+ * The two revisit categories from the product brief. This only makes them
+ * *identifiable* — acting on them is deferred (see BACKLOG.md):
+ *   - fussy:   activities ever marked fussy → adapt/improve for fussy babies.
+ *   - engaged: activities marked engaged    → surface more often.
+ * An activity can appear in both; counts let later logic weigh dominance.
+ */
+export function activitiesToRevisit(log: ActivityLogRow[]): {
+  fussy: ActivityReception[];
+  engaged: ActivityReception[];
+} {
+  const all = [...receptionByActivity(log).values()];
+  return {
+    fussy: all.filter((r) => r.fussy > 0).sort((a, b) => b.fussy - a.fussy),
+    engaged: all.filter((r) => r.engaged > 0).sort((a, b) => b.engaged - a.engaged),
+  };
 }
 
 // ---------- Birth date ----------

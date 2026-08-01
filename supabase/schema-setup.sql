@@ -53,13 +53,16 @@ create index if not exists family_members_family_idx
   on public.family_members (family_id);
 
 create table if not exists public.activity_logs (
-  id            uuid primary key default gen_random_uuid(),
-  family_id     uuid not null references public.families(id) on delete cascade,
-  activity_id   text not null,
-  activity_name text not null,
-  domain        text not null,
-  rating        text not null check (rating in ('engaged', 'neutral', 'fussy')),
-  logged_at     timestamptz not null default now()
+  id              uuid primary key default gen_random_uuid(),
+  family_id       uuid not null references public.families(id) on delete cascade,
+  activity_id     text not null,
+  activity_name   text not null,
+  domain          text not null,
+  rating          text not null check (rating in ('engaged', 'neutral', 'fussy')),
+  -- Baby's age in whole days at log time, so feedback stays interpretable over
+  -- time. Nullable: null when no birth date was known when the rating was saved.
+  logged_age_days int,
+  logged_at       timestamptz not null default now()
 );
 create index if not exists activity_logs_family_logged_at_idx
   on public.activity_logs (family_id, logged_at desc);

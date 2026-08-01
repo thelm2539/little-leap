@@ -104,6 +104,42 @@ Effort: ~1–2 days plus whatever legal review you want on the policy text.
 
 ---
 
+## 6. Act on the fussy / engaged activity categories
+
+**Why:** activity ratings now carry the baby's age at log time, and
+`activitiesToRevisit(log)` in storage.ts already surfaces two categories — but
+nothing acts on them yet. This is where the reception data pays off.
+
+**What's captured:** every rating stores `logged_age_days`;
+`receptionByActivity()` folds the log into per-activity tallies + history;
+`activitiesToRevisit()` returns `{ fussy, engaged }` lists. The Milestones tab
+shows the living record per activity.
+
+**What's left (two deferred product decisions):**
+- **Fussy → adapt.** For activities repeatedly marked fussy, offer a gentler
+  variant or a "try this differently" note. Decide the threshold (any fussy? a
+  fussy-majority? fussy at a given age?) using the stored age.
+- **Engaged → surface more.** For activities marked engaged, increase their
+  frequency in the Home tab's daily rotation so parent and baby get more of what
+  works. Today the rotation in index.tsx is a flat day-offset cycle; weight it
+  by reception.
+
+Effort: ~1–2 days once the thresholds/weighting rules are decided.
+
+## 7. Verify the sleep-milestone DOIs
+
+**Why:** the three sleep milestones (`s01`–`s03` in milestones.ts) ship with
+`doi: 'verify'` placeholders. The citations are real works but the DOI strings
+were not confirmed and must not be faked. The milestone file's whole premise is
+"primary authors only," so these need real DOIs before publishing.
+
+**What's left:** confirm and fill the DOI for each of: Rivkees (2003); McGraw et
+al. (1999); de Weerd & van den Bossche (2003); Grigg-Damberger (2016); Scher
+(2005); Atkinson et al. (1995). Search each title on doi.org / a scholarly index
+and paste the real `10.xxxx/...` string.
+
+Effort: ~1 hour.
+
 ## Notes
 
 - Items 2 and 3 are the two that most change the risk profile of a public
