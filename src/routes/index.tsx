@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/littleleaps/AppShell";
 import { Card } from "@/components/ui/card";
@@ -6,7 +6,7 @@ import { ageLabel, getAge, greeting } from "@/lib/littleleaps/age";
 import { ACTIVITIES, formatDuration, type Activity } from "@/lib/littleleaps/data";
 import { useBirthDate, useBabyName } from "@/lib/littleleaps/storage";
 import { DomainBadge, DurationPill, RatingButtons } from "@/components/littleleaps/ActivityBits";
-import { Lightbulb } from "lucide-react";
+import { Lightbulb, ArrowRight } from "lucide-react";
 import {
   getActivitiesForWeek,
   getNewActivityCount,
@@ -41,6 +41,15 @@ function Home() {
   // All hooks before the early return (React rules of hooks).
   const { birthDate } = useBirthDate();
   const { babyName } = useBabyName();
+  const navigate = useNavigate();
+
+  // Open an activity's full detail on the This Week tab. sessionStorage carries
+  // the target across the navigation; This Week reads it, scrolls to the card
+  // and expands it (same channel the Milestones tab uses).
+  const openActivityDetail = (activityId: string) => {
+    sessionStorage.setItem("littleleaps.focusActivity", activityId);
+    void navigate({ to: "/this-week" });
+  };
 
   // Awake minutes: persisted to localStorage so the slider value survives reloads.
   const [awakeMinutes, setAwakeMinutes] = useState<number>(() => {
@@ -162,6 +171,15 @@ function Home() {
                   <p className="mt-3 text-sm leading-relaxed text-foreground/80">
                     {a.instructions.slice(0, 2).join(" ")}
                   </p>
+                  {/* Learn more → full instructions + the science, on This Week */}
+                  <button
+                    type="button"
+                    onClick={() => openActivityDetail(a.id)}
+                    className="mt-3 inline-flex items-center gap-1 rounded-full border border-sage/30 bg-sage/8
+                               px-3 py-1 text-xs font-medium text-sage transition-colors hover:bg-sage/15"
+                  >
+                    Learn more <ArrowRight size={12} />
+                  </button>
                   <div className="mt-4">
                     <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                       How did it go?
