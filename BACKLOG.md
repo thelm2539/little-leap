@@ -140,6 +140,36 @@ and paste the real `10.xxxx/...` string.
 
 Effort: ~1 hour.
 
+## 8. Sync baby name + preferences to the family (currently device-local)
+
+**Why:** the Profile tab stores the baby's name, default awake window, and daily
+reminder in localStorage only. Birth date already syncs to the `families` row,
+so the name being device-local is inconsistent — a partner's device won't see
+the name the other set.
+
+**What's left:**
+- Add `baby_name text` to `families` and a `set_baby_name(p_family_id, p_name)`
+  SECURITY DEFINER RPC (mirror `set_family_birth_date`). Update
+  `schema-setup.sql`, a migration, `types.ts`, and `setBabyName` in storage.ts
+  to call the RPC and cache locally (same pattern as birth date).
+- Decide whether awake window / reminder are per-family or per-device. Awake
+  window is arguably per-device; the name is clearly per-family.
+
+Effort: ~half a day.
+
+## 9. Deliver the daily reminder
+
+**Why:** the Profile "Daily reminder" toggle persists a preference but nothing
+sends anything — the UI says "scheduled delivery is coming soon." Real delivery
+needs a notification channel.
+
+**What's left:** pick a mechanism (web push via a service worker + the Push API,
+or email via the existing Supabase project), collect a reminder time, and
+schedule it. Web push needs a service worker and permission prompt; this app has
+neither yet. Until then keep the "coming soon" note honest.
+
+Effort: ~2–3 days including the service worker and permission flow.
+
 ## Notes
 
 - Items 2 and 3 are the two that most change the risk profile of a public

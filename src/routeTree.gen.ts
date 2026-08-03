@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ActivitiesRouteImport } from './routes/activities'
 import { Route as AskRouteImport } from './routes/ask'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ThisWeekRouteImport } from './routes/this-week'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,6 +30,11 @@ const AskRoute = AskRouteImport.update({
   path: '/ask',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ThisWeekRoute = ThisWeekRouteImport.update({
   id: '/this-week',
   path: '/this-week',
@@ -39,12 +45,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/activities': typeof ActivitiesRoute
   '/ask': typeof AskRoute
+  '/profile': typeof ProfileRoute
   '/this-week': typeof ThisWeekRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activities': typeof ActivitiesRoute
   '/ask': typeof AskRoute
+  '/profile': typeof ProfileRoute
   '/this-week': typeof ThisWeekRoute
 }
 export interface FileRoutesById {
@@ -52,20 +60,22 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/activities': typeof ActivitiesRoute
   '/ask': typeof AskRoute
+  '/profile': typeof ProfileRoute
   '/this-week': typeof ThisWeekRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/activities' | '/ask' | '/this-week'
+  fullPaths: '/' | '/activities' | '/ask' | '/profile' | '/this-week'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/activities' | '/ask' | '/this-week'
-  id: '__root__' | '/' | '/activities' | '/ask' | '/this-week'
+  to: '/' | '/activities' | '/ask' | '/profile' | '/this-week'
+  id: '__root__' | '/' | '/activities' | '/ask' | '/profile' | '/this-week'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ActivitiesRoute: typeof ActivitiesRoute
   AskRoute: typeof AskRoute
+  ProfileRoute: typeof ProfileRoute
   ThisWeekRoute: typeof ThisWeekRoute
 }
 
@@ -92,6 +102,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AskRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/this-week': {
       id: '/this-week'
       path: '/this-week'
@@ -106,6 +123,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ActivitiesRoute: ActivitiesRoute,
   AskRoute: AskRoute,
+  ProfileRoute: ProfileRoute,
   ThisWeekRoute: ThisWeekRoute,
 }
 export const routeTree = rootRouteImport

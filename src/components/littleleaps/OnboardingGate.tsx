@@ -23,7 +23,7 @@
  * Lives in __root.tsx (outside all page routes) so it is always mounted.
  */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -45,28 +45,44 @@ import {
 // ─── Step types ───────────────────────────────────────────────────────────────
 // The gate moves through these steps in sequence depending on user choices.
 type Step =
-  | "choice"          // Welcome: "New family" vs "Join with invite code"
-  | "new-birth"       // Enter birth date for a new family
-  | "new-success"     // Show the generated invite code (share with partner)
-  | "restore-code"    // Enter an invite code to join
-  | "restore-birth";  // Birth date not set on that family — enter manually
+  | "choice" // Welcome: "New family" vs "Join with invite code"
+  | "new-birth" // Enter birth date for a new family
+  | "new-success" // Show the generated invite code (share with partner)
+  | "restore-code" // Enter an invite code to join
+  | "restore-birth"; // Birth date not set on that family — enter manually
 
 // ─── Component ────────────────────────────────────────────────────────────────
 export function OnboardingGate() {
   const { familyId, ready } = useFamily();
   const { birthDate } = useBirthDate();
 
-  const [step, setStep]             = useState<Step>("choice");
+  const [step, setStep] = useState<Step>("choice");
   const [birthValue, setBirthValue] = useState("");
-  const [codeValue, setCodeValue]   = useState("");
-  const [busy, setBusy]             = useState(false);
-  const [error, setError]           = useState<string | null>(null);
+  const [codeValue, setCodeValue] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   // inviteCode is set after createFamilyProfile so we can show it to the user.
   // Keeping it in state (not just returning from handler) means the success screen
   // stays visible even if the gate's auto-close condition becomes true.
   // The plaintext exists only here and on screen — the server stored only its hash.
   const [inviteCode, setInviteCode] = useState<string | null>(null);
-  const [codeCopied, setCodeCopied]       = useState(false);
+  const [codeCopied, setCodeCopied] = useState(false);
+
+  // ── Invite link: /?invite=CODE ──
+  // When someone opens a shared invite URL, pre-fill the join step with the code
+  // and clean the URL so a refresh doesn't re-trigger it. The user still taps
+  // "Join" so the action is explicit.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const invite = params.get("invite");
+    if (!invite) return;
+    setCodeValue(invite);
+    setStep("restore-code");
+    params.delete("invite");
+    const q = params.toString();
+    window.history.replaceState({}, "", window.location.pathname + (q ? `?${q}` : ""));
+  }, []);
 
   // ── Gate is invisible when the user is fully set up ──
   // Both values are needed: familyId identifies the family, birthDate drives the UI.
@@ -96,9 +112,7 @@ export function OnboardingGate() {
 
   // ── Edge case: family exists but birth date is missing ──
   // Skip the choice step — just ask for the birth date.
-  const activeStep: Step = (familyId && !birthDate && step === "choice")
-    ? "new-birth"
-    : step;
+  const activeStep: Step = familyId && !birthDate && step === "choice" ? "new-birth" : step;
 
   // Today's date in YYYY-MM-DD — used as the max for the date input
   const todayIso = new Date().toISOString().slice(0, 10);
@@ -171,7 +185,6 @@ export function OnboardingGate() {
     }
   };
 
-
   // ── Render ────────────────────────────────────────────────────────────────
   return (
     <Dialog open>
@@ -180,7 +193,6 @@ export function OnboardingGate() {
         onInteractOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
-
         {/* ── Step: choice ── */}
         {activeStep === "choice" && (
           <>
@@ -196,7 +208,10 @@ export function OnboardingGate() {
 
             <div className="mt-4 space-y-2">
               <Button
-                onClick={() => { setStep("new-birth"); setError(null); }}
+                onClick={() => {
+                  setStep("new-birth");
+                  setError(null);
+                }}
                 className="h-12 w-full rounded-2xl bg-sage text-sage-foreground hover:bg-sage/90 flex items-center gap-2"
               >
                 <Baby size={16} />
@@ -204,7 +219,10 @@ export function OnboardingGate() {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => { setStep("restore-code"); setError(null); }}
+                onClick={() => {
+                  setStep("restore-code");
+                  setError(null);
+                }}
                 className="h-12 w-full rounded-2xl border-border/60 flex items-center gap-2"
               >
                 <RotateCcw size={15} />
@@ -245,7 +263,12 @@ export function OnboardingGate() {
                 {busy ? "Creating…" : "Get started"}
               </Button>
               {!familyId && (
-                <Button variant="ghost" onClick={() => { setStep("choice"); setError(null); }}
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setStep("choice");
+                    setError(null);
+                  }}
                   className="h-9 w-full rounded-full text-muted-foreground text-xs"
                 >
                   ← Back
@@ -264,9 +287,8 @@ export function OnboardingGate() {
               </div>
               <DialogTitle className="font-serif text-xl">You're all set!</DialogTitle>
               <DialogDescription className="text-sm text-muted-foreground">
-                Share this invite code with your partner, or use it to add another
-                device. It works up to 5 times and expires in 90 days — once a
-                device has joined, it stays joined.
+                Share this invite code with your partner, or use it to add another device. It works
+                up to 5 times and expires in 90 days — once a device has joined, it stays joined.
               </DialogDescription>
             </DialogHeader>
 
@@ -306,8 +328,8 @@ export function OnboardingGate() {
               </div>
               <DialogTitle className="font-serif text-xl">Enter your invite code</DialogTitle>
               <DialogDescription className="text-sm text-muted-foreground">
-                Ask whoever set up Little Leaps to share an invite code from their
-                device. Codes expire, so generate a fresh one if this fails.
+                Ask whoever set up Little Leaps to share an invite code from their device. Codes
+                expire, so generate a fresh one if this fails.
               </DialogDescription>
             </DialogHeader>
 
@@ -316,7 +338,9 @@ export function OnboardingGate() {
                 autoFocus
                 value={codeValue}
                 onChange={(e) => setCodeValue(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter") handleRestore(); }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleRestore();
+                }}
                 placeholder="e.g. 7K2M-9XPQ-4RT8W"
                 autoCapitalize="characters"
                 autoComplete="off"
@@ -330,7 +354,12 @@ export function OnboardingGate() {
               >
                 {busy ? "Joining…" : "Join"}
               </Button>
-              <Button variant="ghost" onClick={() => { setStep("choice"); setError(null); }}
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setStep("choice");
+                  setError(null);
+                }}
                 className="h-9 w-full rounded-full text-muted-foreground text-xs"
               >
                 ← Back
@@ -348,8 +377,8 @@ export function OnboardingGate() {
               </div>
               <DialogTitle className="font-serif text-xl">One more thing</DialogTitle>
               <DialogDescription className="text-sm text-muted-foreground">
-                We found your family profile but the birth date wasn't stored.
-                Enter it once to complete setup.
+                We found your family profile but the birth date wasn't stored. Enter it once to
+                complete setup.
               </DialogDescription>
             </DialogHeader>
 
@@ -375,10 +404,7 @@ export function OnboardingGate() {
         )}
 
         {/* Error message — shown across all steps */}
-        {error && (
-          <p className="mt-2 text-center text-xs text-destructive">{error}</p>
-        )}
-
+        {error && <p className="mt-2 text-center text-xs text-destructive">{error}</p>}
       </DialogContent>
     </Dialog>
   );

@@ -48,6 +48,10 @@ export interface ActivityLogRow {
 const FAMILY_ID_STORE = "littleleaps.familyId";
 const DOB_STORE = "littleleaps.birthDate";
 const CHECKIN_KEY = "littleleaps.checkin";
+const NAME_STORE = "littleleaps.babyName";
+const INVITE_STORE = "littleleaps.inviteCode";
+const AWAKE_STORE = "littleleaps.awakeMinutes";
+const REMINDER_STORE = "littleleaps.dailyReminder";
 
 // Legacy keys from the pre-uuid model. Cleared on first run so a stale
 // family code can never be mistaken for a session.
@@ -56,6 +60,8 @@ const LEGACY_KEYS = ["littleleaps.familyKey"];
 const FAMILY_EVENT = "littleleaps:family";
 const BIRTHDATE_EVENT = "littleleaps:birthDate";
 const LOG_EVENT = "littleleaps:log";
+const NAME_EVENT = "littleleaps:babyName";
+const INVITE_EVENT = "littleleaps:invite";
 
 // ---------- Error normalisation ----------
 
@@ -200,7 +206,24 @@ export async function createInviteCode(familyId?: string): Promise<string> {
   });
   if (error) throw asError(error, "Could not create an invite code.");
   if (!data) throw new Error("Could not create an invite code.");
+  // Cache the plaintext so the Profile tab can display and re-share it. Only
+  // the hash is stored server-side, so this local copy is the only way to show
+  // the code again without minting a new one.
+  window.localStorage.setItem(INVITE_STORE, data);
+  window.dispatchEvent(new CustomEvent(INVITE_EVENT));
   return data;
+}
+
+/** The last invite code minted on this device, or null. */
+export function getInviteCode(): string | null {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem(INVITE_STORE);
+}
+
+/** A shareable URL that pre-fills the invite code on the join screen. */
+export function inviteUrl(code: string): string {
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  return `${origin}/?invite=${encodeURIComponent(code)}`;
 }
 
 /** Immediately invalidate every outstanding invite for this family. */
@@ -209,6 +232,22 @@ export async function revokeInviteCodes(): Promise<void> {
   if (!id) return;
   const { error } = await supabase.rpc("revoke_family_invite", { p_family_id: id });
   if (error) throw asError(error, "Could not revoke invite codes.");
+  window.localStorage.removeItem(INVITE_STORE);
+  window.dispatchEvent(new CustomEvent(INVITE_EVENT));
+}
+
+export function useInviteCode() {
+  const [code, setCode] = useState<string | null>(() => getInviteCode());
+  useEffect(() => {
+    const handler = () => setCode(getInviteCode());
+    window.addEventListener(INVITE_EVENT, handler);
+    window.addEventListener("storage", handler);
+    return () => {
+      window.removeEventListener(INVITE_EVENT, handler);
+      window.removeEventListener("storage", handler);
+    };
+  }, []);
+  return code;
 }
 
 /**
@@ -548,6 +587,104 @@ export function useBirthDate() {
     // Persists server-side first; the local cache updates on success.
     setBirthDate: (iso: string) => saveBirthDateToProfile(iso),
   };
+}
+
+// ---------- Baby name ----------
+// Device-local for now. Unlike birth date, the name is not yet synced to the
+// families row (see BACKLOG: "sync baby name to the families table"), so a
+// partner's device won't see it until that lands.
+
+export function getBabyName(): string | null {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem(NAME_STORE);
+}
+
+export function setBabyName(name: string): void {
+  const trimmed = name.trim();
+  if (trimmed) window.localStorage.setItem(NAME_STORE, trimmed);
+  else window.localStorage.removeItem(NAME_STORE);
+  window.dispatchEvent(new CustomEvent(NAME_EVENT));
+}
+
+export function useBabyName() {
+  const [name, setName] = useState<string | null>(() => getBabyName());
+  useEffect(() => {
+    const handler = () => setName(getBabyName());
+    window.addEventListener(NAME_EVENT, handler);
+    window.addEventListener("storage", handler);
+    return () => {
+      window.removeEventListener(NAME_EVENT, handler);
+      window.removeEventListener("storage", handler);
+    };
+  }, []);
+  return { babyName: name, setBabyName };
+}
+
+// ---------- Preferences (device-local) ----------
+
+export function getAwakeMinutes(): number {
+  if (typeof window === "undefined") return 60;
+  return Number(window.localStorage.getItem(AWAKE_STORE) ?? "60");
+}
+
+export function setAwakeMinutes(mins: number): void {
+  window.localStorage.setItem(AWAKE_STORE, String(mins));
+}
+
+export function getDailyReminder(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.localStorage.getItem(REMINDER_STORE) === "on";
+}
+
+export function setDailyReminder(on: boolean): void {
+  window.localStorage.setItem(REMINDER_STORE, on ? "on" : "off");
+}
+
+// ---------- Family members (server, RLS-scoped to your family) ----------
+
+export interface FamilyMemberRow {
+  userId: string;
+  joinedAt: string;
+  isSelf: boolean;
+}
+
+/** Everyone in this device's family, newest-joined first, with `isSelf` set. */
+export async function fetchFamilyMembers(): Promise<FamilyMemberRow[]> {
+  const [{ data: userData }, familyId] = [await supabase.auth.getUser(), getFamilyId()];
+  const uid = userData.user?.id;
+  if (!familyId) return [];
+  const { data, error } = await supabase
+    .from("family_members")
+    .select("user_id, joined_at")
+    .eq("family_id", familyId)
+    .order("joined_at", { ascending: true });
+  if (error) throw asError(error, "Could not load your family members.");
+  return (data ?? []).map((r) => ({
+    userId: r.user_id,
+    joinedAt: r.joined_at,
+    isSelf: r.user_id === uid,
+  }));
+}
+
+export function useFamilyMembers() {
+  const { familyId } = useFamily();
+  const [members, setMembers] = useState<FamilyMemberRow[]>([]);
+  useEffect(() => {
+    let cancelled = false;
+    if (!familyId) {
+      setMembers([]);
+      return;
+    }
+    fetchFamilyMembers()
+      .then((m) => {
+        if (!cancelled) setMembers(m);
+      })
+      .catch((e) => console.error("[littleleaps] members load failed", e));
+    return () => {
+      cancelled = true;
+    };
+  }, [familyId]);
+  return members;
 }
 
 // ---------- Check-in (localStorage only -- device-local scratch state) ----------
