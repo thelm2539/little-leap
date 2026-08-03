@@ -4,16 +4,23 @@ import { AppShell } from "@/components/littleleaps/AppShell";
 import { Card } from "@/components/ui/card";
 import { ageLabel, getAge, greeting } from "@/lib/littleleaps/age";
 import { ACTIVITIES, formatDuration, type Activity } from "@/lib/littleleaps/data";
-import { useBirthDate } from "@/lib/littleleaps/storage";
+import { useBirthDate, useBabyName } from "@/lib/littleleaps/storage";
 import { DomainBadge, DurationPill, RatingButtons } from "@/components/littleleaps/ActivityBits";
 import { Lightbulb } from "lucide-react";
-import { getActivitiesForWeek, getNewActivityCount, getWeekTip } from "@/lib/littleleaps/milestones";
+import {
+  getActivitiesForWeek,
+  getNewActivityCount,
+  getWeekTip,
+} from "@/lib/littleleaps/milestones";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Little Leaps — Home" },
-      { name: "description", content: "Evidence-based weekly development companion for your newborn." },
+      {
+        name: "description",
+        content: "Evidence-based weekly development companion for your newborn.",
+      },
     ],
   }),
   component: Home,
@@ -33,6 +40,7 @@ function Home() {
 
   // All hooks before the early return (React rules of hooks).
   const { birthDate } = useBirthDate();
+  const { babyName } = useBabyName();
 
   // Awake minutes: persisted to localStorage so the slider value survives reloads.
   const [awakeMinutes, setAwakeMinutes] = useState<number>(() => {
@@ -52,19 +60,21 @@ function Home() {
   // ── Activities for this week from active milestone windows ──────────────────
   const activityIds = getActivitiesForWeek(weeks);
   const weekActivities = activityIds
-    .map(id => ACTIVITIES.find(a => a.id === id))
+    .map((id) => ACTIVITIES.find((a) => a.id === id))
     .filter((a): a is Activity => a !== undefined);
 
   // Cycle through by day so the selection changes daily but is stable all day.
   const daysSinceBirth = Math.floor(
-    (now.getTime() - new Date(birthDate).getTime()) / (24 * 60 * 60 * 1000)
+    (now.getTime() - new Date(birthDate).getTime()) / (24 * 60 * 60 * 1000),
   );
   const showCount = Math.min(activitiesForAwakeTime(awakeMinutes), weekActivities.length);
-  const todayActivities: Activity[] = weekActivities.length > 0
-    ? Array.from({ length: showCount }, (_, i) =>
-        weekActivities[(daysSinceBirth + i) % weekActivities.length]
-      )
-    : [];
+  const todayActivities: Activity[] =
+    weekActivities.length > 0
+      ? Array.from(
+          { length: showCount },
+          (_, i) => weekActivities[(daysSinceBirth + i) % weekActivities.length],
+        )
+      : [];
 
   // ── Stats ───────────────────────────────────────────────────────────────────
   const newActivitiesCount = getNewActivityCount(weeks);
@@ -75,12 +85,13 @@ function Home() {
   return (
     <AppShell>
       <div className="space-y-5 px-5 pt-5">
-
         <section>
           <p className="text-2xl font-serif font-semibold tracking-tight text-foreground">
             {greeting(now)}
           </p>
-          <p className="mt-1 text-sm text-muted-foreground">Baby is {ageLabel(birthDate, now)}</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {babyName ?? "Baby"} is {ageLabel(birthDate, now)}
+          </p>
         </section>
 
         {/* ── Stats row + awake slider ── */}
@@ -132,7 +143,10 @@ function Home() {
           ) : (
             <div className="space-y-3">
               {todayActivities.map((a) => (
-                <Card key={a.id} className="rounded-3xl border-border/60 bg-cream/40 p-5 shadow-none">
+                <Card
+                  key={a.id}
+                  className="rounded-3xl border-border/60 bg-cream/40 p-5 shadow-none"
+                >
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <h3 className="font-serif text-lg font-semibold text-foreground">
@@ -185,7 +199,9 @@ function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-border/60 bg-background px-3 py-3 text-center">
       <div className="font-serif text-lg font-semibold text-foreground">{value}</div>
-      <div className="mt-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div>
+      <div className="mt-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
+        {label}
+      </div>
     </div>
   );
 }

@@ -8,10 +8,15 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ACTIVITIES, WEEK_EXPECTATIONS, formatDuration, type Activity } from "@/lib/littleleaps/data";
+import {
+  ACTIVITIES,
+  WEEK_EXPECTATIONS,
+  formatDuration,
+  type Activity,
+} from "@/lib/littleleaps/data";
 import { DomainBadge, DurationPill, RatingButtons } from "@/components/littleleaps/ActivityBits";
 import { getAge, dobFormatted } from "@/lib/littleleaps/age";
-import { useBirthDate } from "@/lib/littleleaps/storage";
+import { useBirthDate, useBabyName } from "@/lib/littleleaps/storage";
 import { getActivitiesForWeek } from "@/lib/littleleaps/milestones";
 import { FlaskConical } from "lucide-react";
 
@@ -27,6 +32,7 @@ export const Route = createFileRoute("/this-week")({
 
 function ThisWeek() {
   const { birthDate } = useBirthDate();
+  const { babyName } = useBabyName();
 
   // Read the deep-link target from sessionStorage (set by MilestoneTimeline when an
   // activity pill is tapped). Read + clear synchronously so state is correct on first render.
@@ -54,13 +60,18 @@ function ThisWeek() {
   // This ensures every week has a meaningful set of activities derived from active milestones.
   const activityIds = getActivitiesForWeek(weeks);
   const activities = activityIds
-    .map(id => ACTIVITIES.find(a => a.id === id))
+    .map((id) => ACTIVITIES.find((a) => a.id === id))
     .filter((a): a is Activity => a !== undefined);
 
   return (
     <AppShell>
       <div className="space-y-6 px-5 pt-5">
         <header>
+          {babyName && (
+            <p className="font-serif text-lg font-semibold tracking-tight text-foreground/80">
+              {babyName}
+            </p>
+          )}
           <h1 className="font-serif text-2xl font-semibold tracking-tight text-foreground">
             Week {weeks}
           </h1>
@@ -74,7 +85,11 @@ function ThisWeek() {
           <Card className="rounded-3xl border-border/60 p-2 shadow-none">
             <Accordion type="single" collapsible className="w-full">
               {WEEK_EXPECTATIONS.map((item) => (
-                <AccordionItem key={item.title} value={item.title} className="border-border/60 last:border-b-0">
+                <AccordionItem
+                  key={item.title}
+                  value={item.title}
+                  className="border-border/60 last:border-b-0"
+                >
                   <AccordionTrigger className="px-3 text-left text-sm font-medium hover:no-underline">
                     {item.title}
                   </AccordionTrigger>
@@ -132,7 +147,10 @@ function ThisWeek() {
                           </p>
                           <ol className="space-y-1.5">
                             {a.instructions.map((step, i) => (
-                              <li key={i} className="flex gap-2 text-sm leading-relaxed text-foreground/85">
+                              <li
+                                key={i}
+                                className="flex gap-2 text-sm leading-relaxed text-foreground/85"
+                              >
                                 <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-cream-dark text-[10px] font-semibold text-foreground/70">
                                   {i + 1}
                                 </span>
@@ -145,20 +163,26 @@ function ThisWeek() {
                           <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                             What this supports
                           </p>
-                          <p className="text-sm leading-relaxed text-foreground/85">{a.processSupported}</p>
+                          <p className="text-sm leading-relaxed text-foreground/85">
+                            {a.processSupported}
+                          </p>
                         </div>
                         <div className="rounded-2xl border border-sage/20 bg-sage/5 p-3">
                           <div className="mb-1.5 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-sage">
                             <FlaskConical size={12} />
                             The science
                           </div>
-                          <p className="text-sm leading-relaxed text-foreground/80">{a.evidenceBasis}</p>
+                          <p className="text-sm leading-relaxed text-foreground/80">
+                            {a.evidenceBasis}
+                          </p>
                         </div>
                         <div>
                           <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                             Why it works
                           </p>
-                          <p className="text-sm leading-relaxed text-foreground/75">{a.whyItWorks}</p>
+                          <p className="text-sm leading-relaxed text-foreground/75">
+                            {a.whyItWorks}
+                          </p>
                         </div>
                         <div>
                           <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
