@@ -6,7 +6,6 @@
  *   - see and edit the baby's birth date (via the shared BirthDateGate) and name
  *   - see their unique family session and its members
  *   - mint / share an invite link for a caregiver
- *   - set device-local preferences
  */
 
 import { createFileRoute } from "@tanstack/react-router";
@@ -15,8 +14,6 @@ import { AppShell } from "@/components/littleleaps/AppShell";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
-import { Slider } from "@/components/ui/slider";
 import {
   Dialog,
   DialogContent,
@@ -34,17 +31,13 @@ import {
   useFamilyMembers,
   createInviteCode,
   inviteUrl,
-  getAwakeMinutes,
-  setAwakeMinutes,
-  getDailyReminder,
-  setDailyReminder,
 } from "@/lib/littleleaps/storage";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({
     meta: [
       { title: "Profile — Little Leaps" },
-      { name: "description", content: "Your baby's profile, family session and preferences." },
+      { name: "description", content: "Your baby's profile and family session." },
     ],
   }),
   component: ProfilePage,
@@ -63,11 +56,8 @@ function ProfilePage() {
 
   const [editingName, setEditingName] = useState(false);
   const [nameDraft, setNameDraft] = useState(babyName ?? "");
+  const [savingName, setSavingName] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
-
-  const [awake, setAwake] = useState<number>(() => getAwakeMinutes());
-  const [showAwake, setShowAwake] = useState(false);
-  const [reminder, setReminder] = useState<boolean>(() => getDailyReminder());
 
   // OnboardingGate covers first run; nothing to show until it's done.
   if (!birthDate) return null;
@@ -75,22 +65,21 @@ function ProfilePage() {
   const weeks = getAge(birthDate).weeks;
   const others = members.filter((m) => !m.isSelf);
 
-  const saveName = () => {
-    setBabyName(nameDraft);
-    setEditingName(false);
+  const saveName = async () => {
+    setSavingName(true);
+    try {
+      await setBabyName(nameDraft);
+      setEditingName(false);
+    } catch (e) {
+      toast.error("Couldn't save the name", {
+        description: e instanceof Error ? e.message : undefined,
+      });
+    } finally {
+      setSavingName(false);
+    }
   };
 
   const editBirthDate = () => window.dispatchEvent(new CustomEvent("littleleaps:editBirthDate"));
-
-  const changeAwake = (mins: number) => {
-    setAwake(mins);
-    setAwakeMinutes(mins);
-  };
-
-  const toggleReminder = (on: boolean) => {
-    setReminder(on);
-    setDailyReminder(on);
-  };
 
   return (
     <AppShell>
@@ -117,9 +106,10 @@ function ProfilePage() {
               <Button
                 size="sm"
                 onClick={saveName}
+                disabled={savingName}
                 className="h-9 rounded-xl bg-sage hover:bg-sage/90"
               >
-                Save
+                {savingName ? "Saving…" : "Save"}
               </Button>
             </div>
           ) : (
@@ -185,49 +175,6 @@ function ProfilePage() {
               </Button>
             </div>
           </Card>
-        </section>
-
-        {/* ── Preferences ── */}
-        <section className="space-y-2">
-          <SectionLabel>Preferences</SectionLabel>
-          <Card className="rounded-3xl border-border/60 shadow-none divide-y divide-border/60">
-            <div>
-              <Row
-                label="Default awake window"
-                onClick={() => setShowAwake((v) => !v)}
-                value={<span className="text-sm font-semibold text-foreground">{awake} min</span>}
-              />
-              {showAwake && (
-                <div className="px-4 pb-4 pt-1">
-                  <Slider
-                    value={[awake]}
-                    min={15}
-                    max={120}
-                    step={5}
-                    onValueChange={([v]) => changeAwake(v)}
-                    aria-label="Default awake window in minutes"
-                  />
-                  <div className="mt-1 flex justify-between text-[10px] text-muted-foreground">
-                    <span>15 min</span>
-                    <span>2 hr</span>
-                  </div>
-                </div>
-              )}
-            </div>
-            <div className="flex items-center justify-between px-4 py-3.5">
-              <span className="text-sm text-foreground">Daily reminder</span>
-              <Switch
-                checked={reminder}
-                onCheckedChange={toggleReminder}
-                aria-label="Daily reminder"
-              />
-            </div>
-          </Card>
-          {reminder && (
-            <p className="px-1 text-[11px] text-muted-foreground">
-              Reminders are saved on this device — scheduled delivery is coming soon.
-            </p>
-          )}
         </section>
 
         <div className="h-4" />

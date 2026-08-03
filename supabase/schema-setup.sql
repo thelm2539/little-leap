@@ -31,6 +31,7 @@ create extension if not exists pgcrypto with schema extensions;
 create table if not exists public.families (
   id         uuid primary key default gen_random_uuid(),
   birth_date date,
+  baby_name  text,
   created_at timestamptz not null default now()
 );
 
@@ -363,6 +364,26 @@ $$;
 
 revoke execute on function public.set_family_birth_date(uuid, date) from public, anon;
 grant  execute on function public.set_family_birth_date(uuid, date) to authenticated;
+
+
+create or replace function public.set_baby_name(p_family_id uuid, p_name text)
+returns void
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+begin
+  if not public.is_member(p_family_id) then
+    raise exception 'Not a member of this family' using errcode = '42501';
+  end if;
+  update public.families
+     set baby_name = nullif(btrim(p_name), '')
+   where id = p_family_id;
+end;
+$$;
+
+revoke execute on function public.set_baby_name(uuid, text) from public, anon;
+grant  execute on function public.set_baby_name(uuid, text) to authenticated;
 
 
 -- GDPR erasure. Removes the caller's memberships and hard-deletes any family

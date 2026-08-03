@@ -161,14 +161,20 @@ async function fetchMyFamilyId(): Promise<string | null> {
   return data?.family_id ?? null;
 }
 
-async function fetchBirthDate(familyId: string): Promise<string | null> {
+interface FamilyProfile {
+  birthDate: string | null;
+  babyName: string | null;
+}
+
+/** The family's shared profile row (birth date + baby name). RLS-scoped. */
+async function fetchFamilyProfile(familyId: string): Promise<FamilyProfile> {
   const { data, error } = await supabase
     .from("families")
-    .select("birth_date")
+    .select("birth_date, baby_name")
     .eq("id", familyId)
     .maybeSingle();
-  if (error) throw asError(error, "Could not load the birth date.");
-  return data?.birth_date ?? null;
+  if (error) throw asError(error, "Could not load your family profile.");
+  return { birthDate: data?.birth_date ?? null, babyName: data?.baby_name ?? null };
 }
 
 // ---------- Onboarding ----------
@@ -267,10 +273,16 @@ export async function joinFamilyProfile(code: string): Promise<{ birthDate: stri
 
   cacheFamilyId(familyId);
 
-  const birthDate = await fetchBirthDate(familyId);
+  // Pull the family's shared profile so a joining device inherits the birth date
+  // and baby name the other caregiver already set.
+  const { birthDate, babyName } = await fetchFamilyProfile(familyId);
   if (birthDate) {
     window.localStorage.setItem(DOB_STORE, birthDate);
     window.dispatchEvent(new CustomEvent(BIRTHDATE_EVENT));
+  }
+  if (babyName) {
+    window.localStorage.setItem(NAME_STORE, babyName);
+    window.dispatchEvent(new CustomEvent(NAME_EVENT));
   }
   return { birthDate };
 }
@@ -310,12 +322,13 @@ export async function deleteMyAccount(): Promise<void> {
  */
 export async function exportMyData(): Promise<{
   birthDate: string | null;
+  babyName: string | null;
   activities: ActivityLogRow[];
 }> {
   const familyId = getFamilyId();
-  if (!familyId) return { birthDate: null, activities: [] };
-  const [birthDate, logs] = await Promise.all([
-    fetchBirthDate(familyId),
+  if (!familyId) return { birthDate: null, babyName: null, activities: [] };
+  const [profile, logs] = await Promise.all([
+    fetchFamilyProfile(familyId),
     supabase
       .from("activity_logs")
       .select("*")
@@ -325,7 +338,7 @@ export async function exportMyData(): Promise<{
         return (data ?? []) as ActivityLogRow[];
       }),
   ]);
-  return { birthDate, activities: logs };
+  return { birthDate: profile.birthDate, babyName: profile.babyName, activities: logs };
 }
 
 // ---------- Family hook ----------
@@ -352,19 +365,34 @@ export function useFamily() {
         if (serverId) {
           if (serverId !== getFamilyId()) cacheFamilyId(serverId);
 
-          // Backfill: birth_date never existed as a column before this release,
-          // so migrated families have NULL. Push up the local copy once.
-          const remote = await fetchBirthDate(serverId);
-          const local = getBirthDate();
-          if (!remote && local) {
+          // Reconcile the shared family profile (birth date + baby name).
+          // Server wins when it has a value; a device-local value is backfilled
+          // up once when the server has none (covers columns added after a
+          // family already existed, and names set before name-sync shipped).
+          const remote = await fetchFamilyProfile(serverId);
+
+          const localDob = getBirthDate();
+          if (!remote.birthDate && localDob) {
             try {
-              await saveBirthDateToProfile(local);
+              await saveBirthDateToProfile(localDob);
             } catch (e) {
               console.warn("[littleleaps] birth date backfill failed", e);
             }
-          } else if (remote && remote !== local) {
-            window.localStorage.setItem(DOB_STORE, remote);
+          } else if (remote.birthDate && remote.birthDate !== localDob) {
+            window.localStorage.setItem(DOB_STORE, remote.birthDate);
             window.dispatchEvent(new CustomEvent(BIRTHDATE_EVENT));
+          }
+
+          const localName = getBabyName();
+          if (!remote.babyName && localName) {
+            try {
+              await saveBabyName(localName);
+            } catch (e) {
+              console.warn("[littleleaps] baby name backfill failed", e);
+            }
+          } else if (remote.babyName && remote.babyName !== localName) {
+            window.localStorage.setItem(NAME_STORE, remote.babyName);
+            window.dispatchEvent(new CustomEvent(NAME_EVENT));
           }
         } else if (getFamilyId()) {
           // Cached id but no membership on the server -- the account was deleted
@@ -590,17 +618,31 @@ export function useBirthDate() {
 }
 
 // ---------- Baby name ----------
-// Device-local for now. Unlike birth date, the name is not yet synced to the
-// families row (see BACKLOG: "sync baby name to the families table"), so a
-// partner's device won't see it until that lands.
+// Stored on the shared families row so both caregivers see the same name.
+// localStorage is a cache for instant paint; useFamily() reconciles it with the
+// server on load, and a partner inherits it via joinFamilyProfile.
 
 export function getBabyName(): string | null {
   if (typeof window === "undefined") return null;
   return window.localStorage.getItem(NAME_STORE);
 }
 
-export function setBabyName(name: string): void {
+/**
+ * Save the baby's name to the family (server first, then the local cache).
+ * Mirrors saveBirthDateToProfile: on failure it throws and the cache is left
+ * untouched, so the UI can surface the real error.
+ */
+export async function saveBabyName(name: string): Promise<void> {
+  const familyId = getFamilyId();
+  if (!familyId) throw new Error("No family profile yet.");
   const trimmed = name.trim();
+
+  const { error } = await supabase.rpc("set_baby_name", {
+    p_family_id: familyId,
+    p_name: trimmed,
+  });
+  if (error) throw asError(error, "Could not save the name.");
+
   if (trimmed) window.localStorage.setItem(NAME_STORE, trimmed);
   else window.localStorage.removeItem(NAME_STORE);
   window.dispatchEvent(new CustomEvent(NAME_EVENT));
@@ -617,7 +659,7 @@ export function useBabyName() {
       window.removeEventListener("storage", handler);
     };
   }, []);
-  return { babyName: name, setBabyName };
+  return { babyName: name, setBabyName: saveBabyName };
 }
 
 // ---------- Preferences (device-local) ----------

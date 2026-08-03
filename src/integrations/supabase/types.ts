@@ -35,6 +35,7 @@ export type Database = {
       };
       families: {
         Row: {
+          baby_name: string | null;
           birth_date: string | null;
           created_at: string;
           id: string;
@@ -82,6 +83,10 @@ export type Database = {
       };
       set_family_birth_date: {
         Args: { p_family_id: string; p_birth_date: string };
+        Returns: undefined;
+      };
+      set_baby_name: {
+        Args: { p_family_id: string; p_name: string };
         Returns: undefined;
       };
     };

@@ -140,35 +140,28 @@ and paste the real `10.xxxx/...` string.
 
 Effort: ~1 hour.
 
-## 8. Sync baby name + preferences to the family (currently device-local)
+## 8. Sync baby name to the family — DONE
 
-**Why:** the Profile tab stores the baby's name, default awake window, and daily
-reminder in localStorage only. Birth date already syncs to the `families` row,
-so the name being device-local is inconsistent — a partner's device won't see
-the name the other set.
+Baby name is now stored on `families.baby_name` via the `set_baby_name` RPC and
+inherited by a partner's device (migration `20260803120000_baby_name.sql`).
+Kept here only as a pointer; nothing outstanding.
 
-**What's left:**
-- Add `baby_name text` to `families` and a `set_baby_name(p_family_id, p_name)`
-  SECURITY DEFINER RPC (mirror `set_family_birth_date`). Update
-  `schema-setup.sql`, a migration, `types.ts`, and `setBabyName` in storage.ts
-  to call the RPC and cache locally (same pattern as birth date).
-- Decide whether awake window / reminder are per-family or per-device. Awake
-  window is arguably per-device; the name is clearly per-family.
+## 9. Preferences (awake window + daily reminder)
 
-Effort: ~half a day.
+**Status:** the Preferences section was removed from the Profile tab for now.
+The Home tab still has its own awake-window slider (device-local), and the
+`getAwakeMinutes` / `getDailyReminder` helpers remain in storage.ts unused by
+any screen.
 
-## 9. Deliver the daily reminder
+**If/when preferences return:**
+- Decide per-family vs per-device (awake window is arguably per-device).
+- **Daily reminder delivery** was never wired to anything — it only persisted a
+  flag. Real delivery needs a channel: web push (service worker + Push API,
+  neither of which exists yet) or email via the Supabase project. Collect a
+  reminder time and schedule it. Don't re-expose the toggle until it actually
+  sends something.
 
-**Why:** the Profile "Daily reminder" toggle persists a preference but nothing
-sends anything — the UI says "scheduled delivery is coming soon." Real delivery
-needs a notification channel.
-
-**What's left:** pick a mechanism (web push via a service worker + the Push API,
-or email via the existing Supabase project), collect a reminder time, and
-schedule it. Web push needs a service worker and permission prompt; this app has
-neither yet. Until then keep the "coming soon" note honest.
-
-Effort: ~2–3 days including the service worker and permission flow.
+Effort: reminder delivery ~2–3 days including the service worker + permission flow.
 
 ## Notes
 
