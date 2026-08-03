@@ -12,11 +12,11 @@
 // have a clear landing zone in the app.
 
 export type Domain =
-  | "sensory"               // touch · proprioception · vestibular · gross & fine motor
-  | "visual"                // contrast · pattern · tracking · luminance
-  | "language-communication"// auditory · social-communication · language-exposure
-  | "cognitive"             // attention · causal-learning · social-cognition
-  | "sleep";                // sleep environment · routine · circadian settling
+  | "sensory" // touch · proprioception · vestibular · gross & fine motor
+  | "visual" // contrast · pattern · tracking · luminance
+  | "language-communication" // auditory · social-communication · language-exposure
+  | "cognitive" // attention · causal-learning · social-cognition
+  | "sleep"; // sleep environment · routine · circadian settling
 
 // ── Sub-domain taxonomy ───────────────────────────────────────────────────────
 // Optional second-level tag. Lets the research agent target suggestions
@@ -24,23 +24,23 @@ export type Domain =
 
 export type SubDomain =
   // sensory
-  | "tactile"          // skin, texture, olfactory, palmar
+  | "tactile" // skin, texture, olfactory, palmar
   | "vestibular-motor" // carrying, tummy-time, swaying, limb movement
-  | "multi-sensory"    // activities activating ≥3 modalities simultaneously
+  | "multi-sensory" // activities activating ≥3 modalities simultaneously
   // visual
   | "contrast-pattern" // high-contrast cards, light/shadow, face as stimulus
-  | "visual-tracking"  // smooth-pursuit, slow object movement
+  | "visual-tracking" // smooth-pursuit, slow object movement
   // language-communication
-  | "auditory"         // voice mapping, song, outdoor listening, heartbeat
+  | "auditory" // voice mapping, song, outdoor listening, heartbeat
   | "social-communication" // serve-and-return, face gazing, narrated day
-  | "language-exposure"    // reading aloud, name repetition
+  | "language-exposure" // reading aloud, name repetition
   // cognitive
-  | "attention"        // quiet alert, habituation, attention-recovery
-  | "causal-learning"  // contingency detection, cause-and-effect
+  | "attention" // quiet alert, habituation, attention-recovery
+  | "causal-learning" // contingency detection, cause-and-effect
   | "social-cognition" // imitation, facial expression, early theory-of-mind
   // sleep
-  | "sleep-environment"// sensory conditions that support sleep onset
-  | "sleep-routine";   // rhythmic/predictable pre-sleep sequences
+  | "sleep-environment" // sensory conditions that support sleep onset
+  | "sleep-routine"; // rhythmic/predictable pre-sleep sequences
 
 // ── Activity interface ────────────────────────────────────────────────────────
 
@@ -65,32 +65,28 @@ export interface Activity {
 // ── Domain display maps ───────────────────────────────────────────────────────
 
 export const DOMAIN_LABEL: Record<Domain, string> = {
-  "sensory":                "Sensory & Motor",
-  "visual":                 "Visual",
+  sensory: "Sensory & Motor",
+  visual: "Visual",
   "language-communication": "Language & Communication",
-  "cognitive":              "Cognitive",
-  "sleep":                  "Sleep & Calming",
+  cognitive: "Cognitive",
+  sleep: "Sleep & Calming",
 };
 
 export const DOMAIN_DOT: Record<Domain, string> = {
-  "sensory":                "bg-domain-sensory",
-  "visual":                 "bg-domain-visual",
+  sensory: "bg-domain-sensory",
+  visual: "bg-domain-visual",
   "language-communication": "bg-domain-language-communication",
-  "cognitive":              "bg-domain-cognitive",
-  "sleep":                  "bg-domain-sleep",
+  cognitive: "bg-domain-cognitive",
+  sleep: "bg-domain-sleep",
 };
 
 export const DOMAIN_BADGE: Record<Domain, string> = {
-  "sensory":
-    "bg-domain-sensory/15 text-domain-sensory border-domain-sensory/30",
-  "visual":
-    "bg-domain-visual/15 text-domain-visual border-domain-visual/30",
+  sensory: "bg-domain-sensory/15 text-domain-sensory border-domain-sensory/30",
+  visual: "bg-domain-visual/15 text-domain-visual border-domain-visual/30",
   "language-communication":
     "bg-domain-language-communication/15 text-domain-language-communication border-domain-language-communication/30",
-  "cognitive":
-    "bg-domain-cognitive/20 text-domain-cognitive border-domain-cognitive/40",
-  "sleep":
-    "bg-domain-sleep/15 text-domain-sleep border-domain-sleep/30",
+  cognitive: "bg-domain-cognitive/20 text-domain-cognitive border-domain-cognitive/40",
+  sleep: "bg-domain-sleep/15 text-domain-sleep border-domain-sleep/30",
 };
 
 export function formatDuration(minutes: number): string {
@@ -149,7 +145,8 @@ export const ACTIVITIES: Activity[] = [
     domain: "visual",
     subDomain: "contrast-pattern",
     ageWindowWeeks: "0–8",
-    processSupported: "Early visual cortex calibration — pattern detection before colour vision matures",
+    processSupported:
+      "Early visual cortex calibration — pattern detection before colour vision matures",
     evidenceBasis:
       "Newborn contrast sensitivity favours high-contrast edges; colour discrimination emerges ~2–3 months (Norcia & Tyler, 1985; replicated).",
     instructions: [
@@ -214,7 +211,8 @@ export const ACTIVITIES: Activity[] = [
     domain: "sensory",
     subDomain: "vestibular-motor",
     ageWindowWeeks: "0–12",
-    processSupported: "Neck extensor muscle development, vestibular input, proprioceptive stimulation",
+    processSupported:
+      "Neck extensor muscle development, vestibular input, proprioceptive stimulation",
     evidenceBasis:
       "Prone positioning activates neck and back extensor circuits essential for later head control and postural development; AAP-endorsed for awake supervised periods.",
     instructions: [
@@ -385,7 +383,8 @@ export const ACTIVITIES: Activity[] = [
     domain: "sleep",
     subDomain: "sleep-routine",
     ageWindowWeeks: "0–52",
-    processSupported: "Parasympathetic wind-down; passive body warming and post-bath cooling that cues sleep onset",
+    processSupported:
+      "Parasympathetic wind-down; passive body warming and post-bath cooling that cues sleep onset",
     evidenceBasis:
       "A warm bath 1–2 hours before sleep raises skin temperature and then triggers a compensatory core-temperature drop as the body cools — the same nocturnal temperature fall that precedes natural sleep onset. Warm-bath-before-bed is a widely studied component of infant sleep routines.",
     instructions: [
@@ -407,7 +406,8 @@ export const ACTIVITIES: Activity[] = [
     domain: "sensory",
     subDomain: "tactile",
     ageWindowWeeks: "0–12",
-    processSupported: "Autonomic nervous system regulation; cortisol buffering; tactile and thermoregulatory pathway activation",
+    processSupported:
+      "Autonomic nervous system regulation; cortisol buffering; tactile and thermoregulatory pathway activation",
     evidenceBasis:
       "Kangaroo care has strong replicated evidence (multiple RCTs, endorsed by WHO) for stabilising heart rate, temperature regulation, and cortisol levels in both preterm and term infants. Physical holding is neurologically active stimulation.",
     instructions: [
@@ -495,7 +495,8 @@ export const ACTIVITIES: Activity[] = [
     domain: "language-communication",
     subDomain: "auditory",
     ageWindowWeeks: "0–12",
-    processSupported: "Auditory pattern memory; prosodic learning; stress regulation via familiar sound",
+    processSupported:
+      "Auditory pattern memory; prosodic learning; stress regulation via familiar sound",
     evidenceBasis:
       "Newborns recognise and prefer sounds heard repeatedly in utero; familiar songs activate memory and calming circuits (DeCasper & Fifer, 1980; prenatal learning literature).",
     instructions: [
@@ -516,7 +517,8 @@ export const ACTIVITIES: Activity[] = [
     domain: "language-communication",
     subDomain: "language-exposure",
     ageWindowWeeks: "0–12",
-    processSupported: "Prosodic exposure; language rhythm absorption; stress regulation via caregiver voice",
+    processSupported:
+      "Prosodic exposure; language rhythm absorption; stress regulation via caregiver voice",
     evidenceBasis:
       "The content of what is read does not matter at this age — prosodic pattern exposure is the active ingredient (Werker & Tees; Soderstrom, 2007).",
     instructions: [
@@ -758,7 +760,8 @@ export const ACTIVITIES: Activity[] = [
     domain: "sleep",
     subDomain: "sleep-routine",
     ageWindowWeeks: "0–52",
-    processSupported: "Parasympathetic (rest-and-digest) activation; lowered cortisol; increased vagal tone",
+    processSupported:
+      "Parasympathetic (rest-and-digest) activation; lowered cortisol; increased vagal tone",
     evidenceBasis:
       "Slow, moderate-pressure infant massage is associated with reduced cortisol, increased parasympathetic (vagal) activity, and improved sleep onset and duration in infants. A consistent finding across infant-massage trials and reviews (e.g. Field and colleagues).",
     instructions: [
@@ -780,7 +783,8 @@ export const ACTIVITIES: Activity[] = [
     domain: "sleep",
     subDomain: "sleep-environment",
     ageWindowWeeks: "0–52",
-    processSupported: "Arousal masking; recreation of the constant intrauterine soundscape that supports sleep onset",
+    processSupported:
+      "Arousal masking; recreation of the constant intrauterine soundscape that supports sleep onset",
     evidenceBasis:
       "Continuous broadband ('white') noise masks sudden environmental sounds that would otherwise trigger arousals, and approximates the constant low-frequency sound level of the womb. Newborns exposed to white noise have been shown to fall asleep faster than those settled in quiet.",
     instructions: [
@@ -834,20 +838,9 @@ export const FAQS = [
   },
 ];
 
-export const WEEK_EXPECTATIONS = [
-  {
-    title: "Physical development",
-    body: "Alert windows are lengthening from 2–3 minutes in week 1 to 4–7 minutes now. Primitive reflexes (Moro startle, palmar grasp, rooting) are still fully active — these are signs of healthy neurological function, not something to reduce. Head control is very early: brief lifting during tummy time (1–2 seconds) is excellent progress at this stage.",
-  },
-  {
-    title: "Sensory development",
-    body: "Vision is sharpest at 20–30 cm — precisely the distance from a cradled baby's face to the caregiver's face while feeding. High-contrast black and white patterns are far more stimulating than colourful toys right now. Colour sensitivity is only just beginning to emerge in the fovea. Your baby already recognises your voice from hearing it in the womb.",
-  },
-  {
-    title: "Cognitive development",
-    body: "Your baby is learning contingency — that their actions produce predictable responses. Every time you respond to a cry, a coo, or a gaze, you are literally teaching them that their actions matter. This is the earliest form of learning and the foundation for later problem-solving. Quiet alert states (awake but calm) are the richest windows for interaction.",
-  },
-];
+// NOTE: the old static WEEK_EXPECTATIONS array was removed. "What to expect this
+// week" is now derived from the active milestones via getWeekExpectations() in
+// milestones.ts, so it tracks the baby's age instead of showing week-1 copy.
 
 export const WEEKLY_TIP =
   "Your baby can now focus best at 20–30 cm — exactly the distance from a cradled baby's eyes to your face while feeding.";

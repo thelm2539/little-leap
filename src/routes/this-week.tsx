@@ -8,16 +8,16 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import {
-  ACTIVITIES,
-  WEEK_EXPECTATIONS,
-  formatDuration,
-  type Activity,
-} from "@/lib/littleleaps/data";
+import { ACTIVITIES, formatDuration, type Activity } from "@/lib/littleleaps/data";
 import { DomainBadge, DurationPill, RatingButtons } from "@/components/littleleaps/ActivityBits";
 import { getAge, dobFormatted } from "@/lib/littleleaps/age";
 import { useBirthDate, useBabyName } from "@/lib/littleleaps/storage";
-import { getActivitiesForWeek } from "@/lib/littleleaps/milestones";
+import {
+  getActivitiesForWeek,
+  getWeekExpectations,
+  DOMAIN_LABELS,
+  DOMAIN_CSS_VAR,
+} from "@/lib/littleleaps/milestones";
 import { FlaskConical } from "lucide-react";
 
 export const Route = createFileRoute("/this-week")({
@@ -63,6 +63,10 @@ function ThisWeek() {
     .map((id) => ACTIVITIES.find((a) => a.id === id))
     .filter((a): a is Activity => a !== undefined);
 
+  // "What to expect" is derived from the milestones active this week, grouped by
+  // domain — so it tracks the baby's age and matches the Milestones timeline.
+  const expectations = getWeekExpectations(weeks);
+
   return (
     <AppShell>
       <div className="space-y-6 px-5 pt-5">
@@ -82,24 +86,57 @@ function ThisWeek() {
           <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             What to expect this week
           </h2>
-          <Card className="rounded-3xl border-border/60 p-2 shadow-none">
-            <Accordion type="single" collapsible className="w-full">
-              {WEEK_EXPECTATIONS.map((item) => (
-                <AccordionItem
-                  key={item.title}
-                  value={item.title}
-                  className="border-border/60 last:border-b-0"
-                >
-                  <AccordionTrigger className="px-3 text-left text-sm font-medium hover:no-underline">
-                    {item.title}
-                  </AccordionTrigger>
-                  <AccordionContent className="px-3 text-sm leading-relaxed text-foreground/80">
-                    {item.body}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </Card>
+          {expectations.length === 0 ? (
+            <Card className="rounded-3xl border-border/60 bg-cream/40 p-5 shadow-none">
+              <p className="text-sm text-muted-foreground">
+                No new milestone windows are opening this exact week — keep following{" "}
+                {babyName ?? "your baby"}
+                's cues. The timeline on the Milestones tab shows what's next.
+              </p>
+            </Card>
+          ) : (
+            <Card className="rounded-3xl border-border/60 p-2 shadow-none">
+              <Accordion type="single" collapsible className="w-full">
+                {expectations.map(({ domain, milestones }) => (
+                  <AccordionItem
+                    key={domain}
+                    value={domain}
+                    className="border-border/60 last:border-b-0"
+                  >
+                    <AccordionTrigger className="px-3 text-left text-sm font-medium hover:no-underline">
+                      <span className="flex items-center gap-2">
+                        <span
+                          className="inline-block h-2 w-2 flex-shrink-0 rounded-full"
+                          style={{ backgroundColor: DOMAIN_CSS_VAR[domain] }}
+                        />
+                        {DOMAIN_LABELS[domain]}
+                      </span>
+                    </AccordionTrigger>
+                    <AccordionContent className="space-y-3 px-3 text-sm leading-relaxed text-foreground/80">
+                      {milestones.map((m) => (
+                        <div key={m.id}>
+                          <p className="font-medium text-foreground">{m.name}</p>
+                          <p className="mt-0.5 text-foreground/70">{m.mechanism}</p>
+                          {m.parentCanSee.length > 0 && (
+                            <ul className="mt-1.5 space-y-1">
+                              {m.parentCanSee.map((sign, i) => (
+                                <li
+                                  key={i}
+                                  className="relative pl-3 before:absolute before:left-0 before:text-muted-foreground before:content-['·']"
+                                >
+                                  {sign}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      ))}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </Card>
+          )}
         </section>
 
         <section>

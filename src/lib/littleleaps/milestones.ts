@@ -4,14 +4,14 @@
 // Rule: no CDC/WHO/AAP summaries — primary authors only.
 
 export type MilestoneDomain =
-  | 'visual'
-  | 'sensory'
-  | 'gross-motor'
-  | 'fine-motor'
-  | 'language-communication'
-  | 'cognitive'
-  | 'social'
-  | 'sleep';
+  | "visual"
+  | "sensory"
+  | "gross-motor"
+  | "fine-motor"
+  | "language-communication"
+  | "cognitive"
+  | "social"
+  | "sleep";
 
 /**
  * Whether a milestone is a capability the baby gains, or a temporary regression
@@ -25,7 +25,7 @@ export type MilestoneDomain =
  *
  * Optional: absence means 'achievement'. Read it through `milestoneKind()`.
  */
-export type MilestoneKind = 'achievement' | 'disruption';
+export type MilestoneKind = "achievement" | "disruption";
 
 export interface MilestoneResource {
   title: string;
@@ -37,10 +37,10 @@ export interface Milestone {
   name: string;
   domain: MilestoneDomain;
   kind?: MilestoneKind; // undefined ⇒ 'achievement'. See MilestoneKind.
-  weekStart: number;  // earliest onset
-  weekPeak: number;   // typical / mean (used for timeline placement)
-  weekEnd: number;    // end of window
-  mechanism: string;  // "What's happening"
+  weekStart: number; // earliest onset
+  weekPeak: number; // typical / mean (used for timeline placement)
+  weekEnd: number; // end of window
+  mechanism: string; // "What's happening"
   parentCanSee: string[]; // nested arrays - shift to separate rabltes when creating a database to hold and update milestones
   activityIds: string[];
   resources: MilestoneResource[];
@@ -53,435 +53,613 @@ export const MILESTONES: Milestone[] = [
   // ── PHASE 1 · Weeks 0–2 · Reflexive World ────────────────────────────────
 
   {
-    id: 'm01-face-detection',
-    name: 'Subcortical Face Detection',
-    domain: 'visual',
-    weekStart: 0, weekPeak: 0, weekEnd: 2,
+    id: "m01-face-detection",
+    name: "Subcortical Face Detection",
+    domain: "visual",
+    weekStart: 0,
+    weekPeak: 0,
+    weekEnd: 2,
     mechanism:
-      'A subcortical circuit (superior colliculus → pulvinar) orients the newborn toward face-like patterns from birth, before any cortical face processing is possible. Operates on coarse, high-contrast configurations at ~25 cm — phylogenetically ancient, present in chicks too.',
+      "A subcortical circuit (superior colliculus → pulvinar) orients the newborn toward face-like patterns from birth, before any cortical face processing is possible. Operates on coarse, high-contrast configurations at ~25 cm — phylogenetically ancient, present in chicks too.",
     parentCanSee: [
-      'Gaze drifts toward your face when held at chest distance',
-      'Tracks a face-like card slightly further than random patterns',
-      'Calms when a face is brought close and held still',
-      'Sheridan (1 month): follows face from side toward midline through a quarter circle',
+      "Gaze drifts toward your face when held at chest distance",
+      "Tracks a face-like card slightly further than random patterns",
+      "Calms when a face is brought close and held still",
+      "Sheridan (1 month): follows face from side toward midline through a quarter circle",
     ],
-    activityIds: ['mirror-face-time', 'bw-card-gallery', 'light-shadow'],
+    activityIds: ["mirror-face-time", "bw-card-gallery", "light-shadow"],
     resources: [
-      { title: 'Johnson MH (2011) — Face-sensitive cortical responses in early infancy', doi: '10.1080/17470218.2011.590596' },
-      { title: 'Johnson MH (1999) — The development of visual attention in infancy', doi: '10.1037/h0087301' },
+      {
+        title: "Johnson MH (2011) — Face-sensitive cortical responses in early infancy",
+        doi: "10.1080/17470218.2011.590596",
+      },
+      {
+        title: "Johnson MH (1999) — The development of visual attention in infancy",
+        doi: "10.1037/h0087301",
+      },
     ],
-    checkIn: 'Did her gaze seem to find your face and stay there, even briefly?',
-    accelerator: 'Sustained face-fixation > 8 seconds → cortical face processing likely emerging early; move to conversation-turn and slow-face activities sooner',
-    latestResearch: 'Johnson MH (2011) — Face-sensitive cortical responses in early infancy',
-},
+    checkIn: "Did her gaze seem to find your face and stay there, even briefly?",
+    accelerator:
+      "Sustained face-fixation > 8 seconds → cortical face processing likely emerging early; move to conversation-turn and slow-face activities sooner",
+    latestResearch: "Johnson MH (2011) — Face-sensitive cortical responses in early infancy",
+  },
 
   {
-    id: 'm02-vestibular-dominance',
-    name: 'Vestibular Dominance',
-    domain: 'sensory',
-    weekStart: 0, weekPeak: 0, weekEnd: 2,
+    id: "m02-vestibular-dominance",
+    name: "Vestibular Dominance",
+    domain: "sensory",
+    weekStart: 0,
+    weekPeak: 0,
+    weekEnd: 2,
     mechanism:
-      'The vestibular system (semicircular canals + otolith organs) is functional from ~20 weeks gestation — the most developmentally mature sensory system at birth. Rhythmic movement is the most reliable arousal regulator because of this. Vision is the least mature system at birth.',
+      "The vestibular system (semicircular canals + otolith organs) is functional from ~20 weeks gestation — the most developmentally mature sensory system at birth. Rhythmic movement is the most reliable arousal regulator because of this. Vision is the least mature system at birth.",
     parentCanSee: [
-      'Calms within 30–60 seconds of rhythmic rocking or walking',
-      'Moro reflex (full-body startle) triggered by sudden vestibular displacement',
-      'Settles more reliably in vertical carry than horizontal hold',
+      "Calms within 30–60 seconds of rhythmic rocking or walking",
+      "Moro reflex (full-body startle) triggered by sudden vestibular displacement",
+      "Settles more reliably in vertical carry than horizontal hold",
     ],
-    activityIds: ['sway-narrate', 'varied-carrying', 'skin-to-skin'],
+    activityIds: ["sway-narrate", "varied-carrying", "skin-to-skin"],
     resources: [
-      { title: 'Deng W et al. (2025) — Vestibular contributions to infant postural control', doi: '10.1097/PEP.0000000000001187' },
-      { title: 'Anderson J (1986) — Sensory intervention with the preterm infant', doi: '10.5014/ajot.40.1.19' },
+      {
+        title: "Deng W et al. (2025) — Vestibular contributions to infant postural control",
+        doi: "10.1097/PEP.0000000000001187",
+      },
+      {
+        title: "Anderson J (1986) — Sensory intervention with the preterm infant",
+        doi: "10.5014/ajot.40.1.19",
+      },
     ],
-    checkIn: 'How quickly did she calm when you started swaying — under 1 minute, 1–3 minutes, or longer?',
-    accelerator: 'Calms in < 30 seconds consistently → vestibular regulation maturing ahead of curve',
-    latestResearch: 'Deng W et al. (2025) — Vestibular contributions to infant postural control',
-},
+    checkIn:
+      "How quickly did she calm when you started swaying — under 1 minute, 1–3 minutes, or longer?",
+    accelerator:
+      "Calms in < 30 seconds consistently → vestibular regulation maturing ahead of curve",
+    latestResearch: "Deng W et al. (2025) — Vestibular contributions to infant postural control",
+  },
 
   {
-    id: 'm03-prenatal-auditory-memory',
-    name: 'Prenatal Auditory Memory',
-    domain: 'language-communication',
-    weekStart: 0, weekPeak: 0, weekEnd: 2,
+    id: "m03-prenatal-auditory-memory",
+    name: "Prenatal Auditory Memory",
+    domain: "language-communication",
+    weekStart: 0,
+    weekPeak: 0,
+    weekEnd: 2,
     mechanism:
-      'Auditory cortex processes speech-like signals from ~28 weeks gestation. By birth the infant has prosodic templates of the caregiver\'s voice and native language rhythm. This is recall, not learning. Sheridan (1 month): babies make pre-speech lip and tongue movements in response to caregiver talk from soon after birth.',
+      "Auditory cortex processes speech-like signals from ~28 weeks gestation. By birth the infant has prosodic templates of the caregiver's voice and native language rhythm. This is recall, not learning. Sheridan (1 month): babies make pre-speech lip and tongue movements in response to caregiver talk from soon after birth.",
     parentCanSee: [
-      'Preferential turning toward mother\'s voice over a stranger\'s',
-      'Stills or quiets to familiar songs and voices',
-      'Subtle orienting to familiar language vs. foreign language',
-      'Pre-speech lip and tongue movements when caregiver talks',
+      "Preferential turning toward mother's voice over a stranger's",
+      "Stills or quiets to familiar songs and voices",
+      "Subtle orienting to familiar language vs. foreign language",
+      "Pre-speech lip and tongue movements when caregiver talks",
     ],
-    activityIds: ['same-song', 'heartbeat-settling', 'hum-chest'],
+    activityIds: ["same-song", "heartbeat-settling", "hum-chest"],
     resources: [
-     { title: 'Kuhl PK et al. (2011) — Early language acquisition: neural substrates and theoretical models', doi: '10.1111/j.1467-7687.2010.00973.x' },
+      {
+        title:
+          "Kuhl PK et al. (2011) — Early language acquisition: neural substrates and theoretical models",
+        doi: "10.1111/j.1467-7687.2010.00973.x",
+      },
     ],
-    checkIn: 'Did she seem to respond differently to this song vs. a new one — stilling, turning, or changing expression?',
-    accelerator: 'Consistent orienting to voice at > 30 cm distance → auditory localisation ahead of curve',
-    latestResearch: 'Kuhl PK et al. (2011) — Early language acquisition: neural substrates and theoretical models',
-},
+    checkIn:
+      "Did she seem to respond differently to this song vs. a new one — stilling, turning, or changing expression?",
+    accelerator:
+      "Consistent orienting to voice at > 30 cm distance → auditory localisation ahead of curve",
+    latestResearch:
+      "Kuhl PK et al. (2011) — Early language acquisition: neural substrates and theoretical models",
+  },
 
   // ── PHASE 2 · Weeks 2–6 · First Alertness ────────────────────────────────
 
   {
-    id: 'm04-quiet-alert-state',
-    name: 'Quiet Alert State Lengthening',
-    domain: 'cognitive',
-    weekStart: 2, weekPeak: 3, weekEnd: 6,
+    id: "m04-quiet-alert-state",
+    name: "Quiet Alert State Lengthening",
+    domain: "cognitive",
+    weekStart: 2,
+    weekPeak: 3,
+    weekEnd: 6,
     mechanism:
-      'The quiet alert state (eyes open, body still, cortex maximally receptive) lengthens from < 5 minutes at birth to 20–45+ minutes by week 6. All cortical learning depends on catching these windows. Duration increasing week-on-week is itself the milestone.',
+      "The quiet alert state (eyes open, body still, cortex maximally receptive) lengthens from < 5 minutes at birth to 20–45+ minutes by week 6. All cortical learning depends on catching these windows. Duration increasing week-on-week is itself the milestone.",
     parentCanSee: [
-      'Periods of calm, wide-eyed wakefulness without crying or feeding',
-      'Scanning the room or your face with apparent interest',
-      'Alert duration visibly longer than last week',
+      "Periods of calm, wide-eyed wakefulness without crying or feeding",
+      "Scanning the room or your face with apparent interest",
+      "Alert duration visibly longer than last week",
     ],
-    activityIds: ['quiet-alert-observation', 'mirror-face-time', 'bw-card-gallery'],
+    activityIds: ["quiet-alert-observation", "mirror-face-time", "bw-card-gallery"],
     resources: [
-      { title: 'Adolph KE & Franchak JM (2017) — The development of motor behavior', doi: '10.1002/wcs.1430' },
+      {
+        title: "Adolph KE & Franchak JM (2017) — The development of motor behavior",
+        doi: "10.1002/wcs.1430",
+      },
     ],
-    checkIn: 'How long was this quiet alert window — under 10 minutes, 10–30 minutes, or over 30 minutes?',
-    accelerator: 'Alert windows > 30 minutes before week 4 → contingency detection (M08) likely accessible earlier',
-    latestResearch: 'Adolph KE & Franchak JM (2017) — The development of motor behavior',
-},
+    checkIn:
+      "How long was this quiet alert window — under 10 minutes, 10–30 minutes, or over 30 minutes?",
+    accelerator:
+      "Alert windows > 30 minutes before week 4 → contingency detection (M08) likely accessible earlier",
+    latestResearch: "Adolph KE & Franchak JM (2017) — The development of motor behavior",
+  },
 
   {
-    id: 'm05-palmar-tactile-reflex',
-    name: 'Palmar & Tactile Reflex Integration',
-    domain: 'sensory',
-    weekStart: 2, weekPeak: 4, weekEnd: 8,
+    id: "m05-palmar-tactile-reflex",
+    name: "Palmar & Tactile Reflex Integration",
+    domain: "sensory",
+    weekStart: 2,
+    weekPeak: 4,
+    weekEnd: 8,
     mechanism:
-      'The palmar grasp reflex (present at birth) is subcortical. Around weeks 4–8, cortical motor pathways begin modulating it — the first step toward voluntary grasping. Each reflex activation fires a cortical-subcortical circuit. Texture stimulation activates mechanoreceptors (Meissner\'s, Pacinian) calibrating the somatosensory cortex.',
+      "The palmar grasp reflex (present at birth) is subcortical. Around weeks 4–8, cortical motor pathways begin modulating it — the first step toward voluntary grasping. Each reflex activation fires a cortical-subcortical circuit. Texture stimulation activates mechanoreceptors (Meissner's, Pacinian) calibrating the somatosensory cortex.",
     parentCanSee: [
-      'Reflexive grip when finger placed in palm',
-      'Variable grip strength — sometimes firm, sometimes releases quickly',
+      "Reflexive grip when finger placed in palm",
+      "Variable grip strength — sometimes firm, sometimes releases quickly",
       'Sheridan (1 month): "Grasps finger when palm is touched" — purely reflexive at this stage',
-      'Different facial reactions to different textures',
+      "Different facial reactions to different textures",
     ],
-    activityIds: ['palmar-grasp', 'cloth-texture', 'scent-pairing'],
+    activityIds: ["palmar-grasp", "cloth-texture", "scent-pairing"],
     resources: [
-      { title: 'Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling', doi: '10.1146/annurev-psych-010418-102836' },
+      {
+        title:
+          "Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling",
+        doi: "10.1146/annurev-psych-010418-102836",
+      },
     ],
-    checkIn: 'When you placed your finger in her palm, did she grip it firmly and hold — or was it brief and loose?',
-    accelerator: 'Strong sustained grip > 5 seconds before week 4 → corticospinal pathway maturation ahead of curve',
-    latestResearch: 'Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling',
-},
+    checkIn:
+      "When you placed your finger in her palm, did she grip it firmly and hold — or was it brief and loose?",
+    accelerator:
+      "Strong sustained grip > 5 seconds before week 4 → corticospinal pathway maturation ahead of curve",
+    latestResearch:
+      "Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling",
+  },
 
   {
-    id: 'm06-social-smile',
-    name: 'Social Smile Emergence',
-    domain: 'social',
-    weekStart: 4, weekPeak: 6, weekEnd: 10,
+    id: "m06-social-smile",
+    name: "Social Smile Emergence",
+    domain: "social",
+    weekStart: 4,
+    weekPeak: 6,
+    weekEnd: 10,
     mechanism:
-      'The endogenous social smile marks the onset of cortical engagement with social stimuli. Prior smiles (weeks 0–4) are subcortical/REM-associated. The genuine social smile requires face recognition + cortically mediated positive affect — it\'s the first reliable signal that the cortical face network is coming online.',
+      "The endogenous social smile marks the onset of cortical engagement with social stimuli. Prior smiles (weeks 0–4) are subcortical/REM-associated. The genuine social smile requires face recognition + cortically mediated positive affect — it's the first reliable signal that the cortical face network is coming online.",
     parentCanSee: [
-      'Smile specifically in response to your face (not a bright light or random stimulus)',
-      'Smile with eye contact, sometimes accompanied by vocalisation',
-      'Smile can be elicited repeatedly in the same interaction',
-      'Sheridan: expression still vague at 1 month, progressing to social smile at ~5–6 weeks',
+      "Smile specifically in response to your face (not a bright light or random stimulus)",
+      "Smile with eye contact, sometimes accompanied by vocalisation",
+      "Smile can be elicited repeatedly in the same interaction",
+      "Sheridan: expression still vague at 1 month, progressing to social smile at ~5–6 weeks",
     ],
-    activityIds: ['slow-face', 'conversation-turn', 'mirror-face-time'],
+    activityIds: ["slow-face", "conversation-turn", "mirror-face-time"],
     resources: [
-      { title: 'Johnson MH (2011) — Face-sensitive cortical responses in early infancy', doi: '10.1080/17470218.2011.590596' },
+      {
+        title: "Johnson MH (2011) — Face-sensitive cortical responses in early infancy",
+        doi: "10.1080/17470218.2011.590596",
+      },
     ],
-    checkIn: 'Did she smile back at your face — a real smile, not just a grimace? Did she make eye contact while doing it?',
-    accelerator: 'Social smile reliably before week 5 → unlock conversation-turn and facial-expression-copying activities earlier',
-    latestResearch: 'Johnson MH (2011) — Face-sensitive cortical responses in early infancy',
-},
+    checkIn:
+      "Did she smile back at your face — a real smile, not just a grimace? Did she make eye contact while doing it?",
+    accelerator:
+      "Social smile reliably before week 5 → unlock conversation-turn and facial-expression-copying activities earlier",
+    latestResearch: "Johnson MH (2011) — Face-sensitive cortical responses in early infancy",
+  },
 
   // ── PHASE 3 · Weeks 6–12 · Visual & Motor Awakening ─────────────────────
 
   {
-    id: 'm07-smooth-pursuit',
-    name: 'Smooth Pursuit Emerges',
-    domain: 'visual',
-    weekStart: 6, weekPeak: 8, weekEnd: 10,
+    id: "m07-smooth-pursuit",
+    name: "Smooth Pursuit Emerges",
+    domain: "visual",
+    weekStart: 6,
+    weekPeak: 8,
+    weekEnd: 10,
     mechanism:
-      'Prior to ~6–8 weeks, visual tracking is saccadic (jerky catch-up movements). Smooth pursuit requires cortical involvement (frontal eye fields + MT/V5). Sheridan: at 1 month tracks through a quarter circle; at 3 months tracks through a half circle horizontally and vertically. Defensive blink clearly present by 6–8 weeks.',
+      "Prior to ~6–8 weeks, visual tracking is saccadic (jerky catch-up movements). Smooth pursuit requires cortical involvement (frontal eye fields + MT/V5). Sheridan: at 1 month tracks through a quarter circle; at 3 months tracks through a half circle horizontally and vertically. Defensive blink clearly present by 6–8 weeks.",
     parentCanSee: [
-      'Eyes follow a slow-moving object continuously, not in jumps',
-      'Tracks past the body midline (earlier tracking stops at midline)',
-      'Brief tracking (2–3 seconds) at first, extending with age',
-      'Binocular convergence: eyes come together as toy approaches face (Sheridan, 3 months)',
+      "Eyes follow a slow-moving object continuously, not in jumps",
+      "Tracks past the body midline (earlier tracking stops at midline)",
+      "Brief tracking (2–3 seconds) at first, extending with age",
+      "Binocular convergence: eyes come together as toy approaches face (Sheridan, 3 months)",
     ],
-    activityIds: ['object-tracking', 'light-shadow', 'sway-narrate'],
+    activityIds: ["object-tracking", "light-shadow", "sway-narrate"],
     resources: [
-      { title: 'Johnson MH (2011) — Face-sensitive cortical responses in early infancy', doi: '10.1080/17470218.2011.590596' },
+      {
+        title: "Johnson MH (2011) — Face-sensitive cortical responses in early infancy",
+        doi: "10.1080/17470218.2011.590596",
+      },
     ],
-    checkIn: 'Did her eyes follow the toy smoothly as you moved it — or did her gaze jump to catch up with it?',
-    accelerator: 'Tracks past midline before week 7 → unlock novel-object-pause activity earlier',
-    latestResearch: 'Johnson MH (2011) — Face-sensitive cortical responses in early infancy',
-},
-
-  {
-    id: 'm08-contingency-detection',
-    name: 'Contingency Detection',
-    domain: 'cognitive',
-    weekStart: 8, weekPeak: 10, weekEnd: 12,
-    mechanism:
-      'The infant discovers that their own action causes an effect. Rovee-Collier\'s mobile studies: 3-month-olds learn within ~9 minutes that kicking moves a mobile, retain this for 3 days, and show specificity (only the same mobile cues retrieval). This is the root of intentional behaviour, agency, and problem-solving. Memory retention doubles by 6 months (14 days).',
-    parentCanSee: [
-      'Increased kicking or arm movements when a hanging toy responds',
-      'Pause-and-watch when the contingency stops unexpectedly',
-      'Visible excitement (increased motor activity) when cause-effect is active',
-      'Frustration or disengagement if contingency is removed',
-    ],
-    activityIds: ['contingency-mobile', 'attention-recovery', 'quiet-alert-observation'],
-    resources: [
-      { title: 'Hill WL, Borovsky D & Rovee-Collier C (1988) — Continuities in infant memory development', doi: '10.1002/dev.420210104' },
-      { title: 'Rovee-Collier C et al. (1985) — Reactivation of infant memory', doi: '10.1002/dev.420180611' },
-    ],
-    checkIn: 'Did she seem to notice when the mobile moved? Did she kick more, then look to see the effect?',
-    accelerator: 'Clear cause-effect excitement before week 10 → unlock novel-object-pause; advance cognitive timeline by 1 week',
-    latestResearch: 'Hill WL, Borovsky D & Rovee-Collier C (1988) — Continuities in infant memory development',
+    checkIn:
+      "Did her eyes follow the toy smoothly as you moved it — or did her gaze jump to catch up with it?",
+    accelerator: "Tracks past midline before week 7 → unlock novel-object-pause activity earlier",
+    latestResearch: "Johnson MH (2011) — Face-sensitive cortical responses in early infancy",
   },
 
   {
-    id: 'm09-head-control',
-    name: 'Neck Extension & Head Control',
-    domain: 'gross-motor',
-    weekStart: 4, weekPeak: 8, weekEnd: 12,
+    id: "m08-contingency-detection",
+    name: "Contingency Detection",
+    domain: "cognitive",
+    weekStart: 8,
+    weekPeak: 10,
+    weekEnd: 12,
     mechanism:
-      'Head control is the postural foundation for everything downstream (Adolph\'s cascade thesis). Sheridan stages: 1 month — head turns to side in prone, arms and legs flexed; 3 months — lifts head and upper chest using forearms, buttocks flat; 6 months — lifts head and chest using extended arms and flattened palms. The forearms→extended arms transition is the key 3-to-6-month marker.',
+      "The infant discovers that their own action causes an effect. Rovee-Collier's mobile studies: 3-month-olds learn within ~9 minutes that kicking moves a mobile, retain this for 3 days, and show specificity (only the same mobile cues retrieval). This is the root of intentional behaviour, agency, and problem-solving. Memory retention doubles by 6 months (14 days).",
     parentCanSee: [
-      'Briefly lifts head (1–2 seconds) when prone (from birth)',
-      'Head bobbing when held upright — attempting but losing control',
-      'Sustained head lift (3+ seconds) — milestone achieved',
-      'Forearm-supported lift at 3 months → extended-arm push-up by 6 months',
+      "Increased kicking or arm movements when a hanging toy responds",
+      "Pause-and-watch when the contingency stops unexpectedly",
+      "Visible excitement (increased motor activity) when cause-effect is active",
+      "Frustration or disengagement if contingency is removed",
     ],
-    activityIds: ['tummy-time-chest', 'sway-narrate', 'joint-compression', 'limb-movement'],
+    activityIds: ["contingency-mobile", "attention-recovery", "quiet-alert-observation"],
     resources: [
-      { title: 'Adolph KE & Hoch JE (2020) — Motor skill learning: to generalize or not to generalize', doi: '10.1159/000511511' },
-      { title: 'Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling', doi: '10.1146/annurev-psych-010418-102836' },
+      {
+        title:
+          "Hill WL, Borovsky D & Rovee-Collier C (1988) — Continuities in infant memory development",
+        doi: "10.1002/dev.420210104",
+      },
+      {
+        title: "Rovee-Collier C et al. (1985) — Reactivation of infant memory",
+        doi: "10.1002/dev.420180611",
+      },
     ],
-    checkIn: 'Did she lift her head at all? If yes — briefly (under 3 seconds), for a few seconds, or held it up? Was she resting on her forearms or pushing up on her hands?',
-    accelerator: 'Sustained 3-second hold before week 7, or pushing up on extended arms before week 12 → motor cascade accelerating; suggest varied-carrying progression sooner',
-    latestResearch: 'Adolph KE & Hoch JE (2020) — Motor skill learning: to generalize or not to generalize',
+    checkIn:
+      "Did she seem to notice when the mobile moved? Did she kick more, then look to see the effect?",
+    accelerator:
+      "Clear cause-effect excitement before week 10 → unlock novel-object-pause; advance cognitive timeline by 1 week",
+    latestResearch:
+      "Hill WL, Borovsky D & Rovee-Collier C (1988) — Continuities in infant memory development",
+  },
+
+  {
+    id: "m09-head-control",
+    name: "Neck Extension & Head Control",
+    domain: "gross-motor",
+    weekStart: 4,
+    weekPeak: 8,
+    weekEnd: 12,
+    mechanism:
+      "Head control is the postural foundation for everything downstream (Adolph's cascade thesis). Sheridan stages: 1 month — head turns to side in prone, arms and legs flexed; 3 months — lifts head and upper chest using forearms, buttocks flat; 6 months — lifts head and chest using extended arms and flattened palms. The forearms→extended arms transition is the key 3-to-6-month marker.",
+    parentCanSee: [
+      "Briefly lifts head (1–2 seconds) when prone (from birth)",
+      "Head bobbing when held upright — attempting but losing control",
+      "Sustained head lift (3+ seconds) — milestone achieved",
+      "Forearm-supported lift at 3 months → extended-arm push-up by 6 months",
+    ],
+    activityIds: ["tummy-time-chest", "sway-narrate", "joint-compression", "limb-movement"],
+    resources: [
+      {
+        title:
+          "Adolph KE & Hoch JE (2020) — Motor skill learning: to generalize or not to generalize",
+        doi: "10.1159/000511511",
+      },
+      {
+        title:
+          "Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling",
+        doi: "10.1146/annurev-psych-010418-102836",
+      },
+    ],
+    checkIn:
+      "Did she lift her head at all? If yes — briefly (under 3 seconds), for a few seconds, or held it up? Was she resting on her forearms or pushing up on her hands?",
+    accelerator:
+      "Sustained 3-second hold before week 7, or pushing up on extended arms before week 12 → motor cascade accelerating; suggest varied-carrying progression sooner",
+    latestResearch:
+      "Adolph KE & Hoch JE (2020) — Motor skill learning: to generalize or not to generalize",
   },
 
   // ── PHASE 4 · Weeks 12–20 · Reaching & Language Emergence ───────────────
 
   {
-    id: 'm10-reach-to-grasp',
-    name: 'Reach-to-Grasp Precursors',
-    domain: 'fine-motor',
-    weekStart: 10, weekPeak: 13, weekEnd: 16,
+    id: "m10-reach-to-grasp",
+    name: "Reach-to-Grasp Precursors",
+    domain: "fine-motor",
+    weekStart: 10,
+    weekPeak: 13,
+    weekEnd: 16,
     mechanism:
-      'Reaching requires integrating visual information (where is the object?) with proprioceptive information (where is my hand?) — a visuomotor calibration problem the brain solves over weeks. Sheridan: hand regard at 3 months (watches own hands), bilateral reach by weeks 16–18. Each reach provides error-correction data — motor and perceptual learning happen simultaneously.',
+      "Reaching requires integrating visual information (where is the object?) with proprioceptive information (where is my hand?) — a visuomotor calibration problem the brain solves over weeks. Sheridan: hand regard at 3 months (watches own hands), bilateral reach by weeks 16–18. Each reach provides error-correction data — motor and perceptual learning happen simultaneously.",
     parentCanSee: [
-      'Hand regard (Sheridan, 3 months): watches own hand movements, opens and closes fingers',
-      'Arm swipes toward hanging objects — not yet grabbing',
-      'Hand-to-mouth that seems volitional (not just reflex)',
-      'Sheridan (6 months): two-hand scooping approach; adjusts hand orientation to match object shape',
+      "Hand regard (Sheridan, 3 months): watches own hand movements, opens and closes fingers",
+      "Arm swipes toward hanging objects — not yet grabbing",
+      "Hand-to-mouth that seems volitional (not just reflex)",
+      "Sheridan (6 months): two-hand scooping approach; adjusts hand orientation to match object shape",
     ],
-    activityIds: ['cloth-texture', 'limb-movement', 'novel-object-pause'],
+    activityIds: ["cloth-texture", "limb-movement", "novel-object-pause"],
     resources: [
-      { title: 'Adolph KE & Franchak JM (2017) — The development of motor behavior', doi: '10.1002/wcs.1430' },
-      { title: 'Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling', doi: '10.1146/annurev-psych-010418-102836' },
+      {
+        title: "Adolph KE & Franchak JM (2017) — The development of motor behavior",
+        doi: "10.1002/wcs.1430",
+      },
+      {
+        title:
+          "Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling",
+        doi: "10.1146/annurev-psych-010418-102836",
+      },
     ],
-    checkIn: 'Did she reach toward or bat at the fabric, or were her movements near the object?',
-    accelerator: 'Intentional contact grasp before week 12 → visuomotor integration accelerated; advance contingency-mobile complexity',
-    latestResearch: 'Adolph KE & Franchak JM (2017) — The development of motor behavior',
+    checkIn: "Did she reach toward or bat at the fabric, or were her movements near the object?",
+    accelerator:
+      "Intentional contact grasp before week 12 → visuomotor integration accelerated; advance contingency-mobile complexity",
+    latestResearch: "Adolph KE & Franchak JM (2017) — The development of motor behavior",
   },
 
   {
-    id: 'm11-cooing',
-    name: 'Cooing & Protoconversations',
-    domain: 'language-communication',
-    weekStart: 6, weekPeak: 8, weekEnd: 12,
+    id: "m11-cooing",
+    name: "Cooing & Protoconversations",
+    domain: "language-communication",
+    weekStart: 6,
+    weekPeak: 8,
+    weekEnd: 12,
     mechanism:
-      'Cooing is the first volitional vocalisation — larynx, velum, and tongue produce vowel-like sounds under cortical control. Sheridan (3 months): "Vocalisations are integrated with smiles, eye contact and hand gestures during turn-taking exchanges or \'protoconversations\'" — the full multimodal communication scaffold is in place by 3 months, not 6.',
+      "Cooing is the first volitional vocalisation — larynx, velum, and tongue produce vowel-like sounds under cortical control. Sheridan (3 months): \"Vocalisations are integrated with smiles, eye contact and hand gestures during turn-taking exchanges or 'protoconversations'\" — the full multimodal communication scaffold is in place by 3 months, not 6.",
     parentCanSee: [
       'Open-vowel sounds ("aaah", "ooh") in response to interaction',
-      'Back-and-forth vocal exchange with turn-taking structure emerging',
-      'Vocalisations while looking at your face — gaze + voice together',
-      'Sheridan (1 month): pre-speech lip and tongue movements in response to being talked to',
+      "Back-and-forth vocal exchange with turn-taking structure emerging",
+      "Vocalisations while looking at your face — gaze + voice together",
+      "Sheridan (1 month): pre-speech lip and tongue movements in response to being talked to",
     ],
-    activityIds: ['conversation-turn', 'reading-aloud', 'narrated-day', 'name-repetition'],
+    activityIds: ["conversation-turn", "reading-aloud", "narrated-day", "name-repetition"],
     resources: [
-      { title: 'Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness', doi: '10.3390/ijerph19031180' },
+      {
+        title: "Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness",
+        doi: "10.3390/ijerph19031180",
+      },
     ],
-    checkIn: 'Did she make any sounds back at you — even a small "ooh" or sigh — during the pauses? Did she look at your face while doing it?',
-    accelerator: 'Clear vocal turn-taking (waits, then vocalises) before week 10 → language circuit accelerating; advance voice-mapping and name-repetition',
-    latestResearch: 'Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness',
+    checkIn:
+      'Did she make any sounds back at you — even a small "ooh" or sigh — during the pauses? Did she look at your face while doing it?',
+    accelerator:
+      "Clear vocal turn-taking (waits, then vocalises) before week 10 → language circuit accelerating; advance voice-mapping and name-repetition",
+    latestResearch:
+      "Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness",
   },
 
   {
-    id: 'm17-rolling',
-    name: 'Rolling',
-    domain: 'gross-motor',
-    weekStart: 20, weekPeak: 22, weekEnd: 28,
+    id: "m17-rolling",
+    name: "Rolling",
+    domain: "gross-motor",
+    weekStart: 20,
+    weekPeak: 22,
+    weekEnd: 28,
     mechanism:
-      'Rolling is the first major self-generated locomotion — before crawling, the infant can change their own position and orientation. Front-to-back uses the extensor muscles trained by tummy time and emerges first; back-to-front requires oblique abdominal strength and rotation. Note: Sheridan (citing Bly 1994) documents front-to-back at ~5–6 months, back-to-front ~6–7 months.',
+      "Rolling is the first major self-generated locomotion — before crawling, the infant can change their own position and orientation. Front-to-back uses the extensor muscles trained by tummy time and emerges first; back-to-front requires oblique abdominal strength and rotation. Note: Sheridan (citing Bly 1994) documents front-to-back at ~5–6 months, back-to-front ~6–7 months.",
     parentCanSee: [
-      'First rolls front-to-back (prone to supine) — often surprises them',
-      'Then back-to-front (supine to prone) — requires intentional trunk rotation',
-      'Using rolling to move across the floor (earliest locomotion)',
-      'Safety signal: may roll off surfaces if unsupervised from this point',
+      "First rolls front-to-back (prone to supine) — often surprises them",
+      "Then back-to-front (supine to prone) — requires intentional trunk rotation",
+      "Using rolling to move across the floor (earliest locomotion)",
+      "Safety signal: may roll off surfaces if unsupervised from this point",
     ],
-    activityIds: ['tummy-time-chest', 'varied-carrying', 'limb-movement'],
+    activityIds: ["tummy-time-chest", "varied-carrying", "limb-movement"],
     resources: [
-      { title: 'Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling', doi: '10.1146/annurev-psych-010418-102836' },
+      {
+        title:
+          "Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling",
+        doi: "10.1146/annurev-psych-010418-102836",
+      },
     ],
-    checkIn: 'Did she roll at all during or after tummy time — even a partial roll to her side?',
-    accelerator: 'Rolling front-to-back before week 20 → trunk rotation ahead of curve; pulling-to-sit and sitting likely to follow sooner',
-    latestResearch: 'Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling',
+    checkIn: "Did she roll at all during or after tummy time — even a partial roll to her side?",
+    accelerator:
+      "Rolling front-to-back before week 20 → trunk rotation ahead of curve; pulling-to-sit and sitting likely to follow sooner",
+    latestResearch:
+      "Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling",
   },
 
   // ── PHASE 5 · Weeks 20–36 · Sitting, Grasping, Object Permanence ─────────
 
   {
-    id: 'm18-fine-motor-sequence',
-    name: 'Fine Motor: Palmar → Inferior → Neat Pincer',
-    domain: 'fine-motor',
-    weekStart: 20, weekPeak: 24, weekEnd: 52,
+    id: "m18-fine-motor-sequence",
+    name: "Fine Motor: Palmar → Inferior → Neat Pincer",
+    domain: "fine-motor",
+    weekStart: 20,
+    weekPeak: 24,
+    weekEnd: 52,
     mechanism:
-      'Fine motor follows a proximal-to-distal sequence — shoulder before elbow, elbow before wrist, wrist before finger differentiation. Each stage requires new corticospinal myelination. The neat pincer (thumb tip to index tip) marks the emergence of the uniquely human capacity for fine manipulation. Sheridan documents this trajectory with clinical precision at 6, 9, and 12 months.',
+      "Fine motor follows a proximal-to-distal sequence — shoulder before elbow, elbow before wrist, wrist before finger differentiation. Each stage requires new corticospinal myelination. The neat pincer (thumb tip to index tip) marks the emergence of the uniquely human capacity for fine manipulation. Sheridan documents this trajectory with clinical precision at 6, 9, and 12 months.",
     parentCanSee: [
-      'Stage 1 — Palmar grasp (wks 20–24): whole-hand closure; passes toy hand to hand; adjusts wrist to object orientation (Sheridan, 6m)',
-      'Stage 2 — Inferior pincer (wks 32–36): lateral thumb-to-finger; pokes with index finger; grasps string to pull toy (Sheridan, 9m)',
-      'Stage 3 — Neat pincer (wks 44–52): tip-to-tip opposition; hand pre-shapes before contact; points with index finger (Sheridan, 12m)',
+      "Stage 1 — Palmar grasp (wks 20–24): whole-hand closure; passes toy hand to hand; adjusts wrist to object orientation (Sheridan, 6m)",
+      "Stage 2 — Inferior pincer (wks 32–36): lateral thumb-to-finger; pokes with index finger; grasps string to pull toy (Sheridan, 9m)",
+      "Stage 3 — Neat pincer (wks 44–52): tip-to-tip opposition; hand pre-shapes before contact; points with index finger (Sheridan, 12m)",
     ],
-    activityIds: ['palmar-grasp', 'cloth-texture', 'novel-object-pause', 'limb-movement'],
+    activityIds: ["palmar-grasp", "cloth-texture", "novel-object-pause", "limb-movement"],
     resources: [
-      { title: 'Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling', doi: '10.1146/annurev-psych-010418-102836' },
+      {
+        title:
+          "Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling",
+        doi: "10.1146/annurev-psych-010418-102836",
+      },
     ],
-    checkIn: 'Did she pick up the object with her whole hand — or trying to use just her finger and thumb?',
-    accelerator: 'Index finger isolation (poking behaviour) before week 30 → fine motor ahead of curve; introduce smaller objects and containers',
-    latestResearch: 'Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling',
+    checkIn:
+      "Did she pick up the object with her whole hand — or trying to use just her finger and thumb?",
+    accelerator:
+      "Index finger isolation (poking behaviour) before week 30 → fine motor ahead of curve; introduce smaller objects and containers",
+    latestResearch:
+      "Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling",
   },
 
   {
-    id: 'm12-sitting-with-support',
-    name: 'Sitting With Support',
-    domain: 'gross-motor',
-    weekStart: 16, weekPeak: 20, weekEnd: 24,
+    id: "m12-sitting-with-support",
+    name: "Sitting With Support",
+    domain: "gross-motor",
+    weekStart: 16,
+    weekPeak: 20,
+    weekEnd: 24,
     mechanism:
-      'Sitting requires continuous anticipatory and reactive postural adjustments — trunk and neck extensors working together dynamically. It radically changes the infant\'s visual world (upright perspective) and frees both hands for object exploration. Adolph: sitting is a major developmental unlock — object manipulation and social interaction both expand dramatically.',
+      "Sitting requires continuous anticipatory and reactive postural adjustments — trunk and neck extensors working together dynamically. It radically changes the infant's visual world (upright perspective) and frees both hands for object exploration. Adolph: sitting is a major developmental unlock — object manipulation and social interaction both expand dramatically.",
     parentCanSee: [
-      'Holds sitting with light trunk support for > 10 seconds',
-      'Head stays upright during supported sitting',
-      'Reaches for objects while sitting — arms and hands now both free',
+      "Holds sitting with light trunk support for > 10 seconds",
+      "Head stays upright during supported sitting",
+      "Reaches for objects while sitting — arms and hands now both free",
       'Sheridan (6 months): "Can turn body to look sideways while stretching out to pick up toy from floor without losing balance"',
     ],
-    activityIds: ['varied-carrying', 'joint-compression', 'cloth-texture'],
+    activityIds: ["varied-carrying", "joint-compression", "cloth-texture"],
     resources: [
-      { title: 'Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling', doi: '10.1146/annurev-psych-010418-102836' },
-      { title: 'Adolph KE & Hoch JE (2020) — Motor skill learning: to generalize or not to generalize', doi: '10.1159/000511511' },
+      {
+        title:
+          "Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling",
+        doi: "10.1146/annurev-psych-010418-102836",
+      },
+      {
+        title:
+          "Adolph KE & Hoch JE (2020) — Motor skill learning: to generalize or not to generalize",
+        doi: "10.1159/000511511",
+      },
     ],
-    checkIn: 'During supported sitting, how long before she toppled — under 5 seconds, 5–15 seconds, or held for longer?',
-    accelerator: 'Stable sitting with minimal support before week 20 → accelerate object manipulation activities',
-    latestResearch: 'Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling',
+    checkIn:
+      "During supported sitting, how long before she toppled — under 5 seconds, 5–15 seconds, or held for longer?",
+    accelerator:
+      "Stable sitting with minimal support before week 20 → accelerate object manipulation activities",
+    latestResearch:
+      "Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling",
   },
 
   {
-    id: 'm13-phoneme-narrowing',
-    name: 'Phoneme Narrowing Sensitive Period',
-    domain: 'language-communication',
-    weekStart: 24, weekPeak: 28, weekEnd: 52,
+    id: "m13-phoneme-narrowing",
+    name: "Phoneme Narrowing Sensitive Period",
+    domain: "language-communication",
+    weekStart: 24,
+    weekPeak: 28,
+    weekEnd: 52,
     mechanism:
       'From ~6 months, the auditory cortex commits to native language phoneme categories — improving native contrasts, losing sensitivity to non-native ones. Measurable in theta-band auditory sampling on MEG. This is Kuhl\'s most robust finding and the most time-sensitive window in the 0–12 month period. Sheridan (9 months): canonical babbling strings "dad-dad", "mum-mum", "agaga"; understands "no" and own name.',
     parentCanSee: [
-      'Responds to own name from across a room (~6 months)',
+      "Responds to own name from across a room (~6 months)",
       'Canonical babbling begins: "ba-ba", "ma-ma" — not yet meaningful',
       'Sheridan (6 months): single and double syllables "muh", "goo", "der", "adah"',
-      'Sheridan (9 months): long repetitive strings of syllables; imitates playful sounds',
+      "Sheridan (9 months): long repetitive strings of syllables; imitates playful sounds",
     ],
-    activityIds: ['reading-aloud', 'narrated-day', 'same-song', 'name-repetition', 'outdoor-listening'],
+    activityIds: [
+      "reading-aloud",
+      "narrated-day",
+      "same-song",
+      "name-repetition",
+      "outdoor-listening",
+    ],
     resources: [
-      { title: 'Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness', doi: '10.3390/ijerph19031180' },
-      { title: 'Conboy BT & Kuhl PK (2011) — Early language experience affects neural activity', doi: '10.1111/j.1467-7687.2010.00973.x' },
+      {
+        title: "Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness",
+        doi: "10.3390/ijerph19031180",
+      },
+      {
+        title: "Conboy BT & Kuhl PK (2011) — Early language experience affects neural activity",
+        doi: "10.1111/j.1467-7687.2010.00973.x",
+      },
     ],
-    checkIn: 'Did she vocalise back, or watch your mouth intently while you were reading?',
-    accelerator: 'Canonical babbling before week 24 → language circuit ahead of curve; increase variety and complexity of language exposure',
-    latestResearch: 'Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness',
+    checkIn: "Did she vocalise back, or watch your mouth intently while you were reading?",
+    accelerator:
+      "Canonical babbling before week 24 → language circuit ahead of curve; increase variety and complexity of language exposure",
+    latestResearch:
+      "Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness",
   },
 
   {
-    id: 'm14-object-permanence',
-    name: 'Object Permanence Precursors',
-    domain: 'cognitive',
-    weekStart: 20, weekPeak: 22, weekEnd: 32,
+    id: "m14-object-permanence",
+    name: "Object Permanence Precursors",
+    domain: "cognitive",
+    weekStart: 20,
+    weekPeak: 22,
+    weekEnd: 32,
     mechanism:
-      'At 3 months, infant memory is context-dependent (only the same mobile reactivates it). By 6 months, memory is more generalised and durable (14-day retention). Object permanence builds on this improving memory system. Sheridan stages: 6m — searches vaguely when toy falls; 9m — finds partially hidden toy; 12m — quickly finds fully hidden toy, looks to adult afterwards.',
+      "At 3 months, infant memory is context-dependent (only the same mobile reactivates it). By 6 months, memory is more generalised and durable (14-day retention). Object permanence builds on this improving memory system. Sheridan stages: 6m — searches vaguely when toy falls; 9m — finds partially hidden toy; 12m — quickly finds fully hidden toy, looks to adult afterwards.",
     parentCanSee: [
-      'Sheridan (6 months): watches where toy falls to, searches vaguely when it falls out of view',
-      'Sheridan (9 months): finds toy partially hidden under cover or cup',
-      'Sheridan (12 months): quickly finds toy hidden from view; looks to adult after discovery',
-      'Anticipates the return of a hidden face (peek-a-boo engagement)',
+      "Sheridan (6 months): watches where toy falls to, searches vaguely when it falls out of view",
+      "Sheridan (9 months): finds toy partially hidden under cover or cup",
+      "Sheridan (12 months): quickly finds toy hidden from view; looks to adult after discovery",
+      "Anticipates the return of a hidden face (peek-a-boo engagement)",
     ],
-    activityIds: ['novel-object-pause', 'contingency-mobile', 'attention-recovery'],
+    activityIds: ["novel-object-pause", "contingency-mobile", "attention-recovery"],
     resources: [
-      { title: 'Rovee-Collier C et al. (1985) — Reactivation of infant memory', doi: '10.1002/dev.420180611' },
+      {
+        title: "Rovee-Collier C et al. (1985) — Reactivation of infant memory",
+        doi: "10.1002/dev.420180611",
+      },
     ],
-    checkIn: 'When you covered the toy briefly, did she look toward where it had been — or immediately look away?',
-    accelerator: 'Consistent search for hidden objects before week 24 → object permanence ahead of curve',
-    latestResearch: 'Rovee-Collier C et al. (1985) — Reactivation of infant memory',
-},
+    checkIn:
+      "When you covered the toy briefly, did she look toward where it had been — or immediately look away?",
+    accelerator:
+      "Consistent search for hidden objects before week 24 → object permanence ahead of curve",
+    latestResearch: "Rovee-Collier C et al. (1985) — Reactivation of infant memory",
+  },
 
   {
-    id: 'm19-stranger-anxiety',
-    name: 'Stranger Anxiety & Social Referencing',
-    domain: 'social',
-    weekStart: 28, weekPeak: 32, weekEnd: 44,
+    id: "m19-stranger-anxiety",
+    name: "Stranger Anxiety & Social Referencing",
+    domain: "social",
+    weekStart: 28,
+    weekPeak: 32,
+    weekEnd: 44,
     mechanism:
-      'Stranger anxiety marks a cognitive leap: the infant has built a detailed mental model of familiar faces, so any non-matching face triggers a distinct response. Social referencing (using caregiver\'s expression to assess novel situations) emerges slightly later and is more sophisticated — the infant borrows the parent\'s emotional judgment. Both are healthy markers of attachment and cognitive development.',
+      "Stranger anxiety marks a cognitive leap: the infant has built a detailed mental model of familiar faces, so any non-matching face triggers a distinct response. Social referencing (using caregiver's expression to assess novel situations) emerges slightly later and is more sophisticated — the infant borrows the parent's emotional judgment. Both are healthy markers of attachment and cognitive development.",
     parentCanSee: [
-      'Stage 1 (wks 28–32): occasional shyness when strangers approach too closely or abruptly',
-      'Stage 2 (wks 32–40): clearly distinguishes strangers from familiars; clings to known person; hides face (Sheridan, 9m)',
-      'Stage 3 (wks 36–44): social referencing — looks to caregiver\'s face before approaching novel object or situation',
-      'Important: intensity varies widely by temperament; not a problem to fix, evidence of healthy attachment',
+      "Stage 1 (wks 28–32): occasional shyness when strangers approach too closely or abruptly",
+      "Stage 2 (wks 32–40): clearly distinguishes strangers from familiars; clings to known person; hides face (Sheridan, 9m)",
+      "Stage 3 (wks 36–44): social referencing — looks to caregiver's face before approaching novel object or situation",
+      "Important: intensity varies widely by temperament; not a problem to fix, evidence of healthy attachment",
     ],
-    activityIds: ['slow-face', 'conversation-turn', 'outdoor-listening', 'novel-object-pause'],
+    activityIds: ["slow-face", "conversation-turn", "outdoor-listening", "novel-object-pause"],
     resources: [
-      { title: 'Reddy V et al. (1997) — Communication in infancy: mutual regulation of affect and attention', doi: '10.1017/CBO9780511752773' },
+      {
+        title:
+          "Reddy V et al. (1997) — Communication in infancy: mutual regulation of affect and attention",
+        doi: "10.1017/CBO9780511752773",
+      },
     ],
-    checkIn: 'Before touching something new or uncertain today, did she look at your face first — as if checking how you felt about it?',
-    accelerator: 'Clear social referencing (look-back before novel approach) before week 36 → triadic social cognition developing rapidly; proto-declarative pointing likely to emerge sooner',
-    latestResearch: 'Reddy V et al. (1997) — Communication in infancy: mutual regulation of affect and attention',
+    checkIn:
+      "Before touching something new or uncertain today, did she look at your face first — as if checking how you felt about it?",
+    accelerator:
+      "Clear social referencing (look-back before novel approach) before week 36 → triadic social cognition developing rapidly; proto-declarative pointing likely to emerge sooner",
+    latestResearch:
+      "Reddy V et al. (1997) — Communication in infancy: mutual regulation of affect and attention",
   },
 
   // ── PHASE 6 · Weeks 36–52 · Standing, First Words, Intentionality ─────────
 
   {
-    id: 'm15-pulling-to-stand',
-    name: 'Pulling to Stand',
-    domain: 'gross-motor',
-    weekStart: 32, weekPeak: 38, weekEnd: 44,
+    id: "m15-pulling-to-stand",
+    name: "Pulling to Stand",
+    domain: "gross-motor",
+    weekStart: 32,
+    weekPeak: 38,
+    weekEnd: 44,
     mechanism:
       'Standing requires solving a new balance problem — centre of mass over a narrow base, high above the ground. Adolph: this is active problem-solving; infants repeatedly try, fail, adjust, try again. Cultural practices (walkers vs. floor play) significantly affect timing. Sheridan (9 months): "Pulls to standing, holding onto support for a few moments but cannot lower self and falls backwards with a bump."',
     parentCanSee: [
-      'Pulls to stand holding furniture or your hands',
-      'Stands briefly before sitting back down (or falling)',
+      "Pulls to stand holding furniture or your hands",
+      "Stands briefly before sitting back down (or falling)",
       '"Bouncing" at standing — exploratory weight-shifting',
-      'Cruising: side-stepping while holding furniture',
+      "Cruising: side-stepping while holding furniture",
     ],
-    activityIds: ['varied-carrying', 'joint-compression'],
+    activityIds: ["varied-carrying", "joint-compression"],
     resources: [
-      { title: 'Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling', doi: '10.1146/annurev-psych-010418-102836' },
+      {
+        title:
+          "Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling",
+        doi: "10.1146/annurev-psych-010418-102836",
+      },
     ],
-    checkIn: 'Did she try to pull herself upright on anything today — your hands, furniture, you?',
-    accelerator: 'Pulling to stand before week 32 → locomotion cascade (cruising, first steps) ahead of curve',
-    latestResearch: 'Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling',
+    checkIn: "Did she try to pull herself upright on anything today — your hands, furniture, you?",
+    accelerator:
+      "Pulling to stand before week 32 → locomotion cascade (cruising, first steps) ahead of curve",
+    latestResearch:
+      "Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling",
   },
 
   {
-    id: 'm16-first-words',
-    name: 'First Words & Joint Attention',
-    domain: 'language-communication',
-    weekStart: 40, weekPeak: 50, weekEnd: 56,
+    id: "m16-first-words",
+    name: "First Words & Joint Attention",
+    domain: "language-communication",
+    weekStart: 40,
+    weekPeak: 50,
+    weekEnd: 56,
     mechanism:
       'First words emerge as phoneme narrowing matures. "Words" at this stage are context-dependent sound-meaning pairings. Sheridan (12 months): "Babbles in conversational cadences (jargon)" — intonationally correct babble preceding real words; comprehension precedes production by 4–8 weeks. Tomasello (1995): proto-declarative pointing ("points to object then looks back to adult") is one of the most predictive early language markers.',
     parentCanSee: [
       'Consistent sound-meaning pairing in context ("ba" for bottle)',
-      'Proto-declarative pointing: points at something and looks back at you for a reaction',
-      'Sheridan (12 months): follows adult gaze (joint visual attention)',
-      'Sheridan (12 months): coordinated joint attention — actively switches between object and adult',
+      "Proto-declarative pointing: points at something and looks back at you for a reaction",
+      "Sheridan (12 months): follows adult gaze (joint visual attention)",
+      "Sheridan (12 months): coordinated joint attention — actively switches between object and adult",
     ],
-    activityIds: ['name-repetition', 'narrated-day', 'reading-aloud', 'conversation-turn'],
+    activityIds: ["name-repetition", "narrated-day", "reading-aloud", "conversation-turn"],
     resources: [
-      { title: 'Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness', doi: '10.3390/ijerph19031180' },
+      {
+        title: "Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness",
+        doi: "10.3390/ijerph19031180",
+      },
     ],
-    checkIn: 'Did she use any consistent sound for a specific thing today? Or point at something and look back at you to check your reaction?',
-    accelerator: 'Consistent name-sound pairing before week 40 → first words ahead of curve; increase naming and referential activities',
-    latestResearch: 'Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness',
+    checkIn:
+      "Did she use any consistent sound for a specific thing today? Or point at something and look back at you to check your reaction?",
+    accelerator:
+      "Consistent name-sound pairing before week 40 → first words ahead of curve; increase naming and referential activities",
+    latestResearch:
+      "Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness",
   },
 
   // ── SLEEP & CALMING ───────────────────────────────────────────────────────
@@ -496,75 +674,109 @@ export const MILESTONES: Milestone[] = [
   // grounds (see BACKLOG / chat history).
 
   {
-    id: 's01-circadian-onset',
-    name: 'Circadian Rhythm Onset',
-    domain: 'sleep',
-    kind: 'achievement',
-    weekStart: 6, weekPeak: 10, weekEnd: 16,
+    id: "s01-circadian-onset",
+    name: "Circadian Rhythm Onset",
+    domain: "sleep",
+    kind: "achievement",
+    weekStart: 6,
+    weekPeak: 10,
+    weekEnd: 16,
     mechanism:
       'A newborn has no internal day/night clock — sleep is distributed evenly around the clock in ~3–4 hour bouts. Between roughly weeks 6 and 12 an endogenous circadian rhythm emerges: melatonin secretion and the core body-temperature rhythm begin cycling with the 24-hour day, driven by regular light/dark and feeding cues. Night sleep starts to consolidate into longer stretches and daytime alertness lengthens. This is the biological basis of "sleeping through" later on.',
     parentCanSee: [
-      'Longer unbroken stretches of sleep at night than during the day',
-      'More consistent, longer alert periods in daylight',
-      'Earlier and more predictable evening settling',
-      'A dawning difference between night feeds (quiet, brief) and day feeds (alert)',
+      "Longer unbroken stretches of sleep at night than during the day",
+      "More consistent, longer alert periods in daylight",
+      "Earlier and more predictable evening settling",
+      "A dawning difference between night feeds (quiet, brief) and day feeds (alert)",
     ],
-    activityIds: ['water-sound-bath', 'white-noise', 'hum-chest'],
+    activityIds: ["water-sound-bath", "white-noise", "hum-chest"],
     resources: [
-      { title: 'Rivkees SA (2003) — Developing circadian rhythmicity in infants', doi: 'verify' },
-      { title: 'McGraw K, Hoffmann R, Harker C & Herman JH (1999) — The development of circadian rhythms in a human infant', doi: 'verify' },
+      { title: "Rivkees SA (2003) — Developing circadian rhythmicity in infants", doi: "verify" },
+      {
+        title:
+          "McGraw K, Hoffmann R, Harker C & Herman JH (1999) — The development of circadian rhythms in a human infant",
+        doi: "verify",
+      },
     ],
-    checkIn: 'Is she starting to sleep a noticeably longer stretch at night than in any single daytime nap?',
-    accelerator: 'Bright light and activity by day, dark and calm by night, plus a consistent wind-down (bath → massage → feed) accelerates this rhythm. Avoid stimulating light at night feeds.',
-    latestResearch: 'Rivkees SA (2003) — Developing circadian rhythmicity in infants',
+    checkIn:
+      "Is she starting to sleep a noticeably longer stretch at night than in any single daytime nap?",
+    accelerator:
+      "Bright light and activity by day, dark and calm by night, plus a consistent wind-down (bath → massage → feed) accelerates this rhythm. Avoid stimulating light at night feeds.",
+    latestResearch: "Rivkees SA (2003) — Developing circadian rhythmicity in infants",
   },
 
   {
-    id: 's02-four-month-regression',
+    id: "s02-four-month-regression",
     name: 'Sleep-Cycle Maturation (the "4-month regression")',
-    domain: 'sleep',
-    kind: 'disruption',
-    weekStart: 12, weekPeak: 16, weekEnd: 22,
+    domain: "sleep",
+    kind: "disruption",
+    weekStart: 12,
+    weekPeak: 16,
+    weekEnd: 22,
     mechanism:
       'Around 3–4 months, sleep architecture matures from the newborn two-state pattern (active vs quiet sleep) into adult-like cycles with distinct NREM stages and REM. Cycles are short (~35–50 minutes) and the baby now briefly surfaces toward waking at the end of each one. This is a permanent developmental gain, not a true "regression" — but because the baby wakes between cycles and has not yet learned to resettle unaided, night wakings and short naps suddenly increase. It typically eases as self-settling develops.',
     parentCanSee: [
-      'A sudden increase in night wakings after a period of longer sleep',
-      'Naps shortening to a single sleep cycle (~35–45 minutes)',
-      'Waking fully between cycles and needing help to resettle',
-      'Often coincides with new alertness, rolling attempts and more feeding',
+      "A sudden increase in night wakings after a period of longer sleep",
+      "Naps shortening to a single sleep cycle (~35–45 minutes)",
+      "Waking fully between cycles and needing help to resettle",
+      "Often coincides with new alertness, rolling attempts and more feeding",
     ],
-    activityIds: ['white-noise', 'infant-massage', 'water-sound-bath'],
+    activityIds: ["white-noise", "infant-massage", "water-sound-bath"],
     resources: [
-      { title: 'de Weerd AW & van den Bossche RAS (2003) — The development of sleep during the first months of life', doi: 'verify' },
-      { title: 'Grigg-Damberger MM (2016) — The visual scoring of sleep in infants 0 to 2 months of age', doi: 'verify' },
+      {
+        title:
+          "de Weerd AW & van den Bossche RAS (2003) — The development of sleep during the first months of life",
+        doi: "verify",
+      },
+      {
+        title:
+          "Grigg-Damberger MM (2016) — The visual scoring of sleep in infants 0 to 2 months of age",
+        doi: "verify",
+      },
     ],
-    checkIn: 'Have the night wakings increased recently even though nothing else obvious changed — teething, illness, feeding?',
-    accelerator: 'What helps: keep the wind-down routine consistent, use white noise across sleep cycles, and give a beat before responding to a stir so she has room to resettle herself. This is a phase — it passes as self-settling matures.',
-    latestResearch: 'de Weerd AW & van den Bossche RAS (2003) — The development of sleep during the first months of life',
+    checkIn:
+      "Have the night wakings increased recently even though nothing else obvious changed — teething, illness, feeding?",
+    accelerator:
+      "What helps: keep the wind-down routine consistent, use white noise across sleep cycles, and give a beat before responding to a stir so she has room to resettle herself. This is a phase — it passes as self-settling matures.",
+    latestResearch:
+      "de Weerd AW & van den Bossche RAS (2003) — The development of sleep during the first months of life",
   },
 
   {
-    id: 's03-eight-month-disruption',
-    name: 'Eight-Month Sleep Disruption',
-    domain: 'sleep',
-    kind: 'disruption',
-    weekStart: 32, weekPeak: 36, weekEnd: 44,
+    id: "s03-eight-month-disruption",
+    name: "Eight-Month Sleep Disruption",
+    domain: "sleep",
+    kind: "disruption",
+    weekStart: 32,
+    weekPeak: 36,
+    weekEnd: 44,
     mechanism:
-      'A convergence of developmental gains disrupts sleep around 8–10 months. Object permanence (M14) now means the baby knows you still exist when you leave — so bedtime separation is protested. Separation anxiety peaks in the same window. Simultaneously, major motor skills (crawling, pulling to stand) are being consolidated, and the brain rehearses them during sleep, driving wakings and practice in the cot. Naps are often dropping from three to two. None of it is a step backward — it is several forward steps landing at once.',
+      "A convergence of developmental gains disrupts sleep around 8–10 months. Object permanence (M14) now means the baby knows you still exist when you leave — so bedtime separation is protested. Separation anxiety peaks in the same window. Simultaneously, major motor skills (crawling, pulling to stand) are being consolidated, and the brain rehearses them during sleep, driving wakings and practice in the cot. Naps are often dropping from three to two. None of it is a step backward — it is several forward steps landing at once.",
     parentCanSee: [
-      'New resistance and clinginess at bedtime and on waking',
-      'Waking in the night and calling specifically for you, not just fussing',
-      'Practising crawling or standing in the cot instead of settling',
-      'Fought or shortened naps as a nap transition approaches',
+      "New resistance and clinginess at bedtime and on waking",
+      "Waking in the night and calling specifically for you, not just fussing",
+      "Practising crawling or standing in the cot instead of settling",
+      "Fought or shortened naps as a nap transition approaches",
     ],
-    activityIds: ['hum-chest', 'infant-massage', 'water-sound-bath'],
+    activityIds: ["hum-chest", "infant-massage", "water-sound-bath"],
     resources: [
-      { title: 'Scher A (2005) — Infant sleep at 10 months of age as a window to cognitive development', doi: 'verify' },
-      { title: 'Atkinson E, Vetere A & Grayson K (1995) — Separation anxiety and night waking in infancy', doi: 'verify' },
+      {
+        title:
+          "Scher A (2005) — Infant sleep at 10 months of age as a window to cognitive development",
+        doi: "verify",
+      },
+      {
+        title:
+          "Atkinson E, Vetere A & Grayson K (1995) — Separation anxiety and night waking in infancy",
+        doi: "verify",
+      },
     ],
-    checkIn: 'Is the bedtime resistance new, and does it come with more daytime clinginess or separation upset?',
-    accelerator: 'What helps: a predictable, unhurried bedtime routine; brief reassuring check-ins rather than long interventions; and plenty of daytime practice of the new motor skill so it is less "rehearsed" at night. Eases as separation anxiety settles.',
-    latestResearch: 'Scher A (2005) — Infant sleep at 10 months of age as a window to cognitive development',
+    checkIn:
+      "Is the bedtime resistance new, and does it come with more daytime clinginess or separation upset?",
+    accelerator:
+      'What helps: a predictable, unhurried bedtime routine; brief reassuring check-ins rather than long interventions; and plenty of daytime practice of the new motor skill so it is less "rehearsed" at night. Eases as separation anxiety settles.',
+    latestResearch:
+      "Scher A (2005) — Infant sleep at 10 months of age as a window to cognitive development",
   },
 ];
 
@@ -580,19 +792,19 @@ export function getBabyAgeWeeks(birthDateIso: string): number {
 
 /** Display name for each domain. */
 export const DOMAIN_LABELS: Record<MilestoneDomain, string> = {
-  'visual': 'Visual',
-  'sensory': 'Sensory',
-  'gross-motor': 'Gross Motor',
-  'fine-motor': 'Fine Motor',
-  'language-communication': 'Language',
-  'cognitive': 'Cognitive',
-  'social': 'Social',
-  'sleep': 'Sleep & Calming',
+  visual: "Visual",
+  sensory: "Sensory",
+  "gross-motor": "Gross Motor",
+  "fine-motor": "Fine Motor",
+  "language-communication": "Language",
+  cognitive: "Cognitive",
+  social: "Social",
+  sleep: "Sleep & Calming",
 };
 
 /** Read a milestone's kind, defaulting to 'achievement' when unset. */
 export function milestoneKind(m: Milestone): MilestoneKind {
-  return m.kind ?? 'achievement';
+  return m.kind ?? "achievement";
 }
 
 /**
@@ -601,17 +813,50 @@ export function milestoneKind(m: Milestone): MilestoneKind {
  * This is more reliable than dynamic Tailwind class names at build time.
  */
 export const DOMAIN_CSS_VAR: Record<MilestoneDomain, string> = {
-  'visual':                 'var(--domain-visual)',
-  'sensory':                'var(--domain-sensory)',
-  'gross-motor':            'var(--domain-gross-motor)',
-  'fine-motor':             'var(--domain-fine-motor)',
-  'language-communication': 'var(--domain-language-communication)',
-  'cognitive':              'var(--domain-cognitive)',
-  'social':                 'var(--domain-social)',
-  'sleep':                  'var(--domain-sleep)',
+  visual: "var(--domain-visual)",
+  sensory: "var(--domain-sensory)",
+  "gross-motor": "var(--domain-gross-motor)",
+  "fine-motor": "var(--domain-fine-motor)",
+  "language-communication": "var(--domain-language-communication)",
+  cognitive: "var(--domain-cognitive)",
+  social: "var(--domain-social)",
+  sleep: "var(--domain-sleep)",
 };
 
-// ── Activity helpers ──────────────────────────────────────────────────────────
+// ── Milestone / activity helpers ──────────────────────────────────────────────
+
+/**
+ * The milestones whose window is open during `week` (weekStart <= week <= weekEnd),
+ * in milestone-array order. This is the same "active" test the timeline and the
+ * activity list use, so anything derived from it stays consistent with them.
+ */
+export function getMilestonesForWeek(week: number): Milestone[] {
+  return MILESTONES.filter((m) => m.weekStart <= week && week <= m.weekEnd);
+}
+
+/**
+ * Active milestones for `week`, grouped by domain in a fixed display order.
+ * Domains with no active milestone are omitted. Used by the "What to expect this
+ * week" summary so it reflects the current age instead of static copy.
+ */
+export function getWeekExpectations(
+  week: number,
+): { domain: MilestoneDomain; milestones: Milestone[] }[] {
+  const order: MilestoneDomain[] = [
+    "gross-motor",
+    "fine-motor",
+    "sensory",
+    "visual",
+    "language-communication",
+    "cognitive",
+    "social",
+    "sleep",
+  ];
+  const active = getMilestonesForWeek(week);
+  return order
+    .map((domain) => ({ domain, milestones: active.filter((m) => m.domain === domain) }))
+    .filter((g) => g.milestones.length > 0);
+}
 
 /**
  * All activity IDs referenced by milestones that are active during `week`.
@@ -625,7 +870,10 @@ export function getActivitiesForWeek(week: number): string[] {
   for (const m of MILESTONES) {
     if (m.weekStart <= week && week <= m.weekEnd) {
       for (const id of m.activityIds) {
-        if (!seen.has(id)) { seen.add(id); ids.push(id); }
+        if (!seen.has(id)) {
+          seen.add(id);
+          ids.push(id);
+        }
       }
     }
   }
@@ -664,15 +912,15 @@ export function getNewActivityCount(week: number): number {
  * observable sign, so the tip tracks the baby's actual developmental moment.
  */
 export function getWeekTip(week: number): string {
-  const active = MILESTONES.filter(m => m.weekStart <= week && week <= m.weekEnd);
+  const active = MILESTONES.filter((m) => m.weekStart <= week && week <= m.weekEnd);
   if (active.length === 0) {
-    return 'Keep following your baby\'s cues — every week brings something new.';
+    return "Keep following your baby's cues — every week brings something new.";
   }
   // Prefer the milestone peaking closest to now
   const relevant = [...active].sort(
-    (a, b) => Math.abs(a.weekPeak - week) - Math.abs(b.weekPeak - week)
+    (a, b) => Math.abs(a.weekPeak - week) - Math.abs(b.weekPeak - week),
   )[0];
   const sign = relevant.parentCanSee[0];
-  if (!sign) return 'Keep following your baby\'s cues this week.';
+  if (!sign) return "Keep following your baby's cues this week.";
   return `This week: ${sign.charAt(0).toLowerCase()}${sign.slice(1)}`;
 }
