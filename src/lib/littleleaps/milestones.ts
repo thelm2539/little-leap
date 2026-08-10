@@ -65,7 +65,7 @@ export const MILESTONES: Milestone[] = [
       "Gaze drifts toward your face when held at chest distance",
       "Tracks a face-like card slightly further than random patterns",
       "Calms when a face is brought close and held still",
-      "Sheridan (1 month): follows face from side toward midline through a quarter circle",
+      "Follows your face a short way as it moves from the side toward the middle",
     ],
     activityIds: ["mirror-face-time", "bw-card-gallery", "light-shadow"],
     resources: [
@@ -124,7 +124,7 @@ export const MILESTONES: Milestone[] = [
     weekPeak: 0,
     weekEnd: 2,
     mechanism:
-      "Auditory cortex processes speech-like signals from ~28 weeks gestation. By birth the infant has prosodic templates of the caregiver's voice and native language rhythm. This is recall, not learning. Sheridan (1 month): babies make pre-speech lip and tongue movements in response to caregiver talk from soon after birth.",
+      "Auditory cortex processes speech-like signals from ~28 weeks gestation. By birth the infant has prosodic templates of the caregiver's voice and native language rhythm. This is recall, not learning. From soon after birth, babies also make small pre-speech lip and tongue movements when you talk to them.",
     parentCanSee: [
       "Preferential turning toward mother's voice over a stranger's",
       "Stills or quiets to familiar songs and voices",
@@ -189,7 +189,7 @@ export const MILESTONES: Milestone[] = [
     parentCanSee: [
       "Reflexive grip when finger placed in palm",
       "Variable grip strength — sometimes firm, sometimes releases quickly",
-      'Sheridan (1 month): "Grasps finger when palm is touched" — purely reflexive at this stage',
+      "The grip is automatic — not yet a deliberate choice",
       "Different facial reactions to different textures",
     ],
     activityIds: ["palmar-grasp", "cloth-texture", "scent-pairing"],
@@ -221,7 +221,7 @@ export const MILESTONES: Milestone[] = [
       "Smile specifically in response to your face (not a bright light or random stimulus)",
       "Smile with eye contact, sometimes accompanied by vocalisation",
       "Smile can be elicited repeatedly in the same interaction",
-      "Sheridan: expression still vague at 1 month, progressing to social smile at ~5–6 weeks",
+      "Expression still vague around 1 month, progressing to a true social smile at about 5–6 weeks",
     ],
     activityIds: ["slow-face", "conversation-turn", "mirror-face-time"],
     resources: [
@@ -247,12 +247,12 @@ export const MILESTONES: Milestone[] = [
     weekPeak: 8,
     weekEnd: 10,
     mechanism:
-      "Prior to ~6–8 weeks, visual tracking is saccadic (jerky catch-up movements). Smooth pursuit requires cortical involvement (frontal eye fields + MT/V5). Sheridan: at 1 month tracks through a quarter circle; at 3 months tracks through a half circle horizontally and vertically. Defensive blink clearly present by 6–8 weeks.",
+      "Prior to ~6–8 weeks, visual tracking is saccadic (jerky catch-up movements). Smooth pursuit requires cortical involvement (frontal eye fields + MT/V5). Tracking widens with age — a short arc around 1 month, extending to follow an object across the midline both horizontally and vertically by about 3 months. A defensive blink is clearly present by 6–8 weeks.",
     parentCanSee: [
       "Eyes follow a slow-moving object continuously, not in jumps",
       "Tracks past the body midline (earlier tracking stops at midline)",
       "Brief tracking (2–3 seconds) at first, extending with age",
-      "Binocular convergence: eyes come together as toy approaches face (Sheridan, 3 months)",
+      "Eyes come together (converge) as a toy approaches the face — around 3 months",
     ],
     activityIds: ["object-tracking", "light-shadow", "sway-narrate"],
     resources: [
@@ -310,7 +310,7 @@ export const MILESTONES: Milestone[] = [
     weekPeak: 8,
     weekEnd: 12,
     mechanism:
-      "Head control is the postural foundation for everything downstream (Adolph's cascade thesis). Sheridan stages: 1 month — head turns to side in prone, arms and legs flexed; 3 months — lifts head and upper chest using forearms, buttocks flat; 6 months — lifts head and chest using extended arms and flattened palms. The forearms→extended arms transition is the key 3-to-6-month marker.",
+      "Head control is the postural foundation for everything downstream (Adolph's cascade thesis). The typical progression: around 1 month the head turns to the side when lying on the tummy, arms and legs flexed; by ~3 months baby lifts head and upper chest on the forearms; by ~6 months lifts head and chest on extended arms with flat palms. The forearms→extended arms transition is the key 3-to-6-month marker.",
     parentCanSee: [
       "Briefly lifts head (1–2 seconds) when prone (from birth)",
       "Head bobbing when held upright — attempting but losing control",
@@ -348,12 +348,12 @@ export const MILESTONES: Milestone[] = [
     weekPeak: 13,
     weekEnd: 16,
     mechanism:
-      "Reaching requires integrating visual information (where is the object?) with proprioceptive information (where is my hand?) — a visuomotor calibration problem the brain solves over weeks. Sheridan: hand regard at 3 months (watches own hands), bilateral reach by weeks 16–18. Each reach provides error-correction data — motor and perceptual learning happen simultaneously.",
+      "Reaching requires integrating visual information (where is the object?) with proprioceptive information (where is my hand?) — a visuomotor calibration problem the brain solves over weeks. Hand regard appears around 3 months (baby watches their own hands), with two-handed reaching by about weeks 16–18. Each reach provides error-correction data — motor and perceptual learning happen simultaneously.",
     parentCanSee: [
-      "Hand regard (Sheridan, 3 months): watches own hand movements, opens and closes fingers",
+      "Hand regard (around 3 months): watches their own hand movements, opens and closes fingers",
       "Arm swipes toward hanging objects — not yet grabbing",
       "Hand-to-mouth that seems volitional (not just reflex)",
-      "Sheridan (6 months): two-hand scooping approach; adjusts hand orientation to match object shape",
+      "Around 6 months: a two-handed scooping approach; adjusts hand orientation to match an object's shape",
     ],
     activityIds: ["cloth-texture", "limb-movement", "novel-object-pause"],
     resources: [
@@ -381,12 +381,12 @@ export const MILESTONES: Milestone[] = [
     weekPeak: 8,
     weekEnd: 12,
     mechanism:
-      "Cooing is the first volitional vocalisation — larynx, velum, and tongue produce vowel-like sounds under cortical control. Sheridan (3 months): \"Vocalisations are integrated with smiles, eye contact and hand gestures during turn-taking exchanges or 'protoconversations'\" — the full multimodal communication scaffold is in place by 3 months, not 6.",
+      "Cooing is the first volitional vocalisation — larynx, velum, and tongue produce vowel-like sounds under cortical control. By around 3 months, vocalisations are woven together with smiles, eye contact and hand gestures during turn-taking exchanges ('protoconversations') — the full multimodal communication scaffold is in place by 3 months, not 6.",
     parentCanSee: [
       'Open-vowel sounds ("aaah", "ooh") in response to interaction',
       "Back-and-forth vocal exchange with turn-taking structure emerging",
       "Vocalisations while looking at your face — gaze + voice together",
-      "Sheridan (1 month): pre-speech lip and tongue movements in response to being talked to",
+      "Pre-speech lip and tongue movements when you talk to them (from around 1 month)",
     ],
     activityIds: ["conversation-turn", "reading-aloud", "narrated-day", "name-repetition"],
     resources: [
@@ -411,7 +411,7 @@ export const MILESTONES: Milestone[] = [
     weekPeak: 22,
     weekEnd: 28,
     mechanism:
-      "Rolling is the first major self-generated locomotion — before crawling, the infant can change their own position and orientation. Front-to-back uses the extensor muscles trained by tummy time and emerges first; back-to-front requires oblique abdominal strength and rotation. Note: Sheridan (citing Bly 1994) documents front-to-back at ~5–6 months, back-to-front ~6–7 months.",
+      "Rolling is the first major self-generated locomotion — before crawling, the infant can change their own position and orientation. Front-to-back uses the extensor muscles trained by tummy time and emerges first; back-to-front requires oblique abdominal strength and rotation. Typically, rolling front-to-back appears at ~5–6 months and back-to-front at ~6–7 months.",
     parentCanSee: [
       "First rolls front-to-back (prone to supine) — often surprises them",
       "Then back-to-front (supine to prone) — requires intentional trunk rotation",
@@ -443,11 +443,11 @@ export const MILESTONES: Milestone[] = [
     weekPeak: 24,
     weekEnd: 52,
     mechanism:
-      "Fine motor follows a proximal-to-distal sequence — shoulder before elbow, elbow before wrist, wrist before finger differentiation. Each stage requires new corticospinal myelination. The neat pincer (thumb tip to index tip) marks the emergence of the uniquely human capacity for fine manipulation. Sheridan documents this trajectory with clinical precision at 6, 9, and 12 months.",
+      "Fine motor follows a proximal-to-distal sequence — shoulder before elbow, elbow before wrist, wrist before finger differentiation. Each stage requires new corticospinal myelination. The neat pincer (thumb tip to index tip) marks the emergence of the uniquely human capacity for fine manipulation. This trajectory unfolds in well-documented stages around 6, 9, and 12 months.",
     parentCanSee: [
-      "Stage 1 — Palmar grasp (wks 20–24): whole-hand closure; passes toy hand to hand; adjusts wrist to object orientation (Sheridan, 6m)",
-      "Stage 2 — Inferior pincer (wks 32–36): lateral thumb-to-finger; pokes with index finger; grasps string to pull toy (Sheridan, 9m)",
-      "Stage 3 — Neat pincer (wks 44–52): tip-to-tip opposition; hand pre-shapes before contact; points with index finger (Sheridan, 12m)",
+      "Stage 1 — Palmar grasp (wks 20–24): whole-hand closure; passes a toy hand to hand; adjusts wrist to object orientation (~6 months)",
+      "Stage 2 — Inferior pincer (wks 32–36): lateral thumb-to-finger; pokes with the index finger; grasps a string to pull a toy (~9 months)",
+      "Stage 3 — Neat pincer (wks 44–52): tip-to-tip opposition; the hand pre-shapes before contact; points with the index finger (~12 months)",
     ],
     activityIds: ["palmar-grasp", "cloth-texture", "novel-object-pause", "limb-movement"],
     resources: [
@@ -478,7 +478,7 @@ export const MILESTONES: Milestone[] = [
       "Holds sitting with light trunk support for > 10 seconds",
       "Head stays upright during supported sitting",
       "Reaches for objects while sitting — arms and hands now both free",
-      'Sheridan (6 months): "Can turn body to look sideways while stretching out to pick up toy from floor without losing balance"',
+      "Around 6 months: can turn the body to look sideways and stretch out to pick up a toy from the floor without losing balance",
     ],
     activityIds: ["varied-carrying", "joint-compression", "cloth-texture"],
     resources: [
@@ -509,12 +509,12 @@ export const MILESTONES: Milestone[] = [
     weekPeak: 28,
     weekEnd: 52,
     mechanism:
-      'From ~6 months, the auditory cortex commits to native language phoneme categories — improving native contrasts, losing sensitivity to non-native ones. Measurable in theta-band auditory sampling on MEG. This is Kuhl\'s most robust finding and the most time-sensitive window in the 0–12 month period. Sheridan (9 months): canonical babbling strings "dad-dad", "mum-mum", "agaga"; understands "no" and own name.',
+      'From ~6 months, the auditory cortex commits to native language phoneme categories — improving native contrasts, losing sensitivity to non-native ones. Measurable in theta-band auditory sampling on MEG. This is Kuhl\'s most robust finding and the most time-sensitive window in the 0–12 month period. By around 9 months, expect canonical babbling strings like "dad-dad", "mum-mum", "agaga", plus understanding of "no" and their own name.',
     parentCanSee: [
       "Responds to own name from across a room (~6 months)",
       'Canonical babbling begins: "ba-ba", "ma-ma" — not yet meaningful',
-      'Sheridan (6 months): single and double syllables "muh", "goo", "der", "adah"',
-      "Sheridan (9 months): long repetitive strings of syllables; imitates playful sounds",
+      'Around 6 months: single and double syllables — "muh", "goo", "der", "adah"',
+      "Around 9 months: long repetitive strings of syllables; imitates playful sounds",
     ],
     activityIds: [
       "reading-aloud",
@@ -548,11 +548,11 @@ export const MILESTONES: Milestone[] = [
     weekPeak: 22,
     weekEnd: 32,
     mechanism:
-      "At 3 months, infant memory is context-dependent (only the same mobile reactivates it). By 6 months, memory is more generalised and durable (14-day retention). Object permanence builds on this improving memory system. Sheridan stages: 6m — searches vaguely when toy falls; 9m — finds partially hidden toy; 12m — quickly finds fully hidden toy, looks to adult afterwards.",
+      "At 3 months, infant memory is context-dependent (only the same mobile reactivates it). By 6 months, memory is more generalised and durable (14-day retention). Object permanence builds on this improving memory system. Typical stages: around 6 months baby searches vaguely when a toy falls; around 9 months finds a partially hidden toy; around 12 months quickly finds a fully hidden toy and looks to an adult afterwards.",
     parentCanSee: [
-      "Sheridan (6 months): watches where toy falls to, searches vaguely when it falls out of view",
-      "Sheridan (9 months): finds toy partially hidden under cover or cup",
-      "Sheridan (12 months): quickly finds toy hidden from view; looks to adult after discovery",
+      "Around 6 months: watches where a toy falls, searching vaguely when it drops out of view",
+      "Around 9 months: finds a toy partially hidden under a cover or cup",
+      "Around 12 months: quickly finds a toy hidden from view; looks to an adult after finding it",
       "Anticipates the return of a hidden face (peek-a-boo engagement)",
     ],
     activityIds: ["novel-object-pause", "contingency-mobile", "attention-recovery"],
@@ -580,7 +580,7 @@ export const MILESTONES: Milestone[] = [
       "Stranger anxiety marks a cognitive leap: the infant has built a detailed mental model of familiar faces, so any non-matching face triggers a distinct response. Social referencing (using caregiver's expression to assess novel situations) emerges slightly later and is more sophisticated — the infant borrows the parent's emotional judgment. Both are healthy markers of attachment and cognitive development.",
     parentCanSee: [
       "Stage 1 (wks 28–32): occasional shyness when strangers approach too closely or abruptly",
-      "Stage 2 (wks 32–40): clearly distinguishes strangers from familiars; clings to known person; hides face (Sheridan, 9m)",
+      "Stage 2 (wks 32–40): clearly distinguishes strangers from familiars; clings to a known person; hides the face (~9 months)",
       "Stage 3 (wks 36–44): social referencing — looks to caregiver's face before approaching novel object or situation",
       "Important: intensity varies widely by temperament; not a problem to fix, evidence of healthy attachment",
     ],
@@ -610,7 +610,7 @@ export const MILESTONES: Milestone[] = [
     weekPeak: 38,
     weekEnd: 44,
     mechanism:
-      'Standing requires solving a new balance problem — centre of mass over a narrow base, high above the ground. Adolph: this is active problem-solving; infants repeatedly try, fail, adjust, try again. Cultural practices (walkers vs. floor play) significantly affect timing. Sheridan (9 months): "Pulls to standing, holding onto support for a few moments but cannot lower self and falls backwards with a bump."',
+      "Standing requires solving a new balance problem — centre of mass over a narrow base, high above the ground. Adolph: this is active problem-solving; infants repeatedly try, fail, adjust, try again. Cultural practices (walkers vs. floor play) significantly affect timing. By around 9 months, baby pulls to standing and holds on for a few moments, but cannot yet lower themselves and tends to fall backwards with a bump.",
     parentCanSee: [
       "Pulls to stand holding furniture or your hands",
       "Stands briefly before sitting back down (or falling)",
@@ -640,12 +640,12 @@ export const MILESTONES: Milestone[] = [
     weekPeak: 50,
     weekEnd: 56,
     mechanism:
-      'First words emerge as phoneme narrowing matures. "Words" at this stage are context-dependent sound-meaning pairings. Sheridan (12 months): "Babbles in conversational cadences (jargon)" — intonationally correct babble preceding real words; comprehension precedes production by 4–8 weeks. Tomasello (1995): proto-declarative pointing ("points to object then looks back to adult") is one of the most predictive early language markers.',
+      'First words emerge as phoneme narrowing matures. "Words" at this stage are context-dependent sound-meaning pairings. By around 12 months, babble takes on conversational cadences (jargon) — intonationally correct babble that precedes real words; comprehension runs ahead of production by 4–8 weeks. Proto-declarative pointing ("points to an object then looks back to the adult") is one of the most predictive early-language markers.',
     parentCanSee: [
       'Consistent sound-meaning pairing in context ("ba" for bottle)',
       "Proto-declarative pointing: points at something and looks back at you for a reaction",
-      "Sheridan (12 months): follows adult gaze (joint visual attention)",
-      "Sheridan (12 months): coordinated joint attention — actively switches between object and adult",
+      "Around 12 months: follows an adult's gaze (joint visual attention)",
+      "Around 12 months: coordinated joint attention — actively switches between an object and the adult",
     ],
     activityIds: ["name-repetition", "narrated-day", "reading-aloud", "conversation-turn"],
     resources: [
