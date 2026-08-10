@@ -5,13 +5,14 @@ import { Card } from "@/components/ui/card";
 import { ageLabel, getAge, greeting } from "@/lib/littleleaps/age";
 import { ACTIVITIES, formatDuration, type Activity } from "@/lib/littleleaps/data";
 import { useBirthDate, useBabyName } from "@/lib/littleleaps/storage";
-import { DomainBadge, DurationPill, RatingButtons } from "@/components/littleleaps/ActivityBits";
-import { Lightbulb, ArrowRight } from "lucide-react";
 import {
-  getActivitiesForWeek,
-  getNewActivityCount,
-  getWeekTip,
-} from "@/lib/littleleaps/milestones";
+  DomainBadge,
+  DurationPill,
+  NewBadge,
+  RatingButtons,
+} from "@/components/littleleaps/ActivityBits";
+import { Lightbulb, ArrowRight } from "lucide-react";
+import { getActivitiesForWeek, getNewActivityIds, getWeekTip } from "@/lib/littleleaps/milestones";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -86,7 +87,9 @@ function Home() {
       : [];
 
   // ── Stats ───────────────────────────────────────────────────────────────────
-  const newActivitiesCount = getNewActivityCount(weeks);
+  // Same set drives both the "New this week" count and each card's New badge —
+  // see getNewActivityIds, the single source of truth for "new".
+  const newActivityIds = getNewActivityIds(weeks);
 
   // ── Weekly tip derived from active milestones ───────────────────────────────
   const weeklyTip = getWeekTip(weeks);
@@ -108,7 +111,7 @@ function Home() {
           <div className="grid grid-cols-3 gap-2">
             <Stat label="Age" value={`${weeks}w`} />
             <Stat label="Awake today" value={`${awakeMinutes} min`} />
-            <Stat label="New this week" value={String(newActivitiesCount)} />
+            <Stat label="New this week" value={String(newActivityIds.size)} />
           </div>
 
           {/* Awake window slider
@@ -158,9 +161,12 @@ function Home() {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <h3 className="font-serif text-lg font-semibold text-foreground">
-                        {a.title}
-                      </h3>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="font-serif text-lg font-semibold text-foreground">
+                          {a.title}
+                        </h3>
+                        {newActivityIds.has(a.id) && <NewBadge />}
+                      </div>
                       <div className="mt-2 flex flex-wrap items-center gap-2">
                         <DomainBadge domain={a.domain} />
                         <DurationPill duration={formatDuration(a.durationMinutes)} />

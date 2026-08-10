@@ -839,12 +839,15 @@ export function getActivitiesForWeek(week: number): string[] {
 }
 
 /**
- * Count of activities being introduced for the first time this week.
+ * Activity IDs being introduced for the first time this week.
  * "New" = appears in a milestone starting at `week` AND was not already
  * active from a milestone that started before `week`.
- * Returns 0 for weeks where no new milestone window opens — accurate and expected.
+ *
+ * Single source of truth for "new" — both the Home "New this week" stat and
+ * the "New" badge shown on activity cards (Home + This Week) call this, so
+ * they can never disagree about which activities count as new.
  */
-export function getNewActivityCount(week: number): number {
+export function getNewActivityIds(week: number): Set<string> {
   // Activities already active from prior milestone windows
   const priorIds = new Set<string>();
   for (const m of MILESTONES) {
@@ -861,7 +864,15 @@ export function getNewActivityCount(week: number): number {
       }
     }
   }
-  return newIds.size;
+  return newIds;
+}
+
+/**
+ * Count of activities being introduced for the first time this week.
+ * Returns 0 for weeks where no new milestone window opens — accurate and expected.
+ */
+export function getNewActivityCount(week: number): number {
+  return getNewActivityIds(week).size;
 }
 
 /**

@@ -9,11 +9,17 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { ACTIVITIES, formatDuration, type Activity } from "@/lib/littleleaps/data";
-import { DomainBadge, DurationPill, RatingButtons } from "@/components/littleleaps/ActivityBits";
+import {
+  DomainBadge,
+  DurationPill,
+  NewBadge,
+  RatingButtons,
+} from "@/components/littleleaps/ActivityBits";
 import { getAge, dobFormatted } from "@/lib/littleleaps/age";
 import { useBirthDate, useBabyName } from "@/lib/littleleaps/storage";
 import {
   getActivitiesForWeek,
+  getNewActivityIds,
   getWeekExpectations,
   DOMAIN_LABELS,
   DOMAIN_CSS_VAR,
@@ -62,6 +68,9 @@ function ThisWeek() {
   const activities = activityIds
     .map((id) => ACTIVITIES.find((a) => a.id === id))
     .filter((a): a is Activity => a !== undefined);
+
+  // Same set the Home "New this week" stat uses — see getNewActivityIds.
+  const newActivityIds = getNewActivityIds(weeks);
 
   // "What to expect" is derived from the milestones active this week, grouped by
   // domain — so it tracks the baby's age and matches the Milestones timeline.
@@ -168,8 +177,11 @@ function ThisWeek() {
                     <AccordionItem value={a.id} className="border-b-0">
                       <AccordionTrigger className="px-3 py-3 text-left hover:no-underline">
                         <div className="flex-1 pr-3">
-                          <div className="font-serif text-base font-semibold text-foreground">
-                            {a.title}
+                          <div className="flex flex-wrap items-center gap-2">
+                            <div className="font-serif text-base font-semibold text-foreground">
+                              {a.title}
+                            </div>
+                            {newActivityIds.has(a.id) && <NewBadge />}
                           </div>
                           <div className="mt-1.5 flex flex-wrap items-center gap-2">
                             <DomainBadge domain={a.domain} />
