@@ -1,22 +1,10 @@
 // ── Domain taxonomy ───────────────────────────────────────────────────────────
-//
-// 5 top-level domains (previously 3). Each maps to a colour token in
-// src/styles.css and resolves to bg-domain-*, text-domain-*, border-domain-*.
-//
-// social-emotional is intentionally distributed across domains rather than
-// given its own top-level bucket — social activities surface inside the domain
-// that best describes their primary mechanism (language-communication for
-// serve-and-return; cognitive for attention/social-cognition).
-//
-// sleep has its own domain so research-agent findings in sleep neuroscience
-// have a clear landing zone in the app.
-
-export type Domain =
-  | "sensory" // touch · proprioception · vestibular · gross & fine motor
-  | "visual" // contrast · pattern · tracking · luminance
-  | "language-communication" // auditory · social-communication · language-exposure
-  | "cognitive" // attention · causal-learning · social-cognition
-  | "sleep"; // sleep environment · routine · circadian settling
+// The canonical Domain type and its display maps live in taxonomy.ts, shared
+// with milestones.ts so the two can't drift apart. Re-exported here so existing
+// imports from "./data" keep resolving.
+import type { Domain } from "./taxonomy";
+export type { Domain };
+export { DOMAIN_LABEL, DOMAIN_DOT, DOMAIN_BADGE } from "./taxonomy";
 
 // ── Sub-domain taxonomy ───────────────────────────────────────────────────────
 // Optional second-level tag. Lets the research agent target suggestions
@@ -62,67 +50,40 @@ export interface Activity {
   longTermBenefits?: string[];
 }
 
-// ── Domain display maps ───────────────────────────────────────────────────────
-
-export const DOMAIN_LABEL: Record<Domain, string> = {
-  sensory: "Sensory & Motor",
-  visual: "Visual",
-  "language-communication": "Language & Communication",
-  cognitive: "Cognitive",
-  sleep: "Sleep & Calming",
-};
-
-export const DOMAIN_DOT: Record<Domain, string> = {
-  sensory: "bg-domain-sensory",
-  visual: "bg-domain-visual",
-  "language-communication": "bg-domain-language-communication",
-  cognitive: "bg-domain-cognitive",
-  sleep: "bg-domain-sleep",
-};
-
-export const DOMAIN_BADGE: Record<Domain, string> = {
-  sensory: "bg-domain-sensory/15 text-domain-sensory border-domain-sensory/30",
-  visual: "bg-domain-visual/15 text-domain-visual border-domain-visual/30",
-  "language-communication":
-    "bg-domain-language-communication/15 text-domain-language-communication border-domain-language-communication/30",
-  cognitive: "bg-domain-cognitive/20 text-domain-cognitive border-domain-cognitive/40",
-  sleep: "bg-domain-sleep/15 text-domain-sleep border-domain-sleep/30",
-};
-
 export function formatDuration(minutes: number): string {
   if (minutes === 0) return "Ongoing";
   return `${minutes} min`;
 }
 
 // ── Activities ────────────────────────────────────────────────────────────────
-// 31 activities across 5 active domains.
-//
-// Domain breakdown:
-//   visual                 4   (mirror-face-time, bw-card-gallery,
-//                               object-tracking, light-shadow)
-//   sensory                8   (tummy-time, sway-narrate, palmar-grasp,
-//                               cloth-texture, scent-pairing, joint-compression,
-//                               varied-carrying, limb-movement, skin-to-skin)
-//   language-communication  9   (slow-face, conversation-turn, voice-mapping,
-//                               same-song, reading-aloud, heartbeat-settling,
-//                               name-repetition, outdoor-listening, narrated-day)
-//   cognitive               5   (facial-expression-copying, contingency-mobile,
-//                               attention-recovery, quiet-alert-observation,
-//                               novel-object-pause)
-//   sleep                   4   (water-sound-bath [Warm calming bath], hum-chest,
-//                               infant-massage, white-noise)
+// 31 activities across the 5 simplified domains (taxonomy.ts):
+//   sensory          13   (visual + sensory activities: mirror-face-time,
+//                          bw-card-gallery, object-tracking, light-shadow,
+//                          tummy-time, sway-narrate, palmar-grasp, cloth-texture,
+//                          scent-pairing, joint-compression, varied-carrying,
+//                          limb-movement, skin-to-skin)
+//   motor             0   (no activities tagged motor yet; motor milestones draw
+//                          on sensory activities like tummy-time)
+//   cognitive         5   (facial-expression-copying, contingency-mobile,
+//                          attention-recovery, quiet-alert-observation,
+//                          novel-object-pause)
+//   social-language   9   (slow-face, conversation-turn, voice-mapping, same-song,
+//                          reading-aloud, heartbeat-settling, name-repetition,
+//                          outdoor-listening, narrated-day)
+//   sleep             4   (water-sound-bath [Warm calming bath], hum-chest,
+//                          infant-massage, white-noise)
 //
 // NOTE: domain here is the activity's PRIMARY classification. An activity may
 // still be referenced by a milestone in another domain (the milestone⇄activity
-// link is many-to-many) — e.g. hum-chest is Sleep & Calming but supports the
-// auditory-memory milestone. See the domain-taxonomy cleanup in BACKLOG.md.
+// link is many-to-many) — e.g. hum-chest is Sleep & Calming but supports a
+// social-language milestone. The finer `subDomain` tags are unchanged.
 
 export const ACTIVITIES: Activity[] = [
   // ── VISUAL ─────────────────────────────────────────────────────────────────
   {
     id: "mirror-face-time",
     title: "Mirror face time",
-    domain: "visual",
+    domain: "sensory",
     subDomain: "contrast-pattern",
     ageWindowWeeks: "0–12",
     processSupported: "Visual cortex calibration and face-recognition circuit activation",
@@ -142,7 +103,7 @@ export const ACTIVITIES: Activity[] = [
   {
     id: "bw-card-gallery",
     title: "Black-and-white card gallery",
-    domain: "visual",
+    domain: "sensory",
     subDomain: "contrast-pattern",
     ageWindowWeeks: "0–8",
     processSupported:
@@ -163,7 +124,7 @@ export const ACTIVITIES: Activity[] = [
   {
     id: "object-tracking",
     title: "Slow object tracking",
-    domain: "visual",
+    domain: "sensory",
     subDomain: "visual-tracking",
     ageWindowWeeks: "0–12",
     processSupported: "Visual tracking circuit development; smooth pursuit maturation",
@@ -185,7 +146,7 @@ export const ACTIVITIES: Activity[] = [
   {
     id: "light-shadow",
     title: "Light and shadow play",
-    domain: "visual",
+    domain: "sensory",
     subDomain: "contrast-pattern",
     ageWindowWeeks: "0–12",
     processSupported: "Luminance contrast detection; visual orienting reflex",
@@ -426,7 +387,7 @@ export const ACTIVITIES: Activity[] = [
   {
     id: "slow-face",
     title: "Face gazing — the slow face",
-    domain: "language-communication",
+    domain: "social-language",
     subDomain: "social-communication",
     ageWindowWeeks: "0–12",
     processSupported: "Serve-and-return neural pathway development; face-gaze contingency learning",
@@ -448,7 +409,7 @@ export const ACTIVITIES: Activity[] = [
   {
     id: "conversation-turn",
     title: "The conversation turn",
-    domain: "language-communication",
+    domain: "social-language",
     subDomain: "social-communication",
     ageWindowWeeks: "0–12",
     processSupported: "Prosodic pattern learning; serve-and-return neural circuit development",
@@ -470,7 +431,7 @@ export const ACTIVITIES: Activity[] = [
   {
     id: "voice-mapping",
     title: "Voice mapping",
-    domain: "language-communication",
+    domain: "social-language",
     subDomain: "auditory",
     ageWindowWeeks: "0–8",
     processSupported: "Auditory localisation; cross-modal integration of voice and face",
@@ -492,7 +453,7 @@ export const ACTIVITIES: Activity[] = [
   {
     id: "same-song",
     title: "Singing the same song",
-    domain: "language-communication",
+    domain: "social-language",
     subDomain: "auditory",
     ageWindowWeeks: "0–12",
     processSupported:
@@ -514,7 +475,7 @@ export const ACTIVITIES: Activity[] = [
   {
     id: "reading-aloud",
     title: "Reading aloud — anything",
-    domain: "language-communication",
+    domain: "social-language",
     subDomain: "language-exposure",
     ageWindowWeeks: "0–12",
     processSupported:
@@ -536,7 +497,7 @@ export const ACTIVITIES: Activity[] = [
   {
     id: "heartbeat-settling",
     title: "Heartbeat sound settling",
-    domain: "language-communication",
+    domain: "social-language",
     subDomain: "auditory",
     ageWindowWeeks: "0–6",
     processSupported: "Auditory-somatic association; stress regulation; prenatal auditory memory",
@@ -558,7 +519,7 @@ export const ACTIVITIES: Activity[] = [
   {
     id: "name-repetition",
     title: "Name repetition at close range",
-    domain: "language-communication",
+    domain: "social-language",
     subDomain: "language-exposure",
     ageWindowWeeks: "0–12",
     processSupported: "Own-name representation; auditory discrimination; social signal learning",
@@ -600,7 +561,7 @@ export const ACTIVITIES: Activity[] = [
   {
     id: "outdoor-listening",
     title: "Outdoor ambient listening",
-    domain: "language-communication",
+    domain: "social-language",
     subDomain: "auditory",
     ageWindowWeeks: "0–12",
     processSupported: "Auditory scene analysis; complex sound environment calibration",
@@ -621,7 +582,7 @@ export const ACTIVITIES: Activity[] = [
   {
     id: "narrated-day",
     title: "The narrated day",
-    domain: "language-communication",
+    domain: "social-language",
     subDomain: "social-communication",
     ageWindowWeeks: "0–12",
     processSupported: "Language exposure; prosodic pattern absorption; social contingency learning",

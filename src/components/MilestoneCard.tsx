@@ -162,7 +162,7 @@ export function MilestoneCard({
                   rel="noopener noreferrer"
                   className="flex items-start gap-1 text-[10.5px] underline leading-relaxed
                              hover:opacity-70 transition-opacity"
-                  style={{ color: DOMAIN_CSS_VAR["visual"] }}
+                  style={{ color: domainColor }}
                 >
                   <ExternalLink className="w-3 h-3 mt-0.5 flex-shrink-0" aria-hidden />
                   {r.title}

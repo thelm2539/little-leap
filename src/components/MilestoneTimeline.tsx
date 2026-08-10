@@ -37,13 +37,10 @@ import { useActivityLog, receptionByActivity } from "../lib/littleleaps/storage"
 // This array drives the pill row — if you add a new domain, add it here too.
 const FILTERS: { key: MilestoneDomain | "all"; label: string }[] = [
   { key: "all", label: "All" },
-  { key: "visual", label: "Visual" },
   { key: "sensory", label: "Sensory" },
-  { key: "gross-motor", label: "Gross Motor" },
-  { key: "fine-motor", label: "Fine Motor" },
-  { key: "language-communication", label: "Language" },
+  { key: "motor", label: "Motor" },
   { key: "cognitive", label: "Cognitive" },
-  { key: "social", label: "Social" },
+  { key: "social-language", label: "Social & Language" },
   { key: "sleep", label: "Sleep & Calming" },
 ];
 

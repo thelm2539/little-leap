@@ -3,15 +3,12 @@
 // Source: milestone-research.md (v2, July 2026)
 // Rule: no CDC/WHO/AAP summaries — primary authors only.
 
-export type MilestoneDomain =
-  | "visual"
-  | "sensory"
-  | "gross-motor"
-  | "fine-motor"
-  | "language-communication"
-  | "cognitive"
-  | "social"
-  | "sleep";
+import { DOMAIN_ORDER, type Domain } from "./taxonomy";
+export { DOMAIN_LABEL as DOMAIN_LABELS, DOMAIN_CSS_VAR } from "./taxonomy";
+
+// Kept as an alias so existing `MilestoneDomain` imports resolve. Milestones and
+// activities now share the one Domain taxonomy (taxonomy.ts).
+export type MilestoneDomain = Domain;
 
 /**
  * Whether a milestone is a capability the baby gains, or a temporary regression
@@ -55,7 +52,7 @@ export const MILESTONES: Milestone[] = [
   {
     id: "m01-face-detection",
     name: "Subcortical Face Detection",
-    domain: "visual",
+    domain: "sensory",
     weekStart: 0,
     weekPeak: 0,
     weekEnd: 2,
@@ -119,7 +116,7 @@ export const MILESTONES: Milestone[] = [
   {
     id: "m03-prenatal-auditory-memory",
     name: "Prenatal Auditory Memory",
-    domain: "language-communication",
+    domain: "social-language",
     weekStart: 0,
     weekPeak: 0,
     weekEnd: 2,
@@ -211,7 +208,7 @@ export const MILESTONES: Milestone[] = [
   {
     id: "m06-social-smile",
     name: "Social Smile Emergence",
-    domain: "social",
+    domain: "social-language",
     weekStart: 4,
     weekPeak: 6,
     weekEnd: 10,
@@ -242,7 +239,7 @@ export const MILESTONES: Milestone[] = [
   {
     id: "m07-smooth-pursuit",
     name: "Smooth Pursuit Emerges",
-    domain: "visual",
+    domain: "sensory",
     weekStart: 6,
     weekPeak: 8,
     weekEnd: 10,
@@ -305,7 +302,7 @@ export const MILESTONES: Milestone[] = [
   {
     id: "m09-head-control",
     name: "Neck Extension & Head Control",
-    domain: "gross-motor",
+    domain: "motor",
     weekStart: 4,
     weekPeak: 8,
     weekEnd: 12,
@@ -343,7 +340,7 @@ export const MILESTONES: Milestone[] = [
   {
     id: "m10-reach-to-grasp",
     name: "Reach-to-Grasp Precursors",
-    domain: "fine-motor",
+    domain: "motor",
     weekStart: 10,
     weekPeak: 13,
     weekEnd: 16,
@@ -376,7 +373,7 @@ export const MILESTONES: Milestone[] = [
   {
     id: "m11-cooing",
     name: "Cooing & Protoconversations",
-    domain: "language-communication",
+    domain: "social-language",
     weekStart: 6,
     weekPeak: 8,
     weekEnd: 12,
@@ -406,7 +403,7 @@ export const MILESTONES: Milestone[] = [
   {
     id: "m17-rolling",
     name: "Rolling",
-    domain: "gross-motor",
+    domain: "motor",
     weekStart: 20,
     weekPeak: 22,
     weekEnd: 28,
@@ -438,7 +435,7 @@ export const MILESTONES: Milestone[] = [
   {
     id: "m18-fine-motor-sequence",
     name: "Fine Motor: Palmar → Inferior → Neat Pincer",
-    domain: "fine-motor",
+    domain: "motor",
     weekStart: 20,
     weekPeak: 24,
     weekEnd: 52,
@@ -468,7 +465,7 @@ export const MILESTONES: Milestone[] = [
   {
     id: "m12-sitting-with-support",
     name: "Sitting With Support",
-    domain: "gross-motor",
+    domain: "motor",
     weekStart: 16,
     weekPeak: 20,
     weekEnd: 24,
@@ -504,7 +501,7 @@ export const MILESTONES: Milestone[] = [
   {
     id: "m13-phoneme-narrowing",
     name: "Phoneme Narrowing Sensitive Period",
-    domain: "language-communication",
+    domain: "social-language",
     weekStart: 24,
     weekPeak: 28,
     weekEnd: 52,
@@ -572,7 +569,7 @@ export const MILESTONES: Milestone[] = [
   {
     id: "m19-stranger-anxiety",
     name: "Stranger Anxiety & Social Referencing",
-    domain: "social",
+    domain: "social-language",
     weekStart: 28,
     weekPeak: 32,
     weekEnd: 44,
@@ -605,7 +602,7 @@ export const MILESTONES: Milestone[] = [
   {
     id: "m15-pulling-to-stand",
     name: "Pulling to Stand",
-    domain: "gross-motor",
+    domain: "motor",
     weekStart: 32,
     weekPeak: 38,
     weekEnd: 44,
@@ -635,7 +632,7 @@ export const MILESTONES: Milestone[] = [
   {
     id: "m16-first-words",
     name: "First Words & Joint Attention",
-    domain: "language-communication",
+    domain: "social-language",
     weekStart: 40,
     weekPeak: 50,
     weekEnd: 56,
@@ -790,38 +787,10 @@ export function getBabyAgeWeeks(birthDateIso: string): number {
   return Math.max(0, Math.floor(diffMs / (7 * 24 * 60 * 60 * 1000)));
 }
 
-/** Display name for each domain. */
-export const DOMAIN_LABELS: Record<MilestoneDomain, string> = {
-  visual: "Visual",
-  sensory: "Sensory",
-  "gross-motor": "Gross Motor",
-  "fine-motor": "Fine Motor",
-  "language-communication": "Language",
-  cognitive: "Cognitive",
-  social: "Social",
-  sleep: "Sleep & Calming",
-};
-
 /** Read a milestone's kind, defaulting to 'achievement' when unset. */
 export function milestoneKind(m: Milestone): MilestoneKind {
   return m.kind ?? "achievement";
 }
-
-/**
- * CSS custom property reference for each domain colour.
- * Use as: style={{ backgroundColor: DOMAIN_CSS_VAR[domain] }}
- * This is more reliable than dynamic Tailwind class names at build time.
- */
-export const DOMAIN_CSS_VAR: Record<MilestoneDomain, string> = {
-  visual: "var(--domain-visual)",
-  sensory: "var(--domain-sensory)",
-  "gross-motor": "var(--domain-gross-motor)",
-  "fine-motor": "var(--domain-fine-motor)",
-  "language-communication": "var(--domain-language-communication)",
-  cognitive: "var(--domain-cognitive)",
-  social: "var(--domain-social)",
-  sleep: "var(--domain-sleep)",
-};
 
 // ── Milestone / activity helpers ──────────────────────────────────────────────
 
@@ -839,23 +808,12 @@ export function getMilestonesForWeek(week: number): Milestone[] {
  * Domains with no active milestone are omitted. Used by the "What to expect this
  * week" summary so it reflects the current age instead of static copy.
  */
-export function getWeekExpectations(
-  week: number,
-): { domain: MilestoneDomain; milestones: Milestone[] }[] {
-  const order: MilestoneDomain[] = [
-    "gross-motor",
-    "fine-motor",
-    "sensory",
-    "visual",
-    "language-communication",
-    "cognitive",
-    "social",
-    "sleep",
-  ];
+export function getWeekExpectations(week: number): { domain: Domain; milestones: Milestone[] }[] {
   const active = getMilestonesForWeek(week);
-  return order
-    .map((domain) => ({ domain, milestones: active.filter((m) => m.domain === domain) }))
-    .filter((g) => g.milestones.length > 0);
+  return DOMAIN_ORDER.map((domain) => ({
+    domain,
+    milestones: active.filter((m) => m.domain === domain),
+  })).filter((g) => g.milestones.length > 0);
 }
 
 /**
