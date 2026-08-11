@@ -38,7 +38,7 @@ export function NewBadge() {
   );
 }
 
-const RATING_LABEL: Record<Rating, string> = {
+export const RATING_LABEL: Record<Rating, string> = {
   engaged: "Engaged",
   neutral: "Neutral",
   fussy: "Fussy",

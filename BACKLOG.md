@@ -163,6 +163,50 @@ any screen.
 
 Effort: reminder delivery ~2–3 days including the service worker + permission flow.
 
+## 10. No activities are tagged domain "motor"
+
+**Why it matters:** the new "Activity trends" grid on Profile (one row per
+domain, one square per week) has a permanently empty Motor row — confirmed
+live with seeded test data spanning 9 weeks, every Motor cell showed "no
+activities logged." This isn't a bug in the grid; `ACTIVITIES` in data.ts
+genuinely has zero entries with `domain: "motor"` (noted in that file's own
+header comment: "no activities tagged motor yet; motor milestones draw on
+sensory activities like tummy-time"). The Milestones tab's Motor filter still
+works because milestones reference *sensory* activities like tummy-time for
+their motor content — but that means Motor never accumulates its own
+reception history.
+
+**What's left:** either add dedicated motor-domain activities (tummy-time
+variants, reaching/grasping practice, rolling encouragement, etc.) so Motor
+has content to log against, or accept that Motor stays milestone-only and
+consider hiding/greying its row in the reception grid instead of showing a
+permanently blank one.
+
+Effort: content work, not code — depends on how many motor activities you want.
+
+## 11. Toast notifications may not be rendering
+
+**Why it matters:** discovered while testing the new grid's tap-to-reveal
+detail (`toast()` from `sonner`, called on tapping a cell). In the dev
+preview, no toast ever appeared — confirmed via DOM inspection
+(`[data-sonner-toast]` never appears) after directly firing click events,
+bypassing any pointer-simulation flakiness. To rule out a bug in the new code,
+the same check was run against the pre-existing "Engaged/Neutral/Fussy" rating
+buttons on Home (`RatingButtons` in ActivityBits.tsx, using the identical
+`toast()` call pattern, shipped well before this session) — same result, no
+toast. So this is a pre-existing, app-wide gap, not something introduced by
+the reception grid.
+
+**Caveat:** this was only checked in the local dev preview, which logged
+several `Content-Security-Policy` report-only violations (inline scripts,
+Google Fonts stylesheet, a worker) unrelated to sonner but indicating the
+preview's CSP differs from a real deployment — so this needs re-confirming on
+the actual deployed site before treating it as a real bug. If it reproduces
+there too: check the `Toaster` mount in AppShell.tsx, the installed `sonner`
+version, and whether its portal is being blocked or unmounted.
+
+Effort: ~1 hour to confirm on the real deployment; more if it's a genuine bug.
+
 ## Notes
 
 - Items 2 and 3 are the two that most change the risk profile of a public

@@ -11,6 +11,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/littleleaps/AppShell";
+import { ActivityReceptionGrid } from "@/components/littleleaps/ActivityReceptionGrid";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -176,6 +177,8 @@ function ProfilePage() {
             </div>
           </Card>
         </section>
+
+        <ActivityReceptionGrid />
 
         <div className="h-4" />
       </div>

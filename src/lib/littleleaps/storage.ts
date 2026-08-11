@@ -27,6 +27,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ACTIVITIES, DOMAIN_LABEL } from "./data";
+import { DOMAIN_ORDER, type Domain } from "./taxonomy";
 
 export type Rating = "engaged" | "neutral" | "fussy";
 
@@ -586,6 +587,163 @@ export function activitiesToRevisit(log: ActivityLogRow[]): {
     fussy: all.filter((r) => r.fussy > 0).sort((a, b) => b.fussy - a.fussy),
     engaged: all.filter((r) => r.engaged > 0).sort((a, b) => b.engaged - a.engaged),
   };
+}
+
+// ---------- Weekly reception grid (by domain) ----------
+// Powers the "what's she enjoying, week by week" card on Profile: one square
+// per (domain, week), so a type of play's trajectory (fussy → settled) reads
+// at a glance instead of being buried in an aggregate.
+
+/**
+ * One week's outcome for one domain: the most recent rating logged that week
+ * for activities in that domain, plus how many activities contributed.
+ * `rating: null` means a quiet week — nothing in that domain was logged.
+ */
+export interface WeekCell {
+  rating: Rating | null;
+  count: number;
+}
+
+export interface DomainReceptionRow {
+  domain: Domain;
+  cells: Map<number, WeekCell>; // week number -> cell, one entry per ReceptionGrid.weeks
+}
+
+export interface ReceptionGrid {
+  weeks: number[]; // ascending, contiguous: earliest logged week through the latest
+  rows: DomainReceptionRow[]; // always one row per DOMAIN_ORDER entry, even with no data
+}
+
+/**
+ * Build the weekly-by-domain grid.
+ *
+ * Domain is re-derived from the activity's CURRENT classification (via
+ * ACTIVITIES), never from the text frozen on the log row at rating time — so
+ * a log entry follows the taxonomy if it's ever reorganised, the same
+ * principle that fixed the milestone/activity domain drift earlier. If an
+ * activity_id no longer exists in ACTIVITIES, that row is skipped.
+ *
+ * "Most recent wins" for a cell's colour: `log` is already newest-first (the
+ * order useActivityLog returns), so the first row seen for a domain+week pair
+ * is the one to keep. `count` still accumulates the full frequency for that
+ * domain+week even though the colour only shows the latest outcome — surfaced
+ * via tap-to-reveal rather than cell colour, so a busy week doesn't need a
+ * second visual encoding competing with the rating itself.
+ */
+export function buildReceptionGrid(log: ActivityLogRow[]): ReceptionGrid {
+  const cellsByDomain = new Map<Domain, Map<number, WeekCell>>();
+  let minWeek: number | null = null;
+  let maxWeek: number | null = null;
+
+  for (const row of log) {
+    if (row.logged_age_days === null) continue;
+    const activity = ACTIVITIES.find((a) => a.id === row.activity_id);
+    if (!activity) continue;
+    const week = Math.floor(row.logged_age_days / 7);
+
+    if (minWeek === null || week < minWeek) minWeek = week;
+    if (maxWeek === null || week > maxWeek) maxWeek = week;
+
+    let domainCells = cellsByDomain.get(activity.domain);
+    if (!domainCells) {
+      domainCells = new Map();
+      cellsByDomain.set(activity.domain, domainCells);
+    }
+    const existing = domainCells.get(week);
+    if (existing) {
+      existing.count += 1; // rating stays as first-seen (= most recent, log is desc-ordered)
+    } else {
+      domainCells.set(week, { rating: row.rating, count: 1 });
+    }
+  }
+
+  const weeks =
+    minWeek === null || maxWeek === null
+      ? []
+      : Array.from({ length: maxWeek - minWeek + 1 }, (_, i) => minWeek! + i);
+
+  const rows: DomainReceptionRow[] = DOMAIN_ORDER.map((domain) => ({
+    domain,
+    cells: new Map(
+      weeks.map((w) => [w, cellsByDomain.get(domain)?.get(w) ?? { rating: null, count: 0 }]),
+    ),
+  }));
+
+  return { weeks, rows };
+}
+
+const SENTIMENT: Record<Rating, number> = { fussy: 0, neutral: 1, engaged: 2 };
+
+/**
+ * A short, deterministic 1-2 sentence summary of the grid's clearest
+ * patterns: a domain that struggled early and has settled recently, and/or
+ * one that's been reliably engaged throughout. Intentionally a simple
+ * rule-based heuristic (not full NLG) — tune the thresholds, not the shape.
+ */
+export function describeReceptionTrends(grid: ReceptionGrid): string {
+  type Point = { week: number; rating: Rating };
+
+  const series = grid.rows
+    .map((row) => ({
+      domain: row.domain,
+      points: grid.weeks
+        .map((w) => ({ week: w, rating: row.cells.get(w)?.rating ?? null }))
+        .filter((p): p is Point => p.rating !== null),
+    }))
+    .filter((s) => s.points.length >= 2);
+
+  if (series.length === 0) {
+    return "Keep logging activities to see patterns emerge here.";
+  }
+
+  // Improving: recent points sit meaningfully more "engaged" than earlier ones.
+  let improving: { domain: Domain; lastStruggleWeek: number; streak: number } | null = null;
+  for (const s of series) {
+    const recentN = Math.max(1, Math.min(3, s.points.length - 1));
+    const earlier = s.points.slice(0, s.points.length - recentN);
+    const recent = s.points.slice(s.points.length - recentN);
+    if (earlier.length === 0) continue;
+
+    const avg = (pts: Point[]) => pts.reduce((sum, p) => sum + SENTIMENT[p.rating], 0) / pts.length;
+    const earlierAvg = avg(earlier);
+    const recentAvg = avg(recent);
+
+    if (earlierAvg <= 1 && recentAvg >= 1.5 && recentAvg - earlierAvg >= 1) {
+      const lastStruggleIdx = [...s.points].reverse().findIndex((p) => p.rating !== "engaged");
+      const lastStruggleWeek =
+        lastStruggleIdx === -1
+          ? s.points[0].week
+          : s.points[s.points.length - 1 - lastStruggleIdx].week;
+      let streak = 0;
+      for (let i = s.points.length - 1; i >= 0 && s.points[i].rating === "engaged"; i--) streak++;
+      improving = { domain: s.domain, lastStruggleWeek, streak };
+      break; // one callout is enough
+    }
+  }
+
+  // Reliable: every logged point for a domain is "engaged" (skip the one already called out above).
+  const reliable = series
+    .filter((s) => s.domain !== improving?.domain)
+    .filter((s) => s.points.every((p) => p.rating === "engaged"))
+    .sort((a, b) => b.points.length - a.points.length)[0];
+
+  const sentences: string[] = [];
+  if (improving) {
+    sentences.push(
+      `${DOMAIN_LABEL[improving.domain]} play was hard going until week ${improving.lastStruggleWeek}` +
+        ` — the last ${improving.streak} week${improving.streak === 1 ? "" : "s"} have been settled.`,
+    );
+  }
+  if (reliable) {
+    sentences.push(`${DOMAIN_LABEL[reliable.domain]} play has been a reliable win the whole way.`);
+  }
+
+  if (sentences.length === 0) {
+    const busiest = [...series].sort((a, b) => b.points.length - a.points.length)[0];
+    sentences.push(`${DOMAIN_LABEL[busiest.domain]} has had the most activity so far.`);
+  }
+
+  return sentences.join(" ");
 }
 
 // ---------- Birth date ----------
