@@ -473,4 +473,150 @@ grant all on public.activity_logs          to service_role;
 grant all on public.family_invites         to service_role;
 grant all on public.invite_redeem_attempts to service_role;
 
+-- ---------------------------------------------------------------------------
+-- Content management (activities, milestones) — see
+-- supabase/migrations/20260812120000_content_management.sql for the full
+-- rationale. Lets content move without a code deploy: the app reads
+-- status = 'published' rows; a separate low-privilege content_curator role
+-- can only write status = 'draft' rows, enforced by RLS below.
+-- ---------------------------------------------------------------------------
+
+-- Scoped credential for an external content-curation agent. No grants on any
+-- other table in the schema — a compromised curator credential can edit
+-- draft content and nothing else. Created before the tables/policies below
+-- that reference it.
+do $$
+begin
+  if not exists (select 1 from pg_roles where rolname = 'content_curator') then
+    create role content_curator with login;
+  end if;
+end
+$$;
+
+create or replace function public.touch_updated_at()
+returns trigger
+language plpgsql
+set search_path = public, pg_temp
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
+create table if not exists public.content_activities (
+  id                  text primary key,
+  title               text not null,
+  domain              text not null check (domain in ('sensory', 'motor', 'cognitive', 'social-language', 'sleep')),
+  sub_domain          text check (sub_domain in (
+                        'tactile', 'vestibular-motor', 'multi-sensory',
+                        'contrast-pattern', 'visual-tracking',
+                        'auditory', 'social-communication', 'language-exposure',
+                        'attention', 'causal-learning', 'social-cognition',
+                        'sleep-environment', 'sleep-routine'
+                      )),
+  age_window_weeks   text not null,
+  process_supported  text not null,
+  evidence_basis     text not null,
+  instructions       text[] not null,
+  duration_minutes   int not null check (duration_minutes >= 0),
+  why_it_works       text not null,
+  week_recommended   int not null check (week_recommended >= 0),
+  sources             jsonb not null default '[]',
+  short_term_benefits text[],
+  long_term_benefits  text[],
+  status              text not null default 'draft' check (status in ('draft', 'published', 'archived')),
+  version             int not null default 1,
+  created_at          timestamptz not null default now(),
+  updated_at          timestamptz not null default now(),
+  updated_by          text
+);
+
+drop trigger if exists touch_content_activities on public.content_activities;
+create trigger touch_content_activities
+  before update on public.content_activities
+  for each row execute function public.touch_updated_at();
+
+alter table public.content_activities enable row level security;
+
+drop policy if exists "published activities are public"          on public.content_activities;
+drop policy if exists "content_curator can read all activities"  on public.content_activities;
+drop policy if exists "content_curator can insert draft activities" on public.content_activities;
+drop policy if exists "content_curator can update draft activities" on public.content_activities;
+
+create policy "published activities are public" on public.content_activities
+  for select to anon, authenticated
+  using (status = 'published');
+
+create policy "content_curator can read all activities" on public.content_activities
+  for select to content_curator
+  using (true);
+
+create policy "content_curator can insert draft activities" on public.content_activities
+  for insert to content_curator
+  with check (status = 'draft');
+
+create policy "content_curator can update draft activities" on public.content_activities
+  for update to content_curator
+  using (status = 'draft')
+  with check (status = 'draft');
+
+create table if not exists public.content_milestones (
+  id                text primary key,
+  name              text not null,
+  domain            text not null check (domain in ('sensory', 'motor', 'cognitive', 'social-language', 'sleep')),
+  kind              text check (kind in ('achievement', 'disruption')),
+  week_start        int not null check (week_start >= 0),
+  week_peak         int not null check (week_peak >= 0),
+  week_end          int not null check (week_end >= week_start),
+  mechanism         text not null,
+  parent_can_see    text[] not null,
+  activity_ids      text[] not null default '{}',
+  resources         jsonb not null default '[]',
+  check_in          text not null,
+  accelerator       text not null,
+  latest_research   text not null,
+  status            text not null default 'draft' check (status in ('draft', 'published', 'archived')),
+  version           int not null default 1,
+  created_at        timestamptz not null default now(),
+  updated_at        timestamptz not null default now(),
+  updated_by        text
+);
+
+drop trigger if exists touch_content_milestones on public.content_milestones;
+create trigger touch_content_milestones
+  before update on public.content_milestones
+  for each row execute function public.touch_updated_at();
+
+alter table public.content_milestones enable row level security;
+
+drop policy if exists "published milestones are public"           on public.content_milestones;
+drop policy if exists "content_curator can read all milestones"   on public.content_milestones;
+drop policy if exists "content_curator can insert draft milestones" on public.content_milestones;
+drop policy if exists "content_curator can update draft milestones" on public.content_milestones;
+
+create policy "published milestones are public" on public.content_milestones
+  for select to anon, authenticated
+  using (status = 'published');
+
+create policy "content_curator can read all milestones" on public.content_milestones
+  for select to content_curator
+  using (true);
+
+create policy "content_curator can insert draft milestones" on public.content_milestones
+  for insert to content_curator
+  with check (status = 'draft');
+
+create policy "content_curator can update draft milestones" on public.content_milestones
+  for update to content_curator
+  using (status = 'draft')
+  with check (status = 'draft');
+
+grant usage on schema public to content_curator;
+grant select, insert, update on public.content_activities to content_curator;
+grant select, insert, update on public.content_milestones to content_curator;
+
+grant all on public.content_activities to service_role;
+grant all on public.content_milestones to service_role;
+
 commit;

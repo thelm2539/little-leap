@@ -207,6 +207,58 @@ version, and whether its portal is being blocked or unmounted.
 
 Effort: ~1 hour to confirm on the real deployment; more if it's a genuine bug.
 
+## 12. Content management: move activities/milestones off static TS files
+
+**Why:** `ACTIVITIES` (data.ts) and `MILESTONES` (milestones.ts) are hardcoded
+arrays — any content change needs a code review and a full deploy. Once this
+ships to an app store, a wording fix would mean a new binary and store
+review, which is the wrong tool for a content-only change. The intent is to
+let a separate content-curation workflow (human or agent-driven) update
+activities/milestones without touching app code, and have it sync to every
+device the same way `activity_logs` already does.
+
+**What's done (schema only, not yet wired to the client):**
+- [supabase/migrations/20260812120000_content_management.sql](supabase/migrations/20260812120000_content_management.sql)
+  adds `content_activities` / `content_milestones`, mirroring the current
+  `Activity`/`Milestone` TS shapes field-for-field. A `status` column
+  (`draft` / `published` / `archived`) gates visibility — RLS lets anyone
+  read `published` rows, and a new low-privilege `content_curator` Postgres
+  role can INSERT/UPDATE but only ever in `draft` state (enforced by RLS
+  `with check (status = 'draft')`, not by trust). It has no grants on any
+  other table — a compromised curator credential can edit draft content and
+  nothing else.
+- [supabase/schema-setup.sql](supabase/schema-setup.sql) got the same
+  tables/policies/role folded in, for fresh installs.
+- [scripts/generate-content-seed.ts](scripts/generate-content-seed.ts)
+  generates [supabase/seed-content.sql](supabase/seed-content.sql) directly
+  from the live `ACTIVITIES`/`MILESTONES` arrays (31 activities, 22
+  milestones) — generated, not hand-transcribed, so the seed can't drift
+  from the real content. Seeds as `status = 'published'` since this is
+  already-reviewed launch content, not a draft.
+
+**What's left:**
+- Run the migration, then `supabase/seed-content.sql`, in the Supabase SQL
+  editor (not done yet — needs the user's DB access).
+- Set a password for `content_curator` separately (`alter role
+  content_curator with password '...'` — do NOT commit it) and hand that
+  connection string to whatever curates content. It's a direct Postgres
+  connection, not the anon/publishable key — this role isn't reachable
+  through PostgREST without custom JWT claims, which isn't needed for one
+  trusted back-office writer.
+- **The client-side swap is the real remaining work.** `data.ts`/
+  `milestones.ts` are imported as synchronous constant arrays in a lot of
+  places (`ACTIVITIES.find()`, `getMilestonesForWeek()`, the reception grid's
+  domain lookup, etc.). Moving to DB-backed content means: keep the current
+  arrays as an offline/first-paint fallback, add a fetch-with-cache layer
+  (fetch `published` rows once, cache in localStorage with a version stamp,
+  serve from cache on subsequent loads), and thread a loading state through
+  everywhere that currently assumes the data is already there. This touches
+  most of the domain logic and several components — worth doing as its own
+  focused pass, not bundled into the schema change.
+- No promote-draft-to-published UI yet; for now that's a manual `UPDATE ...
+  SET status = 'published'` run as the table owner (bypasses RLS). Worth a
+  small RPC or admin screen once there's real review volume.
+
 ## Notes
 
 - Items 2 and 3 are the two that most change the risk profile of a public
