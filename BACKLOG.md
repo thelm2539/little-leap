@@ -126,19 +126,39 @@ shows the living record per activity.
 
 Effort: ~1–2 days once the thresholds/weighting rules are decided.
 
-## 7. Verify the sleep-milestone DOIs
+## 7. Verify the sleep-milestone DOIs — DONE (widened into a full DOI audit)
 
-**Why:** the three sleep milestones (`s01`–`s03` in milestones.ts) ship with
-`doi: 'verify'` placeholders. The citations are real works but the DOI strings
-were not confirmed and must not be faked. The milestone file's whole premise is
-"primary authors only," so these need real DOIs before publishing.
+**Original scope:** fill the 6 `doi: 'verify'` placeholders on `s01`–`s03`.
 
-**What's left:** confirm and fill the DOI for each of: Rivkees (2003); McGraw et
-al. (1999); de Weerd & van den Bossche (2003); Grigg-Damberger (2016); Scher
-(2005); Atkinson et al. (1995). Search each title on doi.org / a scholarly index
-and paste the real `10.xxxx/...` string.
+**What actually happened (2026-08-15):** every DOI in `milestones.ts` — not
+just the sleep ones — was checked against Crossref. 9 of 18 distinct citations
+had a real problem, not just the 6 placeholders:
 
-Effort: ~1 hour.
+- 1 broken DOI that didn't resolve at all (Reddy V et al. 1997, `m19`) — fixed
+  by swapping to a working DOI for the same chapter (a 2026 Routledge reissue,
+  same title, same authors).
+- 7 citations where the DOI resolved to a **real but different paper** than
+  the title claimed — e.g. the DOI cited for "Mittag M & Kuhl PK et al. (2022)
+  — Early language skills predict school readiness" actually belongs to a
+  paper about dyslexia risk with no Kuhl as an author at all. Two of these
+  (`m03`, `m04`) turned out to be real papers with the *wrong DOI* attached
+  rather than a wrong title — fixed by finding the correct DOI instead of
+  relabeling.
+- 1 citation (Atkinson, Vetere & Grayson 1995, `s03`) has a real, correctly-
+  DOI'd paper, but its actual subject — temperament and sleep patterns in
+  pre-school children — is a looser fit for the separation-anxiety claim it's
+  backing than its old (fabricated) title implied. Title corrected to the
+  real one; **left as an open editorial question** whether to keep, replace
+  (Scher & Blumberg 1999, `10.1046/j.1365-2214.1999.00099.x`, is a closer
+  topical match), or adjust what `s03` claims it supports.
+- The remaining 6 sleep-milestone DOIs and 4 other citations were confirmed
+  correct as written.
+
+Fixed in `milestones.ts`, regenerated into `supabase/seed-content.sql`, and
+applied to the live `content_milestones` table (15 rows bumped to version 2,
+`updated_by = 'doi-audit-2026-08-15'`).
+
+**What's left:** decide on the Atkinson/Scher question above.
 
 ## 8. Sync baby name to the family — DONE
 

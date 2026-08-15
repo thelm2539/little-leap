@@ -67,18 +67,20 @@ export const MILESTONES: Milestone[] = [
     activityIds: ["mirror-face-time", "bw-card-gallery", "light-shadow"],
     resources: [
       {
-        title: "Johnson MH (2011) — Face-sensitive cortical responses in early infancy",
+        title: "Johnson MH (2011) — Face Processing as a Brain Adaptation at Multiple Timescales",
         doi: "10.1080/17470218.2011.590596",
       },
       {
-        title: "Johnson MH (1999) — The development of visual attention in infancy",
-        doi: "10.1037/h0087301",
+        title:
+          "Johnson MH (1990) — Cortical Maturation and the Development of Visual Attention in Early Infancy",
+        doi: "10.1162/jocn.1990.2.2.81",
       },
     ],
     checkIn: "Did her gaze seem to find your face and stay there, even briefly?",
     accelerator:
       "Sustained face-fixation > 8 seconds → cortical face processing likely emerging early; move to conversation-turn and slow-face activities sooner",
-    latestResearch: "Johnson MH (2011) — Face-sensitive cortical responses in early infancy",
+    latestResearch:
+      "Johnson MH (2011) — Face Processing as a Brain Adaptation at Multiple Timescales",
   },
 
   {
@@ -98,7 +100,8 @@ export const MILESTONES: Milestone[] = [
     activityIds: ["sway-narrate", "varied-carrying", "skin-to-skin"],
     resources: [
       {
-        title: "Deng W et al. (2025) — Vestibular contributions to infant postural control",
+        title:
+          "Deng W et al. (2025) — Environment Enrichment Strategies for Pre- and Post-Term Infants: A Summarized Communication From Pediatric Physical Therapists",
         doi: "10.1097/PEP.0000000000001187",
       },
       {
@@ -110,7 +113,8 @@ export const MILESTONES: Milestone[] = [
       "How quickly did she calm when you started swaying — under 1 minute, 1–3 minutes, or longer?",
     accelerator:
       "Calms in < 30 seconds consistently → vestibular regulation maturing ahead of curve",
-    latestResearch: "Deng W et al. (2025) — Vestibular contributions to infant postural control",
+    latestResearch:
+      "Deng W et al. (2025) — Environment Enrichment Strategies for Pre- and Post-Term Infants: A Summarized Communication From Pediatric Physical Therapists",
   },
 
   {
@@ -132,8 +136,8 @@ export const MILESTONES: Milestone[] = [
     resources: [
       {
         title:
-          "Kuhl PK et al. (2011) — Early language acquisition: neural substrates and theoretical models",
-        doi: "10.1111/j.1467-7687.2010.00973.x",
+          "Kuhl PK (2009) — Early Language Acquisition: Neural Substrates and Theoretical Models",
+        doi: "10.7551/mitpress/8029.003.0073",
       },
     ],
     checkIn:
@@ -141,7 +145,7 @@ export const MILESTONES: Milestone[] = [
     accelerator:
       "Consistent orienting to voice at > 30 cm distance → auditory localisation ahead of curve",
     latestResearch:
-      "Kuhl PK et al. (2011) — Early language acquisition: neural substrates and theoretical models",
+      "Kuhl PK (2009) — Early Language Acquisition: Neural Substrates and Theoretical Models",
   },
 
   // ── PHASE 2 · Weeks 2–6 · First Alertness ────────────────────────────────
@@ -223,7 +227,7 @@ export const MILESTONES: Milestone[] = [
     activityIds: ["slow-face", "conversation-turn", "mirror-face-time"],
     resources: [
       {
-        title: "Johnson MH (2011) — Face-sensitive cortical responses in early infancy",
+        title: "Johnson MH (2011) — Face Processing as a Brain Adaptation at Multiple Timescales",
         doi: "10.1080/17470218.2011.590596",
       },
     ],
@@ -231,7 +235,8 @@ export const MILESTONES: Milestone[] = [
       "Did she smile back at your face — a real smile, not just a grimace? Did she make eye contact while doing it?",
     accelerator:
       "Social smile reliably before week 5 → unlock conversation-turn and facial-expression-copying activities earlier",
-    latestResearch: "Johnson MH (2011) — Face-sensitive cortical responses in early infancy",
+    latestResearch:
+      "Johnson MH (2011) — Face Processing as a Brain Adaptation at Multiple Timescales",
   },
 
   // ── PHASE 3 · Weeks 6–12 · Visual & Motor Awakening ─────────────────────
@@ -254,14 +259,15 @@ export const MILESTONES: Milestone[] = [
     activityIds: ["object-tracking", "light-shadow", "sway-narrate"],
     resources: [
       {
-        title: "Johnson MH (2011) — Face-sensitive cortical responses in early infancy",
+        title: "Johnson MH (2011) — Face Processing as a Brain Adaptation at Multiple Timescales",
         doi: "10.1080/17470218.2011.590596",
       },
     ],
     checkIn:
       "Did her eyes follow the toy smoothly as you moved it — or did her gaze jump to catch up with it?",
     accelerator: "Tracks past midline before week 7 → unlock novel-object-pause activity earlier",
-    latestResearch: "Johnson MH (2011) — Face-sensitive cortical responses in early infancy",
+    latestResearch:
+      "Johnson MH (2011) — Face Processing as a Brain Adaptation at Multiple Timescales",
   },
 
   {
@@ -287,7 +293,7 @@ export const MILESTONES: Milestone[] = [
         doi: "10.1002/dev.420210104",
       },
       {
-        title: "Rovee-Collier C et al. (1985) — Reactivation of infant memory",
+        title: "Rovee-Collier C et al. (1985) — Specificity in the reactivation of infant memory",
         doi: "10.1002/dev.420180611",
       },
     ],
@@ -317,8 +323,7 @@ export const MILESTONES: Milestone[] = [
     activityIds: ["tummy-time-chest", "sway-narrate", "joint-compression", "limb-movement"],
     resources: [
       {
-        title:
-          "Adolph KE & Hoch JE (2020) — Motor skill learning: to generalize or not to generalize",
+        title: "Adolph KE & Hoch JE (2020) — The Importance of Motor Skills for Development",
         doi: "10.1159/000511511",
       },
       {
@@ -331,8 +336,7 @@ export const MILESTONES: Milestone[] = [
       "Did she lift her head at all? If yes — briefly (under 3 seconds), for a few seconds, or held it up? Was she resting on her forearms or pushing up on her hands?",
     accelerator:
       "Sustained 3-second hold before week 7, or pushing up on extended arms before week 12 → motor cascade accelerating; suggest varied-carrying progression sooner",
-    latestResearch:
-      "Adolph KE & Hoch JE (2020) — Motor skill learning: to generalize or not to generalize",
+    latestResearch: "Adolph KE & Hoch JE (2020) — The Importance of Motor Skills for Development",
   },
 
   // ── PHASE 4 · Weeks 12–20 · Reaching & Language Emergence ───────────────
@@ -388,7 +392,8 @@ export const MILESTONES: Milestone[] = [
     activityIds: ["conversation-turn", "reading-aloud", "narrated-day", "name-repetition"],
     resources: [
       {
-        title: "Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness",
+        title:
+          "Mittag M, Larson E, Taulu S & Clarke M (2022) — Reduced Theta Sampling in Infants at Risk for Dyslexia across the Sensitive Period of Native Phoneme Learning",
         doi: "10.3390/ijerph19031180",
       },
     ],
@@ -397,7 +402,7 @@ export const MILESTONES: Milestone[] = [
     accelerator:
       "Clear vocal turn-taking (waits, then vocalises) before week 10 → language circuit accelerating; advance voice-mapping and name-repetition",
     latestResearch:
-      "Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness",
+      "Mittag M, Larson E, Taulu S & Clarke M (2022) — Reduced Theta Sampling in Infants at Risk for Dyslexia across the Sensitive Period of Native Phoneme Learning",
   },
 
   {
@@ -485,8 +490,7 @@ export const MILESTONES: Milestone[] = [
         doi: "10.1146/annurev-psych-010418-102836",
       },
       {
-        title:
-          "Adolph KE & Hoch JE (2020) — Motor skill learning: to generalize or not to generalize",
+        title: "Adolph KE & Hoch JE (2020) — The Importance of Motor Skills for Development",
         doi: "10.1159/000511511",
       },
     ],
@@ -522,11 +526,13 @@ export const MILESTONES: Milestone[] = [
     ],
     resources: [
       {
-        title: "Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness",
+        title:
+          "Mittag M, Larson E, Taulu S & Clarke M (2022) — Reduced Theta Sampling in Infants at Risk for Dyslexia across the Sensitive Period of Native Phoneme Learning",
         doi: "10.3390/ijerph19031180",
       },
       {
-        title: "Conboy BT & Kuhl PK (2011) — Early language experience affects neural activity",
+        title:
+          "Conboy BT & Kuhl PK (2011) — Impact of second-language experience in infancy: brain measures of first- and second-language speech perception",
         doi: "10.1111/j.1467-7687.2010.00973.x",
       },
     ],
@@ -534,7 +540,7 @@ export const MILESTONES: Milestone[] = [
     accelerator:
       "Canonical babbling before week 24 → language circuit ahead of curve; increase variety and complexity of language exposure",
     latestResearch:
-      "Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness",
+      "Mittag M, Larson E, Taulu S & Clarke M (2022) — Reduced Theta Sampling in Infants at Risk for Dyslexia across the Sensitive Period of Native Phoneme Learning",
   },
 
   {
@@ -555,7 +561,7 @@ export const MILESTONES: Milestone[] = [
     activityIds: ["novel-object-pause", "contingency-mobile", "attention-recovery"],
     resources: [
       {
-        title: "Rovee-Collier C et al. (1985) — Reactivation of infant memory",
+        title: "Rovee-Collier C et al. (1985) — Specificity in the reactivation of infant memory",
         doi: "10.1002/dev.420180611",
       },
     ],
@@ -563,7 +569,8 @@ export const MILESTONES: Milestone[] = [
       "When you covered the toy briefly, did she look toward where it had been — or immediately look away?",
     accelerator:
       "Consistent search for hidden objects before week 24 → object permanence ahead of curve",
-    latestResearch: "Rovee-Collier C et al. (1985) — Reactivation of infant memory",
+    latestResearch:
+      "Rovee-Collier C et al. (1985) — Specificity in the reactivation of infant memory",
   },
 
   {
@@ -586,7 +593,7 @@ export const MILESTONES: Milestone[] = [
       {
         title:
           "Reddy V et al. (1997) — Communication in infancy: mutual regulation of affect and attention",
-        doi: "10.1017/CBO9780511752773",
+        doi: "10.4324/9781003753063-16",
       },
     ],
     checkIn:
@@ -647,7 +654,8 @@ export const MILESTONES: Milestone[] = [
     activityIds: ["name-repetition", "narrated-day", "reading-aloud", "conversation-turn"],
     resources: [
       {
-        title: "Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness",
+        title:
+          "Mittag M, Larson E, Taulu S & Clarke M (2022) — Reduced Theta Sampling in Infants at Risk for Dyslexia across the Sensitive Period of Native Phoneme Learning",
         doi: "10.3390/ijerph19031180",
       },
     ],
@@ -656,7 +664,7 @@ export const MILESTONES: Milestone[] = [
     accelerator:
       "Consistent name-sound pairing before week 40 → first words ahead of curve; increase naming and referential activities",
     latestResearch:
-      "Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness",
+      "Mittag M, Larson E, Taulu S & Clarke M (2022) — Reduced Theta Sampling in Infants at Risk for Dyslexia across the Sensitive Period of Native Phoneme Learning",
   },
 
   // ── SLEEP & CALMING ───────────────────────────────────────────────────────
@@ -664,11 +672,14 @@ export const MILESTONES: Milestone[] = [
   // (regressions). For disruptions, `accelerator` carries a what-helps note
   // rather than an ahead-of-curve signal — see MilestoneKind.
   //
-  // ⚠️ SOURCES: the DOIs below are placeholders ('verify'). The citations are
-  // real works, but the DOI strings must be confirmed against the source before
-  // publishing — they were NOT auto-verified. The contested "Wonder Weeks"
-  // recurring fussy-period construct was deliberately excluded on evidence
-  // grounds (see BACKLOG / chat history).
+  // SOURCES: all DOIs verified against Crossref (2026-08-15) — see BACKLOG
+  // item 7. The Atkinson/Vetere/Grayson (1995) citation on s03 is a real,
+  // correctly-DOI'd paper, but its actual subject (temperament and sleep
+  // patterns in pre-school children) is a looser fit for the separation-
+  // anxiety claim it's backing than its old (fabricated) title implied —
+  // flagged for editorial review, not silently reframed. The contested
+  // "Wonder Weeks" recurring fussy-period construct was deliberately
+  // excluded on evidence grounds (see BACKLOG / chat history).
 
   {
     id: "s01-circadian-onset",
@@ -688,11 +699,14 @@ export const MILESTONES: Milestone[] = [
     ],
     activityIds: ["water-sound-bath", "white-noise", "hum-chest"],
     resources: [
-      { title: "Rivkees SA (2003) — Developing circadian rhythmicity in infants", doi: "verify" },
+      {
+        title: "Rivkees SA (2003) — Developing circadian rhythmicity in infants",
+        doi: "10.1542/peds.112.2.373",
+      },
       {
         title:
           "McGraw K, Hoffmann R, Harker C & Herman JH (1999) — The development of circadian rhythms in a human infant",
-        doi: "verify",
+        doi: "10.1093/sleep/22.3.303",
       },
     ],
     checkIn:
@@ -723,12 +737,12 @@ export const MILESTONES: Milestone[] = [
       {
         title:
           "de Weerd AW & van den Bossche RAS (2003) — The development of sleep during the first months of life",
-        doi: "verify",
+        doi: "10.1053/smrv.2002.0198",
       },
       {
         title:
           "Grigg-Damberger MM (2016) — The visual scoring of sleep in infants 0 to 2 months of age",
-        doi: "verify",
+        doi: "10.5664/jcsm.5600",
       },
     ],
     checkIn:
@@ -760,12 +774,12 @@ export const MILESTONES: Milestone[] = [
       {
         title:
           "Scher A (2005) — Infant sleep at 10 months of age as a window to cognitive development",
-        doi: "verify",
+        doi: "10.1016/j.earlhumdev.2004.07.005",
       },
       {
         title:
-          "Atkinson E, Vetere A & Grayson K (1995) — Separation anxiety and night waking in infancy",
-        doi: "verify",
+          "Atkinson E, Vetere A & Grayson K (1995) — Sleep disruption in young children: the influence of temperament on the sleep patterns of pre-school children",
+        doi: "10.1111/j.1365-2214.1995.tb00754.x",
       },
     ],
     checkIn:

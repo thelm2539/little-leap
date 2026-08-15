@@ -671,10 +671,10 @@ values (
   'A subcortical circuit (superior colliculus → pulvinar) orients the newborn toward face-like patterns from birth, before any cortical face processing is possible. Operates on coarse, high-contrast configurations at ~25 cm — phylogenetically ancient, present in chicks too.',
   '{"Gaze drifts toward your face when held at chest distance","Tracks a face-like card slightly further than random patterns","Calms when a face is brought close and held still","Follows your face a short way as it moves from the side toward the middle"}',
   '{"mirror-face-time","bw-card-gallery","light-shadow"}',
-  '[{"title":"Johnson MH (2011) — Face-sensitive cortical responses in early infancy","doi":"10.1080/17470218.2011.590596"},{"title":"Johnson MH (1999) — The development of visual attention in infancy","doi":"10.1037/h0087301"}]'::jsonb,
+  '[{"title":"Johnson MH (2011) — Face Processing as a Brain Adaptation at Multiple Timescales","doi":"10.1080/17470218.2011.590596"},{"title":"Johnson MH (1990) — Cortical Maturation and the Development of Visual Attention in Early Infancy","doi":"10.1162/jocn.1990.2.2.81"}]'::jsonb,
   'Did her gaze seem to find your face and stay there, even briefly?',
   'Sustained face-fixation > 8 seconds → cortical face processing likely emerging early; move to conversation-turn and slow-face activities sooner',
-  'Johnson MH (2011) — Face-sensitive cortical responses in early infancy',
+  'Johnson MH (2011) — Face Processing as a Brain Adaptation at Multiple Timescales',
   'published',
   'seed'
 )
@@ -692,10 +692,10 @@ values (
   'The vestibular system (semicircular canals + otolith organs) is functional from ~20 weeks gestation — the most developmentally mature sensory system at birth. Rhythmic movement is the most reliable arousal regulator because of this. Vision is the least mature system at birth.',
   '{"Calms within 30–60 seconds of rhythmic rocking or walking","Moro reflex (full-body startle) triggered by sudden vestibular displacement","Settles more reliably in vertical carry than horizontal hold"}',
   '{"sway-narrate","varied-carrying","skin-to-skin"}',
-  '[{"title":"Deng W et al. (2025) — Vestibular contributions to infant postural control","doi":"10.1097/PEP.0000000000001187"},{"title":"Anderson J (1986) — Sensory intervention with the preterm infant","doi":"10.5014/ajot.40.1.19"}]'::jsonb,
+  '[{"title":"Deng W et al. (2025) — Environment Enrichment Strategies for Pre- and Post-Term Infants: A Summarized Communication From Pediatric Physical Therapists","doi":"10.1097/PEP.0000000000001187"},{"title":"Anderson J (1986) — Sensory intervention with the preterm infant","doi":"10.5014/ajot.40.1.19"}]'::jsonb,
   'How quickly did she calm when you started swaying — under 1 minute, 1–3 minutes, or longer?',
   'Calms in < 30 seconds consistently → vestibular regulation maturing ahead of curve',
-  'Deng W et al. (2025) — Vestibular contributions to infant postural control',
+  'Deng W et al. (2025) — Environment Enrichment Strategies for Pre- and Post-Term Infants: A Summarized Communication From Pediatric Physical Therapists',
   'published',
   'seed'
 )
@@ -713,10 +713,10 @@ values (
   'Auditory cortex processes speech-like signals from ~28 weeks gestation. By birth the infant has prosodic templates of the caregiver''s voice and native language rhythm. This is recall, not learning. From soon after birth, babies also make small pre-speech lip and tongue movements when you talk to them.',
   '{"Preferential turning toward mother''s voice over a stranger''s","Stills or quiets to familiar songs and voices","Subtle orienting to familiar language vs. foreign language","Pre-speech lip and tongue movements when caregiver talks"}',
   '{"same-song","heartbeat-settling","hum-chest"}',
-  '[{"title":"Kuhl PK et al. (2011) — Early language acquisition: neural substrates and theoretical models","doi":"10.1111/j.1467-7687.2010.00973.x"}]'::jsonb,
+  '[{"title":"Kuhl PK (2009) — Early Language Acquisition: Neural Substrates and Theoretical Models","doi":"10.7551/mitpress/8029.003.0073"}]'::jsonb,
   'Did she seem to respond differently to this song vs. a new one — stilling, turning, or changing expression?',
   'Consistent orienting to voice at > 30 cm distance → auditory localisation ahead of curve',
-  'Kuhl PK et al. (2011) — Early language acquisition: neural substrates and theoretical models',
+  'Kuhl PK (2009) — Early Language Acquisition: Neural Substrates and Theoretical Models',
   'published',
   'seed'
 )
@@ -776,10 +776,10 @@ values (
   'The endogenous social smile marks the onset of cortical engagement with social stimuli. Prior smiles (weeks 0–4) are subcortical/REM-associated. The genuine social smile requires face recognition + cortically mediated positive affect — it''s the first reliable signal that the cortical face network is coming online.',
   '{"Smile specifically in response to your face (not a bright light or random stimulus)","Smile with eye contact, sometimes accompanied by vocalisation","Smile can be elicited repeatedly in the same interaction","Expression still vague around 1 month, progressing to a true social smile at about 5–6 weeks"}',
   '{"slow-face","conversation-turn","mirror-face-time"}',
-  '[{"title":"Johnson MH (2011) — Face-sensitive cortical responses in early infancy","doi":"10.1080/17470218.2011.590596"}]'::jsonb,
+  '[{"title":"Johnson MH (2011) — Face Processing as a Brain Adaptation at Multiple Timescales","doi":"10.1080/17470218.2011.590596"}]'::jsonb,
   'Did she smile back at your face — a real smile, not just a grimace? Did she make eye contact while doing it?',
   'Social smile reliably before week 5 → unlock conversation-turn and facial-expression-copying activities earlier',
-  'Johnson MH (2011) — Face-sensitive cortical responses in early infancy',
+  'Johnson MH (2011) — Face Processing as a Brain Adaptation at Multiple Timescales',
   'published',
   'seed'
 )
@@ -797,10 +797,10 @@ values (
   'Prior to ~6–8 weeks, visual tracking is saccadic (jerky catch-up movements). Smooth pursuit requires cortical involvement (frontal eye fields + MT/V5). Tracking widens with age — a short arc around 1 month, extending to follow an object across the midline both horizontally and vertically by about 3 months. A defensive blink is clearly present by 6–8 weeks.',
   '{"Eyes follow a slow-moving object continuously, not in jumps","Tracks past the body midline (earlier tracking stops at midline)","Brief tracking (2–3 seconds) at first, extending with age","Eyes come together (converge) as a toy approaches the face — around 3 months"}',
   '{"object-tracking","light-shadow","sway-narrate"}',
-  '[{"title":"Johnson MH (2011) — Face-sensitive cortical responses in early infancy","doi":"10.1080/17470218.2011.590596"}]'::jsonb,
+  '[{"title":"Johnson MH (2011) — Face Processing as a Brain Adaptation at Multiple Timescales","doi":"10.1080/17470218.2011.590596"}]'::jsonb,
   'Did her eyes follow the toy smoothly as you moved it — or did her gaze jump to catch up with it?',
   'Tracks past midline before week 7 → unlock novel-object-pause activity earlier',
-  'Johnson MH (2011) — Face-sensitive cortical responses in early infancy',
+  'Johnson MH (2011) — Face Processing as a Brain Adaptation at Multiple Timescales',
   'published',
   'seed'
 )
@@ -818,7 +818,7 @@ values (
   'The infant discovers that their own action causes an effect. Rovee-Collier''s mobile studies: 3-month-olds learn within ~9 minutes that kicking moves a mobile, retain this for 3 days, and show specificity (only the same mobile cues retrieval). This is the root of intentional behaviour, agency, and problem-solving. Memory retention doubles by 6 months (14 days).',
   '{"Increased kicking or arm movements when a hanging toy responds","Pause-and-watch when the contingency stops unexpectedly","Visible excitement (increased motor activity) when cause-effect is active","Frustration or disengagement if contingency is removed"}',
   '{"contingency-mobile","attention-recovery","quiet-alert-observation"}',
-  '[{"title":"Hill WL, Borovsky D & Rovee-Collier C (1988) — Continuities in infant memory development","doi":"10.1002/dev.420210104"},{"title":"Rovee-Collier C et al. (1985) — Reactivation of infant memory","doi":"10.1002/dev.420180611"}]'::jsonb,
+  '[{"title":"Hill WL, Borovsky D & Rovee-Collier C (1988) — Continuities in infant memory development","doi":"10.1002/dev.420210104"},{"title":"Rovee-Collier C et al. (1985) — Specificity in the reactivation of infant memory","doi":"10.1002/dev.420180611"}]'::jsonb,
   'Did she seem to notice when the mobile moved? Did she kick more, then look to see the effect?',
   'Clear cause-effect excitement before week 10 → unlock novel-object-pause; advance cognitive timeline by 1 week',
   'Hill WL, Borovsky D & Rovee-Collier C (1988) — Continuities in infant memory development',
@@ -839,10 +839,10 @@ values (
   'Head control is the postural foundation for everything downstream (Adolph''s cascade thesis). The typical progression: around 1 month the head turns to the side when lying on the tummy, arms and legs flexed; by ~3 months baby lifts head and upper chest on the forearms; by ~6 months lifts head and chest on extended arms with flat palms. The forearms→extended arms transition is the key 3-to-6-month marker.',
   '{"Briefly lifts head (1–2 seconds) when prone (from birth)","Head bobbing when held upright — attempting but losing control","Sustained head lift (3+ seconds) — milestone achieved","Forearm-supported lift at 3 months → extended-arm push-up by 6 months"}',
   '{"tummy-time-chest","sway-narrate","joint-compression","limb-movement"}',
-  '[{"title":"Adolph KE & Hoch JE (2020) — Motor skill learning: to generalize or not to generalize","doi":"10.1159/000511511"},{"title":"Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling","doi":"10.1146/annurev-psych-010418-102836"}]'::jsonb,
+  '[{"title":"Adolph KE & Hoch JE (2020) — The Importance of Motor Skills for Development","doi":"10.1159/000511511"},{"title":"Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling","doi":"10.1146/annurev-psych-010418-102836"}]'::jsonb,
   'Did she lift her head at all? If yes — briefly (under 3 seconds), for a few seconds, or held it up? Was she resting on her forearms or pushing up on her hands?',
   'Sustained 3-second hold before week 7, or pushing up on extended arms before week 12 → motor cascade accelerating; suggest varied-carrying progression sooner',
-  'Adolph KE & Hoch JE (2020) — Motor skill learning: to generalize or not to generalize',
+  'Adolph KE & Hoch JE (2020) — The Importance of Motor Skills for Development',
   'published',
   'seed'
 )
@@ -881,10 +881,10 @@ values (
   'Cooing is the first volitional vocalisation — larynx, velum, and tongue produce vowel-like sounds under cortical control. By around 3 months, vocalisations are woven together with smiles, eye contact and hand gestures during turn-taking exchanges (''protoconversations'') — the full multimodal communication scaffold is in place by 3 months, not 6.',
   '{"Open-vowel sounds (\"aaah\", \"ooh\") in response to interaction","Back-and-forth vocal exchange with turn-taking structure emerging","Vocalisations while looking at your face — gaze + voice together","Pre-speech lip and tongue movements when you talk to them (from around 1 month)"}',
   '{"conversation-turn","reading-aloud","narrated-day","name-repetition"}',
-  '[{"title":"Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness","doi":"10.3390/ijerph19031180"}]'::jsonb,
+  '[{"title":"Mittag M, Larson E, Taulu S & Clarke M (2022) — Reduced Theta Sampling in Infants at Risk for Dyslexia across the Sensitive Period of Native Phoneme Learning","doi":"10.3390/ijerph19031180"}]'::jsonb,
   'Did she make any sounds back at you — even a small "ooh" or sigh — during the pauses? Did she look at your face while doing it?',
   'Clear vocal turn-taking (waits, then vocalises) before week 10 → language circuit accelerating; advance voice-mapping and name-repetition',
-  'Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness',
+  'Mittag M, Larson E, Taulu S & Clarke M (2022) — Reduced Theta Sampling in Infants at Risk for Dyslexia across the Sensitive Period of Native Phoneme Learning',
   'published',
   'seed'
 )
@@ -944,7 +944,7 @@ values (
   'Sitting requires continuous anticipatory and reactive postural adjustments — trunk and neck extensors working together dynamically. It radically changes the infant''s visual world (upright perspective) and frees both hands for object exploration. Adolph: sitting is a major developmental unlock — object manipulation and social interaction both expand dramatically.',
   '{"Holds sitting with light trunk support for > 10 seconds","Head stays upright during supported sitting","Reaches for objects while sitting — arms and hands now both free","Around 6 months: can turn the body to look sideways and stretch out to pick up a toy from the floor without losing balance"}',
   '{"varied-carrying","joint-compression","cloth-texture"}',
-  '[{"title":"Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling","doi":"10.1146/annurev-psych-010418-102836"},{"title":"Adolph KE & Hoch JE (2020) — Motor skill learning: to generalize or not to generalize","doi":"10.1159/000511511"}]'::jsonb,
+  '[{"title":"Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling","doi":"10.1146/annurev-psych-010418-102836"},{"title":"Adolph KE & Hoch JE (2020) — The Importance of Motor Skills for Development","doi":"10.1159/000511511"}]'::jsonb,
   'During supported sitting, how long before she toppled — under 5 seconds, 5–15 seconds, or held for longer?',
   'Stable sitting with minimal support before week 20 → accelerate object manipulation activities',
   'Adolph KE & Hoch JE (2019) — Motor development: embodied, embedded, enculturated, and enabling',
@@ -965,10 +965,10 @@ values (
   'From ~6 months, the auditory cortex commits to native language phoneme categories — improving native contrasts, losing sensitivity to non-native ones. Measurable in theta-band auditory sampling on MEG. This is Kuhl''s most robust finding and the most time-sensitive window in the 0–12 month period. By around 9 months, expect canonical babbling strings like "dad-dad", "mum-mum", "agaga", plus understanding of "no" and their own name.',
   '{"Responds to own name from across a room (~6 months)","Canonical babbling begins: \"ba-ba\", \"ma-ma\" — not yet meaningful","Around 6 months: single and double syllables — \"muh\", \"goo\", \"der\", \"adah\"","Around 9 months: long repetitive strings of syllables; imitates playful sounds"}',
   '{"reading-aloud","narrated-day","same-song","name-repetition","outdoor-listening"}',
-  '[{"title":"Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness","doi":"10.3390/ijerph19031180"},{"title":"Conboy BT & Kuhl PK (2011) — Early language experience affects neural activity","doi":"10.1111/j.1467-7687.2010.00973.x"}]'::jsonb,
+  '[{"title":"Mittag M, Larson E, Taulu S & Clarke M (2022) — Reduced Theta Sampling in Infants at Risk for Dyslexia across the Sensitive Period of Native Phoneme Learning","doi":"10.3390/ijerph19031180"},{"title":"Conboy BT & Kuhl PK (2011) — Impact of second-language experience in infancy: brain measures of first- and second-language speech perception","doi":"10.1111/j.1467-7687.2010.00973.x"}]'::jsonb,
   'Did she vocalise back, or watch your mouth intently while you were reading?',
   'Canonical babbling before week 24 → language circuit ahead of curve; increase variety and complexity of language exposure',
-  'Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness',
+  'Mittag M, Larson E, Taulu S & Clarke M (2022) — Reduced Theta Sampling in Infants at Risk for Dyslexia across the Sensitive Period of Native Phoneme Learning',
   'published',
   'seed'
 )
@@ -986,10 +986,10 @@ values (
   'At 3 months, infant memory is context-dependent (only the same mobile reactivates it). By 6 months, memory is more generalised and durable (14-day retention). Object permanence builds on this improving memory system. Typical stages: around 6 months baby searches vaguely when a toy falls; around 9 months finds a partially hidden toy; around 12 months quickly finds a fully hidden toy and looks to an adult afterwards.',
   '{"Around 6 months: watches where a toy falls, searching vaguely when it drops out of view","Around 9 months: finds a toy partially hidden under a cover or cup","Around 12 months: quickly finds a toy hidden from view; looks to an adult after finding it","Anticipates the return of a hidden face (peek-a-boo engagement)"}',
   '{"novel-object-pause","contingency-mobile","attention-recovery"}',
-  '[{"title":"Rovee-Collier C et al. (1985) — Reactivation of infant memory","doi":"10.1002/dev.420180611"}]'::jsonb,
+  '[{"title":"Rovee-Collier C et al. (1985) — Specificity in the reactivation of infant memory","doi":"10.1002/dev.420180611"}]'::jsonb,
   'When you covered the toy briefly, did she look toward where it had been — or immediately look away?',
   'Consistent search for hidden objects before week 24 → object permanence ahead of curve',
-  'Rovee-Collier C et al. (1985) — Reactivation of infant memory',
+  'Rovee-Collier C et al. (1985) — Specificity in the reactivation of infant memory',
   'published',
   'seed'
 )
@@ -1007,7 +1007,7 @@ values (
   'Stranger anxiety marks a cognitive leap: the infant has built a detailed mental model of familiar faces, so any non-matching face triggers a distinct response. Social referencing (using caregiver''s expression to assess novel situations) emerges slightly later and is more sophisticated — the infant borrows the parent''s emotional judgment. Both are healthy markers of attachment and cognitive development.',
   '{"Stage 1 (wks 28–32): occasional shyness when strangers approach too closely or abruptly","Stage 2 (wks 32–40): clearly distinguishes strangers from familiars; clings to a known person; hides the face (~9 months)","Stage 3 (wks 36–44): social referencing — looks to caregiver''s face before approaching novel object or situation","Important: intensity varies widely by temperament; not a problem to fix, evidence of healthy attachment"}',
   '{"slow-face","conversation-turn","outdoor-listening","novel-object-pause"}',
-  '[{"title":"Reddy V et al. (1997) — Communication in infancy: mutual regulation of affect and attention","doi":"10.1017/CBO9780511752773"}]'::jsonb,
+  '[{"title":"Reddy V et al. (1997) — Communication in infancy: mutual regulation of affect and attention","doi":"10.4324/9781003753063-16"}]'::jsonb,
   'Before touching something new or uncertain today, did she look at your face first — as if checking how you felt about it?',
   'Clear social referencing (look-back before novel approach) before week 36 → triadic social cognition developing rapidly; proto-declarative pointing likely to emerge sooner',
   'Reddy V et al. (1997) — Communication in infancy: mutual regulation of affect and attention',
@@ -1049,10 +1049,10 @@ values (
   'First words emerge as phoneme narrowing matures. "Words" at this stage are context-dependent sound-meaning pairings. By around 12 months, babble takes on conversational cadences (jargon) — intonationally correct babble that precedes real words; comprehension runs ahead of production by 4–8 weeks. Proto-declarative pointing ("points to an object then looks back to the adult") is one of the most predictive early-language markers.',
   '{"Consistent sound-meaning pairing in context (\"ba\" for bottle)","Proto-declarative pointing: points at something and looks back at you for a reaction","Around 12 months: follows an adult''s gaze (joint visual attention)","Around 12 months: coordinated joint attention — actively switches between an object and the adult"}',
   '{"name-repetition","narrated-day","reading-aloud","conversation-turn"}',
-  '[{"title":"Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness","doi":"10.3390/ijerph19031180"}]'::jsonb,
+  '[{"title":"Mittag M, Larson E, Taulu S & Clarke M (2022) — Reduced Theta Sampling in Infants at Risk for Dyslexia across the Sensitive Period of Native Phoneme Learning","doi":"10.3390/ijerph19031180"}]'::jsonb,
   'Did she use any consistent sound for a specific thing today? Or point at something and look back at you to check your reaction?',
   'Consistent name-sound pairing before week 40 → first words ahead of curve; increase naming and referential activities',
-  'Mittag M & Kuhl PK et al. (2022) — Early language skills predict school readiness',
+  'Mittag M, Larson E, Taulu S & Clarke M (2022) — Reduced Theta Sampling in Infants at Risk for Dyslexia across the Sensitive Period of Native Phoneme Learning',
   'published',
   'seed'
 )
@@ -1070,7 +1070,7 @@ values (
   'A newborn has no internal day/night clock — sleep is distributed evenly around the clock in ~3–4 hour bouts. Between roughly weeks 6 and 12 an endogenous circadian rhythm emerges: melatonin secretion and the core body-temperature rhythm begin cycling with the 24-hour day, driven by regular light/dark and feeding cues. Night sleep starts to consolidate into longer stretches and daytime alertness lengthens. This is the biological basis of "sleeping through" later on.',
   '{"Longer unbroken stretches of sleep at night than during the day","More consistent, longer alert periods in daylight","Earlier and more predictable evening settling","A dawning difference between night feeds (quiet, brief) and day feeds (alert)"}',
   '{"water-sound-bath","white-noise","hum-chest"}',
-  '[{"title":"Rivkees SA (2003) — Developing circadian rhythmicity in infants","doi":"verify"},{"title":"McGraw K, Hoffmann R, Harker C & Herman JH (1999) — The development of circadian rhythms in a human infant","doi":"verify"}]'::jsonb,
+  '[{"title":"Rivkees SA (2003) — Developing circadian rhythmicity in infants","doi":"10.1542/peds.112.2.373"},{"title":"McGraw K, Hoffmann R, Harker C & Herman JH (1999) — The development of circadian rhythms in a human infant","doi":"10.1093/sleep/22.3.303"}]'::jsonb,
   'Is she starting to sleep a noticeably longer stretch at night than in any single daytime nap?',
   'Bright light and activity by day, dark and calm by night, plus a consistent wind-down (bath → massage → feed) accelerates this rhythm. Avoid stimulating light at night feeds.',
   'Rivkees SA (2003) — Developing circadian rhythmicity in infants',
@@ -1091,7 +1091,7 @@ values (
   'Around 3–4 months, sleep architecture matures from the newborn two-state pattern (active vs quiet sleep) into adult-like cycles with distinct NREM stages and REM. Cycles are short (~35–50 minutes) and the baby now briefly surfaces toward waking at the end of each one. This is a permanent developmental gain, not a true "regression" — but because the baby wakes between cycles and has not yet learned to resettle unaided, night wakings and short naps suddenly increase. It typically eases as self-settling develops.',
   '{"A sudden increase in night wakings after a period of longer sleep","Naps shortening to a single sleep cycle (~35–45 minutes)","Waking fully between cycles and needing help to resettle","Often coincides with new alertness, rolling attempts and more feeding"}',
   '{"white-noise","infant-massage","water-sound-bath"}',
-  '[{"title":"de Weerd AW & van den Bossche RAS (2003) — The development of sleep during the first months of life","doi":"verify"},{"title":"Grigg-Damberger MM (2016) — The visual scoring of sleep in infants 0 to 2 months of age","doi":"verify"}]'::jsonb,
+  '[{"title":"de Weerd AW & van den Bossche RAS (2003) — The development of sleep during the first months of life","doi":"10.1053/smrv.2002.0198"},{"title":"Grigg-Damberger MM (2016) — The visual scoring of sleep in infants 0 to 2 months of age","doi":"10.5664/jcsm.5600"}]'::jsonb,
   'Have the night wakings increased recently even though nothing else obvious changed — teething, illness, feeding?',
   'What helps: keep the wind-down routine consistent, use white noise across sleep cycles, and give a beat before responding to a stir so she has room to resettle herself. This is a phase — it passes as self-settling matures.',
   'de Weerd AW & van den Bossche RAS (2003) — The development of sleep during the first months of life',
@@ -1112,7 +1112,7 @@ values (
   'A convergence of developmental gains disrupts sleep around 8–10 months. Object permanence (M14) now means the baby knows you still exist when you leave — so bedtime separation is protested. Separation anxiety peaks in the same window. Simultaneously, major motor skills (crawling, pulling to stand) are being consolidated, and the brain rehearses them during sleep, driving wakings and practice in the cot. Naps are often dropping from three to two. None of it is a step backward — it is several forward steps landing at once.',
   '{"New resistance and clinginess at bedtime and on waking","Waking in the night and calling specifically for you, not just fussing","Practising crawling or standing in the cot instead of settling","Fought or shortened naps as a nap transition approaches"}',
   '{"hum-chest","infant-massage","water-sound-bath"}',
-  '[{"title":"Scher A (2005) — Infant sleep at 10 months of age as a window to cognitive development","doi":"verify"},{"title":"Atkinson E, Vetere A & Grayson K (1995) — Separation anxiety and night waking in infancy","doi":"verify"}]'::jsonb,
+  '[{"title":"Scher A (2005) — Infant sleep at 10 months of age as a window to cognitive development","doi":"10.1016/j.earlhumdev.2004.07.005"},{"title":"Atkinson E, Vetere A & Grayson K (1995) — Sleep disruption in young children: the influence of temperament on the sleep patterns of pre-school children","doi":"10.1111/j.1365-2214.1995.tb00754.x"}]'::jsonb,
   'Is the bedtime resistance new, and does it come with more daytime clinginess or separation upset?',
   'What helps: a predictable, unhurried bedtime routine; brief reassuring check-ins rather than long interventions; and plenty of daytime practice of the new motor skill so it is less "rehearsed" at night. Eases as separation anxiety settles.',
   'Scher A (2005) — Infant sleep at 10 months of age as a window to cognitive development',
