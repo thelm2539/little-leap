@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/littleleaps/AppShell";
+import { ActivityReceptionGrid } from "@/components/littleleaps/ActivityReceptionGrid";
 import { Card } from "@/components/ui/card";
 import { ageLabel, getAge, greeting } from "@/lib/littleleaps/age";
 import { ACTIVITIES, formatDuration, type Activity } from "@/lib/littleleaps/data";
@@ -139,6 +140,8 @@ function Home() {
             </div>
           </div>
         </section>
+
+        <ActivityReceptionGrid />
 
         {/* ── Today's activities ── */}
         <section>

@@ -12,7 +12,7 @@
  * recent rating wins per cell; domain re-derived from the activity's current
  * classification, not the label frozen on the log row).
  *
- * Lives on the Profile tab, below Family.
+ * Lives on the Home tab, above "Today's activities".
  */
 
 import { Fragment } from "react";
