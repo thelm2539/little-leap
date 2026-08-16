@@ -6,8 +6,17 @@
  *   - What's happening (mechanism)
  *   - What the parent can observe at home
  *   - Activities (pills that navigate to This Week tab)
- *   - Resources (DOI links)
- *   - Latest research
+ *   - Resources (DOI links — verified against Crossref, see BACKLOG item 7)
+ *
+ * A "Latest research" section used to render here too, but it was always a
+ * plain-text, unlinked duplicate of resources[0].title (milestones.ts kept
+ * them in sync) — a real second source implies more evidence than exists,
+ * and the label overclaims recency for the several citations that are
+ * correctly decades old (e.g. Rovee-Collier 1985). Dropped rather than kept
+ * as a redundant, misleadingly-labelled restatement of the first Resources
+ * entry. The `latestResearch` field itself is still in the data model
+ * (unused by this component) in case a real second-source feature wants it
+ * later.
  *
  * Check-in and Accelerator sections are kept in the data (milestones.ts) but
  * not rendered here — they'll be used in a future feature.
@@ -170,18 +179,6 @@ export function MilestoneCard({
               ))}
             </div>
           </Section>
-
-          {/* 5. Latest research — only if populated */}
-          {milestone.latestResearch && (
-            <Section label="Latest research">
-              <div
-                className="bg-secondary/30 rounded-lg px-2.5 py-2 text-[11.5px]
-                              text-foreground/75 leading-relaxed"
-              >
-                {milestone.latestResearch}
-              </div>
-            </Section>
-          )}
 
           {/*
             Check-in and Accelerator are intentionally not rendered here.
