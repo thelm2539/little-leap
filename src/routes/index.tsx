@@ -5,11 +5,20 @@ import { ActivityReceptionGrid } from "@/components/littleleaps/ActivityReceptio
 import { Card } from "@/components/ui/card";
 import { ageLabel, getAge, greeting } from "@/lib/littleleaps/age";
 import { ACTIVITIES, formatDuration, type Activity } from "@/lib/littleleaps/data";
-import { useBirthDate, useBabyName } from "@/lib/littleleaps/storage";
+import {
+  useBirthDate,
+  useBabyName,
+  useActivityLog,
+  buildReceptionGrid,
+  weeklyConfidence,
+  describeWeeklyConfidence,
+  ratedToday,
+} from "@/lib/littleleaps/storage";
 import {
   DomainBadge,
   DurationPill,
   NewBadge,
+  RatingBadge,
   RatingButtons,
 } from "@/components/littleleaps/ActivityBits";
 import { Lightbulb, ArrowRight } from "lucide-react";
@@ -43,6 +52,7 @@ function Home() {
   // All hooks before the early return (React rules of hooks).
   const { birthDate } = useBirthDate();
   const { babyName } = useBabyName();
+  const { log } = useActivityLog();
   const navigate = useNavigate();
 
   // Open an activity's full detail on the This Week tab. sessionStorage carries
@@ -95,6 +105,12 @@ function Home() {
   // ── Weekly tip derived from active milestones ───────────────────────────────
   const weeklyTip = getWeekTip(weeks);
 
+  // ── Weekly confidence signal — closes the loop even before a full pattern
+  // exists for the reception grid below. Same log, no extra query.
+  const receptionGrid = buildReceptionGrid(log);
+  const confidence = weeklyConfidence(log, receptionGrid, weeks);
+  const confidenceText = describeWeeklyConfidence(confidence);
+
   return (
     <AppShell>
       <div className="space-y-5 px-5 pt-5">
@@ -138,7 +154,17 @@ function Home() {
               <span className="text-[9px] text-muted-foreground">15 min</span>
               <span className="text-[9px] text-muted-foreground">2 hr</span>
             </div>
+            <p className="mt-2 text-[11px] text-muted-foreground">
+              Sets how many activities we suggest below — a longer window fits more in.
+            </p>
           </div>
+        </section>
+
+        {/* ── Weekly confidence ── */}
+        <section>
+          <Card className="rounded-3xl border-sage/20 bg-sage/8 p-4 shadow-none">
+            <p className="text-sm leading-relaxed text-foreground/85">{confidenceText}</p>
+          </Card>
         </section>
 
         <ActivityReceptionGrid />
@@ -189,12 +215,19 @@ function Home() {
                   >
                     Learn more <ArrowRight size={12} />
                   </button>
-                  <div className="mt-4">
-                    <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                      How did it go?
-                    </p>
-                    <RatingButtons activityId={a.id} compact />
-                  </div>
+                  {ratedToday(log, a.id) ? (
+                    <div className="mt-4 flex items-center justify-between">
+                      <RatingBadge activityId={a.id} />
+                      <span className="text-[11px] text-muted-foreground">Logged today</span>
+                    </div>
+                  ) : (
+                    <div className="mt-4">
+                      <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                        How did it go?
+                      </p>
+                      <RatingButtons activityId={a.id} compact />
+                    </div>
+                  )}
                 </Card>
               ))}
             </div>

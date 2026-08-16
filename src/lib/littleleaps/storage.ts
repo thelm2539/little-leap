@@ -746,6 +746,60 @@ export function describeReceptionTrends(grid: ReceptionGrid): string {
   return sentences.join(" ");
 }
 
+// ---------- Weekly confidence (Home) ----------
+// A parent logging activities wants some signal back that it's adding up to
+// something, even before there's enough history for describeReceptionTrends
+// to find a pattern. This turns the same log into an immediate, honest read
+// of "how's this week going" — domains touched + days active — derived from
+// data that's already being fetched, no new query.
+
+export interface WeeklyConfidence {
+  domainsCovered: number;
+  domainsTotal: number;
+  activeDays: number;
+}
+
+/** `grid` is the caller's buildReceptionGrid(log) output; `currentWeek` is the baby's age in weeks. */
+export function weeklyConfidence(
+  log: ActivityLogRow[],
+  grid: ReceptionGrid,
+  currentWeek: number,
+): WeeklyConfidence {
+  const domainsCovered = grid.rows.filter((r) => r.cells.get(currentWeek)?.rating != null).length;
+
+  const since = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const days = new Set<string>();
+  for (const row of log) {
+    if (new Date(row.logged_at).getTime() >= since) days.add(row.logged_at.slice(0, 10));
+  }
+
+  return { domainsCovered, domainsTotal: DOMAIN_ORDER.length, activeDays: days.size };
+}
+
+/** One reassuring, honest sentence — never guilt-trips at zero, never overclaims at low volume. */
+export function describeWeeklyConfidence(c: WeeklyConfidence): string {
+  if (c.activeDays === 0) {
+    return "Log an activity today to start tracking your week.";
+  }
+  if (c.domainsCovered >= 4) {
+    return `Great coverage — ${c.domainsCovered} of ${c.domainsTotal} domains touched this week.`;
+  }
+  if (c.activeDays >= 4) {
+    return `You're on track — active ${c.activeDays} days this week.`;
+  }
+  return `${c.activeDays} active day${c.activeDays === 1 ? "" : "s"} this week — keep it up.`;
+}
+
+/** Whether `activityId` already has a log entry for today's calendar date. */
+export function ratedToday(
+  log: ActivityLogRow[],
+  activityId: string,
+  now: Date = new Date(),
+): boolean {
+  const today = now.toISOString().slice(0, 10);
+  return log.some((e) => e.activity_id === activityId && e.logged_at.slice(0, 10) === today);
+}
+
 // ---------- Birth date ----------
 // Authoritative copy lives in families.birth_date. localStorage is a cache so
 // the UI can paint before the round trip completes; useFamily() reconciles them.
