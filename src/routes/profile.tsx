@@ -8,7 +8,7 @@
  *   - mint / share an invite link for a caregiver
  */
 
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/littleleaps/AppShell";
 import { Card } from "@/components/ui/card";
@@ -21,8 +21,29 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Pencil, Copy, Check, UserPlus, Baby } from "lucide-react";
+import {
+  Pencil,
+  Copy,
+  Check,
+  UserPlus,
+  Baby,
+  Info,
+  Download,
+  Trash2,
+  ChevronRight,
+} from "lucide-react";
 import { getAge } from "@/lib/littleleaps/age";
 import {
   useBirthDate,
@@ -31,6 +52,8 @@ import {
   useFamilyMembers,
   createInviteCode,
   inviteUrl,
+  exportMyData,
+  deleteMyAccount,
 } from "@/lib/littleleaps/storage";
 
 export const Route = createFileRoute("/profile")({
@@ -80,6 +103,20 @@ function ProfilePage() {
   };
 
   const editBirthDate = () => window.dispatchEvent(new CustomEvent("littleleaps:editBirthDate"));
+
+  const copyInviteLinkDirect = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!inviteCode) {
+      setInviteOpen(true);
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(inviteUrl(inviteCode));
+      toast.success("Invite link copied");
+    } catch {
+      toast.error("Couldn't copy — tap the row to see the full link");
+    }
+  };
 
   return (
     <AppShell>
@@ -147,15 +184,30 @@ function ProfilePage() {
         <section className="space-y-2">
           <SectionLabel>Family</SectionLabel>
           <Card className="rounded-3xl border-border/60 shadow-none divide-y divide-border/60">
-            <Row
-              label="Invite code"
-              onClick={() => setInviteOpen(true)}
-              value={
+            {/* Not a plain Row: needs a separate copy button alongside the
+                tap-to-open-dialog area, and a <button> can't nest a <button>. */}
+            <div className="flex items-center justify-between px-4 py-3.5">
+              <button
+                type="button"
+                onClick={() => setInviteOpen(true)}
+                className="flex flex-1 items-center justify-between gap-2 text-left"
+              >
+                <span className="text-sm text-foreground">Invite code</span>
                 <span className="font-mono text-sm font-semibold tracking-wide text-foreground">
                   {inviteCode ? truncateCode(inviteCode) : "Set up"}
                 </span>
-              }
-            />
+              </button>
+              {inviteCode && (
+                <button
+                  type="button"
+                  onClick={copyInviteLinkDirect}
+                  aria-label="Copy invite link"
+                  className="ml-2 flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground"
+                >
+                  <Copy size={14} />
+                </button>
+              )}
+            </div>
             <Row label="You" value={<Muted>This device</Muted>} />
             {others.map((m) => (
               <Row
@@ -176,6 +228,26 @@ function ProfilePage() {
             </div>
           </Card>
         </section>
+
+        {/* ── About ── */}
+        <section className="space-y-2">
+          <SectionLabel>About</SectionLabel>
+          <Card className="rounded-3xl border-border/60 shadow-none">
+            <Link
+              to="/about"
+              className="flex items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-secondary/40"
+            >
+              <span className="flex items-center gap-2.5 text-sm text-foreground">
+                <Info size={16} className="text-muted-foreground" />
+                About & Sources
+              </span>
+              <ChevronRight size={16} className="text-muted-foreground" />
+            </Link>
+          </Card>
+        </section>
+
+        {/* ── Account ── */}
+        <AccountSection />
 
         <div className="h-4" />
       </div>
@@ -276,6 +348,105 @@ function InviteDialog({
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+// ─── Account section ────────────────────────────────────────────────────────
+// Export (GDPR portability) and delete (GDPR erasure) both already existed
+// server-side — exportMyData() and the delete_my_account RPC — with no UI
+// trigger until now. See BACKLOG item 5.
+function AccountSection() {
+  const [exporting, setExporting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const data = await exportMyData();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `little-leaps-export-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success("Export downloaded");
+    } catch (e) {
+      toast.error("Couldn't export your data", {
+        description: e instanceof Error ? e.message : undefined,
+      });
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    setDeleting(true);
+    try {
+      await deleteMyAccount();
+      // Auth/session state changed underneath the app (signed out, family
+      // gone) — a full reload is the safest way back to onboarding rather
+      // than relying on every hook to reconcile in place.
+      window.location.href = "/";
+    } catch (e) {
+      toast.error("Couldn't delete your account", {
+        description: e instanceof Error ? e.message : undefined,
+      });
+      setDeleting(false);
+    }
+  };
+
+  return (
+    <section className="space-y-2">
+      <SectionLabel>Account</SectionLabel>
+      <Card className="rounded-3xl border-border/60 shadow-none divide-y divide-border/60">
+        <button
+          type="button"
+          onClick={handleExport}
+          disabled={exporting}
+          className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-secondary/40 disabled:opacity-60"
+        >
+          <span className="flex items-center gap-2.5 text-sm text-foreground">
+            <Download size={16} className="text-muted-foreground" />
+            {exporting ? "Preparing export…" : "Export my data"}
+          </span>
+        </button>
+
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <button
+              type="button"
+              className="flex w-full items-center justify-between px-4 py-3.5 text-left transition-colors hover:bg-destructive/8"
+            >
+              <span className="flex items-center gap-2.5 text-sm text-destructive">
+                <Trash2 size={16} />
+                Delete account
+              </span>
+            </button>
+          </AlertDialogTrigger>
+          <AlertDialogContent className="max-w-[380px] rounded-3xl">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete your account?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This permanently deletes your baby's birth date, name, and every logged activity. If
+                a partner shares this family and no one else is left in it, their access is removed
+                too. This cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDelete}
+                disabled={deleting}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {deleting ? "Deleting…" : "Delete account"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </Card>
+    </section>
   );
 }
 

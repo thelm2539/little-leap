@@ -13,14 +13,14 @@
  * All timeline logic lives in MilestoneTimeline.tsx.
  */
 
-import { createFileRoute } from '@tanstack/react-router';
-import { AppShell } from '@/components/littleleaps/AppShell';
-import { MilestoneTimeline } from '@/components/MilestoneTimeline';
-import { useBirthDate } from '@/lib/littleleaps/storage';
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { AppShell } from "@/components/littleleaps/AppShell";
+import { MilestoneTimeline } from "@/components/MilestoneTimeline";
+import { useBirthDate } from "@/lib/littleleaps/storage";
 
 // ─── Route definition ─────────────────────────────────────────────────────────
 // The string '/activities' must match this file's name (activities.tsx).
-export const Route = createFileRoute('/activities')({
+export const Route = createFileRoute("/activities")({
   component: ActivitiesPage,
 });
 
@@ -38,14 +38,20 @@ function ActivitiesPage() {
         <h1 className="font-serif text-[26px] font-bold text-foreground leading-tight">
           Milestones
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Week-by-week developmental timeline
-        </p>
+        <p className="text-sm text-muted-foreground mt-1">Week-by-week developmental timeline</p>
       </div>
 
       {/* MilestoneTimeline receives birthDate and handles everything from here:
           domain filter pills, spine, week grouping, cards, opacity fades */}
       <MilestoneTimeline birthDate={birthDate} />
+
+      {/* Every baby is different — ages here are typical ranges, not deadlines. */}
+      <p className="px-5 pb-4 pt-2 text-center text-[11px] text-muted-foreground">
+        Educational, not medical advice — every baby develops at their own pace.{" "}
+        <Link to="/about" className="text-sage hover:underline">
+          Read more
+        </Link>
+      </p>
     </AppShell>
   );
 }
