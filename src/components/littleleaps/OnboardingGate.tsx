@@ -40,6 +40,7 @@ import {
   createFamilyProfile,
   joinFamilyProfile,
   saveBirthDateToProfile,
+  saveBabyName,
 } from "@/lib/littleleaps/storage";
 
 // ─── Step types ───────────────────────────────────────────────────────────────
@@ -58,6 +59,7 @@ export function OnboardingGate() {
 
   const [step, setStep] = useState<Step>("choice");
   const [birthValue, setBirthValue] = useState("");
+  const [nameValue, setNameValue] = useState("");
   const [codeValue, setCodeValue] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -126,6 +128,16 @@ export function OnboardingGate() {
     setError(null);
     try {
       const code = await createFamilyProfile(birthValue);
+      // Name is optional and secondary to birth date — if it fails to save,
+      // don't block onboarding on it; the family/birth date already exist and
+      // the name can always be set later from Profile.
+      if (nameValue.trim()) {
+        try {
+          await saveBabyName(nameValue);
+        } catch (e) {
+          console.warn("[littleleaps] baby name save failed during onboarding", e);
+        }
+      }
       // Show the success step so the user can copy/share their invite code
       setInviteCode(code);
       setStep("new-success");
@@ -239,19 +251,27 @@ export function OnboardingGate() {
               <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-sage/15 text-sage">
                 <Baby size={22} />
               </div>
-              <DialogTitle className="font-serif text-xl">When was your baby born?</DialogTitle>
+              <DialogTitle className="font-serif text-xl">Tell us about your baby</DialogTitle>
               <DialogDescription className="text-sm text-muted-foreground">
-                Everything in the app is personalised to your baby's age from this date.
+                Everything in the app is personalised to your baby's age from this date. The name is
+                optional — we'll just say "Baby" if you skip it.
               </DialogDescription>
             </DialogHeader>
 
             <div className="mt-4 space-y-3">
+              <Input
+                value={nameValue}
+                onChange={(e) => setNameValue(e.target.value)}
+                placeholder="Baby's name (optional)"
+                autoFocus
+                className="h-11 rounded-2xl border-border/60 bg-cream/40"
+              />
               <input
                 type="date"
                 value={birthValue}
                 onChange={(e) => setBirthValue(e.target.value)}
                 max={todayIso}
-                autoFocus
+                aria-label="Baby's date of birth"
                 className="h-11 w-full rounded-2xl border border-border/60 bg-cream/40 px-4
                            text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-sage/40"
               />
