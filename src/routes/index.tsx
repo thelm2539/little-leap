@@ -1,19 +1,37 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/littleleaps/AppShell";
+import { ActivityReceptionGrid } from "@/components/littleleaps/ActivityReceptionGrid";
 import { Card } from "@/components/ui/card";
 import { ageLabel, getAge, greeting } from "@/lib/littleleaps/age";
 import { ACTIVITIES, formatDuration, type Activity } from "@/lib/littleleaps/data";
-import { useBirthDate } from "@/lib/littleleaps/storage";
-import { DomainBadge, DurationPill, RatingButtons } from "@/components/littleleaps/ActivityBits";
-import { Lightbulb } from "lucide-react";
-import { getActivitiesForWeek, getNewActivityCount, getWeekTip } from "@/lib/littleleaps/milestones";
+import {
+  useBirthDate,
+  useBabyName,
+  useActivityLog,
+  buildReceptionGrid,
+  weeklyConfidence,
+  describeWeeklyConfidence,
+  ratedToday,
+} from "@/lib/littleleaps/storage";
+import {
+  DomainBadge,
+  DurationPill,
+  NewBadge,
+  RatingBadge,
+  RatingButtons,
+} from "@/components/littleleaps/ActivityBits";
+import { Lightbulb, ArrowRight } from "lucide-react";
+import { getActivitiesForWeek, getNewActivityIds, getWeekTip } from "@/lib/littleleaps/milestones";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Little Leaps — Home" },
-      { name: "description", content: "Evidence-based weekly development companion for your newborn." },
+      {
+        name: "description",
+        content: "Evidence-based weekly development companion for your newborn.",
+      },
     ],
   }),
   component: Home,
@@ -33,6 +51,17 @@ function Home() {
 
   // All hooks before the early return (React rules of hooks).
   const { birthDate } = useBirthDate();
+  const { babyName } = useBabyName();
+  const { log } = useActivityLog();
+  const navigate = useNavigate();
+
+  // Open an activity's full detail on the This Week tab. sessionStorage carries
+  // the target across the navigation; This Week reads it, scrolls to the card
+  // and expands it (same channel the Milestones tab uses).
+  const openActivityDetail = (activityId: string) => {
+    sessionStorage.setItem("littleleaps.focusActivity", activityId);
+    void navigate({ to: "/this-week" });
+  };
 
   // Awake minutes: persisted to localStorage so the slider value survives reloads.
   const [awakeMinutes, setAwakeMinutes] = useState<number>(() => {
@@ -52,35 +81,46 @@ function Home() {
   // ── Activities for this week from active milestone windows ──────────────────
   const activityIds = getActivitiesForWeek(weeks);
   const weekActivities = activityIds
-    .map(id => ACTIVITIES.find(a => a.id === id))
+    .map((id) => ACTIVITIES.find((a) => a.id === id))
     .filter((a): a is Activity => a !== undefined);
 
   // Cycle through by day so the selection changes daily but is stable all day.
   const daysSinceBirth = Math.floor(
-    (now.getTime() - new Date(birthDate).getTime()) / (24 * 60 * 60 * 1000)
+    (now.getTime() - new Date(birthDate).getTime()) / (24 * 60 * 60 * 1000),
   );
   const showCount = Math.min(activitiesForAwakeTime(awakeMinutes), weekActivities.length);
-  const todayActivities: Activity[] = weekActivities.length > 0
-    ? Array.from({ length: showCount }, (_, i) =>
-        weekActivities[(daysSinceBirth + i) % weekActivities.length]
-      )
-    : [];
+  const todayActivities: Activity[] =
+    weekActivities.length > 0
+      ? Array.from(
+          { length: showCount },
+          (_, i) => weekActivities[(daysSinceBirth + i) % weekActivities.length],
+        )
+      : [];
 
   // ── Stats ───────────────────────────────────────────────────────────────────
-  const newActivitiesCount = getNewActivityCount(weeks);
+  // Same set drives both the "New this week" count and each card's New badge —
+  // see getNewActivityIds, the single source of truth for "new".
+  const newActivityIds = getNewActivityIds(weeks);
 
   // ── Weekly tip derived from active milestones ───────────────────────────────
   const weeklyTip = getWeekTip(weeks);
 
+  // ── Weekly confidence signal — closes the loop even before a full pattern
+  // exists for the reception grid below. Same log, no extra query.
+  const receptionGrid = buildReceptionGrid(log);
+  const confidence = weeklyConfidence(log, receptionGrid, weeks);
+  const confidenceText = describeWeeklyConfidence(confidence);
+
   return (
     <AppShell>
       <div className="space-y-5 px-5 pt-5">
-
         <section>
           <p className="text-2xl font-serif font-semibold tracking-tight text-foreground">
             {greeting(now)}
           </p>
-          <p className="mt-1 text-sm text-muted-foreground">Baby is {ageLabel(birthDate, now)}</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {babyName ?? "Baby"} is {ageLabel(birthDate, now)}
+          </p>
         </section>
 
         {/* ── Stats row + awake slider ── */}
@@ -88,7 +128,7 @@ function Home() {
           <div className="grid grid-cols-3 gap-2">
             <Stat label="Age" value={`${weeks}w`} />
             <Stat label="Awake today" value={`${awakeMinutes} min`} />
-            <Stat label="New this week" value={String(newActivitiesCount)} />
+            <Stat label="New this week" value={String(newActivityIds.size)} />
           </div>
 
           {/* Awake window slider
@@ -114,8 +154,20 @@ function Home() {
               <span className="text-[9px] text-muted-foreground">15 min</span>
               <span className="text-[9px] text-muted-foreground">2 hr</span>
             </div>
+            <p className="mt-2 text-[11px] text-muted-foreground">
+              Sets how many activities we suggest below — a longer window fits more in.
+            </p>
           </div>
         </section>
+
+        {/* ── Weekly confidence ── */}
+        <section>
+          <Card className="rounded-3xl border-sage/20 bg-sage/8 p-4 shadow-none">
+            <p className="text-sm leading-relaxed text-foreground/85">{confidenceText}</p>
+          </Card>
+        </section>
+
+        <ActivityReceptionGrid />
 
         {/* ── Today's activities ── */}
         <section>
@@ -132,12 +184,18 @@ function Home() {
           ) : (
             <div className="space-y-3">
               {todayActivities.map((a) => (
-                <Card key={a.id} className="rounded-3xl border-border/60 bg-cream/40 p-5 shadow-none">
+                <Card
+                  key={a.id}
+                  className="rounded-3xl border-border/60 bg-cream/40 p-5 shadow-none"
+                >
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <h3 className="font-serif text-lg font-semibold text-foreground">
-                        {a.title}
-                      </h3>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="font-serif text-lg font-semibold text-foreground">
+                          {a.title}
+                        </h3>
+                        {newActivityIds.has(a.id) && <NewBadge />}
+                      </div>
                       <div className="mt-2 flex flex-wrap items-center gap-2">
                         <DomainBadge domain={a.domain} />
                         <DurationPill duration={formatDuration(a.durationMinutes)} />
@@ -148,12 +206,28 @@ function Home() {
                   <p className="mt-3 text-sm leading-relaxed text-foreground/80">
                     {a.instructions.slice(0, 2).join(" ")}
                   </p>
-                  <div className="mt-4">
-                    <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                      How did it go?
-                    </p>
-                    <RatingButtons activityId={a.id} compact />
-                  </div>
+                  {/* Learn more → full instructions + the science, on This Week */}
+                  <button
+                    type="button"
+                    onClick={() => openActivityDetail(a.id)}
+                    className="mt-3 inline-flex items-center gap-1 rounded-full border border-sage/30 bg-sage/8
+                               px-3 py-1 text-xs font-medium text-sage transition-colors hover:bg-sage/15"
+                  >
+                    Learn more <ArrowRight size={12} />
+                  </button>
+                  {ratedToday(log, a.id) ? (
+                    <div className="mt-4 flex items-center justify-between">
+                      <RatingBadge activityId={a.id} />
+                      <span className="text-[11px] text-muted-foreground">Logged today</span>
+                    </div>
+                  ) : (
+                    <div className="mt-4">
+                      <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                        How did it go?
+                      </p>
+                      <RatingButtons activityId={a.id} compact />
+                    </div>
+                  )}
                 </Card>
               ))}
             </div>
@@ -185,7 +259,9 @@ function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-border/60 bg-background px-3 py-3 text-center">
       <div className="font-serif text-lg font-semibold text-foreground">{value}</div>
-      <div className="mt-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div>
+      <div className="mt-0.5 text-[10px] uppercase tracking-wide text-muted-foreground">
+        {label}
+      </div>
     </div>
   );
 }

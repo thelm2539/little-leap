@@ -3,17 +3,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Clock, Smile, Meh, Frown } from "lucide-react";
 import { toast } from "sonner";
-import {
-  type Activity,
-  DOMAIN_BADGE,
-  DOMAIN_DOT,
-  DOMAIN_LABEL,
-} from "@/lib/littleleaps/data";
+import { type Activity, DOMAIN_BADGE, DOMAIN_DOT, DOMAIN_LABEL } from "@/lib/littleleaps/data";
 import { useActivityLog, type Rating, latestRatingFor } from "@/lib/littleleaps/storage";
 
 export function DomainBadge({ domain }: { domain: Activity["domain"] }) {
   return (
-    <Badge variant="outline" className={`rounded-full border px-2.5 py-0.5 text-[11px] font-medium ${DOMAIN_BADGE[domain]}`}>
+    <Badge
+      variant="outline"
+      className={`rounded-full border px-2.5 py-0.5 text-[11px] font-medium ${DOMAIN_BADGE[domain]}`}
+    >
       {DOMAIN_LABEL[domain]}
     </Badge>
   );
@@ -31,13 +29,28 @@ export function DurationPill({ duration }: { duration: string }) {
   );
 }
 
-const RATING_LABEL: Record<Rating, string> = {
+/** Small "New" pill for an activity just introduced this week (see getNewActivityIds). */
+export function NewBadge() {
+  return (
+    <Badge className="rounded-full border-none bg-sage px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-sage-foreground">
+      New
+    </Badge>
+  );
+}
+
+export const RATING_LABEL: Record<Rating, string> = {
   engaged: "Engaged",
   neutral: "Neutral",
   fussy: "Fussy",
 };
 
-export function RatingButtons({ activityId, compact = false }: { activityId: string; compact?: boolean }) {
+export function RatingButtons({
+  activityId,
+  compact = false,
+}: {
+  activityId: string;
+  compact?: boolean;
+}) {
   const { logRating } = useActivityLog();
   const [pending, setPending] = useState<Rating | null>(null);
 

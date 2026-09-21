@@ -17,33 +17,40 @@
  */
 
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { Home, CalendarDays, Sparkles, MessageCircleQuestion, Sprout, Pencil } from "lucide-react";
+import { Home, CalendarDays, Sparkles, User, Sprout } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
+import { useBabyName } from "@/lib/littleleaps/storage";
 import type { ReactNode } from "react";
 
 // ─── Tab definitions ──────────────────────────────────────────────────────────
 // Each tab maps to a route file in src/routes/.
 // 'exact' means only match if the path is exactly "/" (not "/something-else")
-type Tab = { to: "/" | "/this-week" | "/activities" | "/ask"; label: string; icon: typeof Home; exact?: boolean };
+// The Ask route still exists but is intentionally not in the nav.
+type Tab = {
+  to: "/" | "/this-week" | "/activities" | "/profile";
+  label: string;
+  icon: typeof Home;
+  exact?: boolean;
+};
 const TABS: Tab[] = [
-  { to: "/",            label: "Home",      icon: Home,                   exact: true },
-  { to: "/this-week",  label: "This Week",  icon: CalendarDays },
+  { to: "/", label: "Home", icon: Home, exact: true },
+  { to: "/this-week", label: "This Week", icon: CalendarDays },
   { to: "/activities", label: "Milestones", icon: Sparkles },
-  { to: "/ask",        label: "Ask",        icon: MessageCircleQuestion },
+  { to: "/profile", label: "Profile", icon: User },
 ];
 
 // ─── Component ────────────────────────────────────────────────────────────────
 export function AppShell({ children }: { children?: ReactNode }) {
   // Track the current URL so we can highlight the active tab
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { babyName } = useBabyName();
+  const initial = babyName?.trim()?.[0]?.toUpperCase();
 
   return (
     <div className="min-h-screen bg-app">
-
       {/* ── Content column ── */}
       {/* max-w-[420px] on mobile, md:max-w-2xl (672px) on desktop */}
       <div className="mx-auto flex min-h-screen max-w-[420px] md:max-w-2xl flex-col bg-background shadow-sm">
-
         {/* ── Sticky header ── */}
         <header className="flex items-center justify-between gap-2 border-b border-border/60 bg-background/80 px-5 py-4 backdrop-blur sticky top-0 z-20">
           {/* Logo */}
@@ -56,22 +63,16 @@ export function AppShell({ children }: { children?: ReactNode }) {
             </span>
           </div>
 
-          {/* Edit birth date button — small pencil icon in the top-right */}
-          {/*
-            onClick opens the BirthDateGate in edit mode.
-            aria-label makes it accessible to screen readers.
-          */}
-          {/* Pencil icon dispatches a custom event that BirthDateGate (in __root.tsx) listens for.
-              Using an event keeps AppShell and BirthDateGate decoupled — no shared state needed. */}
-          <button
-            type="button"
-            aria-label="Edit baby's birth date"
-            onClick={() => window.dispatchEvent(new CustomEvent("littleleaps:editBirthDate"))}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground
-                       hover:bg-secondary hover:text-foreground transition-colors"
+          {/* Profile avatar — links to the Profile tab. Shows the baby's initial
+              once a name is set, otherwise a generic person icon. */}
+          <Link
+            to="/profile"
+            aria-label="Baby profile"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-sage text-sage-foreground
+                       text-sm font-semibold transition-opacity hover:opacity-90"
           >
-            <Pencil size={15} />
-          </button>
+            {initial ?? <User size={16} strokeWidth={2} />}
+          </Link>
         </header>
 
         {/* ── Page content ── */}
